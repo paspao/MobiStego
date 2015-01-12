@@ -1,5 +1,11 @@
 language: android
 
+jdk: oraclejdk7
+
+env:
+  global:
+    - ANDROID_API_LEVEL=android-21
+    - ANDROID_ABI=armeabi-v7a
 android:
   components:
     # Uncomment the lines below if you want to
@@ -11,21 +17,25 @@ android:
     - build-tools-21.1.2
 
     # The SDK version used to compile your project
-    - android-21
+    - $ANDROID_API_LEVEL
 
     # Additional components
-    - extra-google-google_play_services
+    #- extra-google-google_play_services
     #- extra-google-m2repository
     #- extra-android-m2repository
     #- addon-google_apis-google-19
 
     # Specify at least one system image,
     # if you need to run emulator(s) during your tests
-    - sys-img-armeabi-v7a-android-21
+    #- sys-img-armeabi-v7a-android-21
     #- sys-img-x86-android-17
 
 before_script:
-  - echo no | android create avd --force -n test -t android-21 --abi armeabi-v7a
+  - echo no | android create avd --force -n test -t $ANDROID_API_LEVEL --abi $ANDROID_ABI
   - emulator -avd test -no-skin -no-audio -no-window &
-  - android-wait-for-emulator
+  #- android-wait-for-emulator
   #- adb shell input keyevent 82 &
+
+script:
+  - ./wait_for_emulator
+  - ./gradlew connectedCheck -PdisablePreDex
