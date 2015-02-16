@@ -1,9 +1,8 @@
-package it.mobistego;
+package it.mobistego.test;
 
 import android.app.Application;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
-import android.graphics.drawable.BitmapDrawable;
 import android.test.ApplicationTestCase;
 import android.util.Log;
 
@@ -46,7 +45,7 @@ public class ApplicationTest extends ApplicationTestCase<Application> {
         String message="Hello World!!!";
         Bitmap src=BitmapFactory.decodeResource(getContext().getResources(),
                 R.drawable.test);
-        int density=src.getDensity();
+
         List<Bitmap> srcList= Utility.splitImage(src);
         List<Bitmap> encodedList=LSB2bit.encodeMessage(srcList,message,new LSB2bit.ProgressHandler() {
             @Override
@@ -84,8 +83,8 @@ public class ApplicationTest extends ApplicationTestCase<Application> {
         getContext().getResources().getDrawable(R.drawable.test);
         String message="Hello World!!!";
         Bitmap src=BitmapFactory.decodeResource(getContext().getResources(),
-                R.drawable.test);
-        int density=src.getDensity();
+                it.mobistego.test.R.drawable.test);
+
         List<Bitmap> srcList= Utility.splitImage(src);
         List<Bitmap> encodedList=LSB2bit.encodeMessage(srcList,message,new LSB2bit.ProgressHandler() {
             @Override

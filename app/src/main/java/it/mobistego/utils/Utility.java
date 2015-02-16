@@ -12,7 +12,7 @@ import java.util.List;
  */
 public class Utility {
 
-    public static final int SQUARE_BLOCK=512;
+    public static final int SQUARE_BLOCK = 512;
 
     public static List<Bitmap> splitImage(Bitmap bitmap) {
 
@@ -20,7 +20,7 @@ public class Utility {
 
 
         //For height and width of the small image chunks
-        int chunkHeight,chunkWidth;
+        int chunkHeight, chunkWidth;
 
         //To store all the small image chunks in bitmap format in this list
         ArrayList<Bitmap> chunkedImages = new ArrayList<Bitmap>();
@@ -30,11 +30,11 @@ public class Utility {
         //Bitmap bitmap = drawable.getBitmap();
         //Bitmap scaledBitmap = Bitmap.createBitmap(bitmap, bitmap.getWidth(), bitmap.getHeight(), true);
 
-        int rows=bitmap.getHeight()/SQUARE_BLOCK;
-        int cols=bitmap.getWidth()/SQUARE_BLOCK;
+        int rows = bitmap.getHeight() / SQUARE_BLOCK;
+        int cols = bitmap.getWidth() / SQUARE_BLOCK;
 
-        int chunkH_mod=bitmap.getHeight()%SQUARE_BLOCK;
-        int chunkW_mod=bitmap.getWidth()%SQUARE_BLOCK;
+        int chunkH_mod = bitmap.getHeight() % SQUARE_BLOCK;
+        int chunkW_mod = bitmap.getWidth() % SQUARE_BLOCK;
 
         /*Log.d(TAG, "Rows " + rows);
         Log.d(TAG,"Cols "+cols);
@@ -42,26 +42,25 @@ public class Utility {
         Log.d(TAG,"Cols module "+chunkW_mod);
 */
         //rows = cols = (int) Math.sqrt(chunkNumbers);
-        if(chunkH_mod>0)
+        if (chunkH_mod > 0)
             rows++;
-        if(chunkW_mod>0)
+        if (chunkW_mod > 0)
             cols++;
-
 
 
         //xCoord and yCoord are the pixel positions of the image chunks
         int yCoord = 0;
-        for(int x=0; x<rows; x++){
+        for (int x = 0; x < rows; x++) {
             int xCoord = 0;
-            for(int y=0; y<cols; y++){
+            for (int y = 0; y < cols; y++) {
                 chunkHeight = SQUARE_BLOCK;
                 chunkWidth = SQUARE_BLOCK;
 
-                if(y==cols-1&&chunkW_mod>0)
+                if (y == cols - 1 && chunkW_mod > 0)
                     chunkWidth = chunkW_mod;
 
-                if(x==rows-1&&chunkH_mod>0)
-                    chunkHeight=chunkH_mod;
+                if (x == rows - 1 && chunkH_mod > 0)
+                    chunkHeight = chunkH_mod;
 
                 chunkedImages.add(Bitmap.createBitmap(bitmap, xCoord, yCoord, chunkWidth, chunkHeight));
                 xCoord += SQUARE_BLOCK;
@@ -73,13 +72,13 @@ public class Utility {
         return chunkedImages;
     }
 
-    public static Bitmap mergeImage(List<Bitmap> images,int originalHeight,int originalWidth) {
+    public static Bitmap mergeImage(List<Bitmap> images, int originalHeight, int originalWidth) {
 
-        int rows=originalHeight/SQUARE_BLOCK;
-        int cols=originalWidth/SQUARE_BLOCK;
+        int rows = originalHeight / SQUARE_BLOCK;
+        int cols = originalWidth / SQUARE_BLOCK;
 
-        int chunkH_mod=originalHeight%SQUARE_BLOCK;
-        int chunkW_mod=originalWidth%SQUARE_BLOCK;
+        int chunkH_mod = originalHeight % SQUARE_BLOCK;
+        int chunkW_mod = originalWidth % SQUARE_BLOCK;
 
         /*Log.d(TAG,"Rows "+rows);
         Log.d(TAG,"Cols "+cols);
@@ -87,9 +86,9 @@ public class Utility {
         Log.d(TAG,"Cols module "+chunkW_mod);*/
 
 
-        if(chunkH_mod>0)
+        if (chunkH_mod > 0)
             rows++;
-        if(chunkW_mod>0)
+        if (chunkW_mod > 0)
             cols++;
 
         //create a bitmap of a size which can hold the complete image after merging
@@ -99,8 +98,8 @@ public class Utility {
 
         Canvas canvas = new Canvas(bitmap);
         int count = 0;
-        int chunkWidth=SQUARE_BLOCK;
-        int chunkHeight=SQUARE_BLOCK;
+        int chunkWidth = SQUARE_BLOCK;
+        int chunkHeight = SQUARE_BLOCK;
 
         for (int irows = 0; irows < rows; irows++) {
             for (int icols = 0; icols < cols; icols++) {
@@ -124,17 +123,18 @@ public class Utility {
 
     /**
      * Convert the byte array to an int array.
+     *
      * @param b The byte array.
      * @return The int array.
      */
 
     public static int[] byteArrayToIntArray(byte[] b) {
-        Log.v("Size byte array", b.length+"");
-        int size=b.length / 3;
-        Log.v("Size Int array",size+"");
+        Log.v("Size byte array", b.length + "");
+        int size = b.length / 3;
+        Log.v("Size Int array", size + "");
         System.runFinalization();
         System.gc();
-        Log.v("FreeMemory", Runtime.getRuntime().freeMemory()+"");
+        Log.v("FreeMemory", Runtime.getRuntime().freeMemory() + "");
         int[] result = new int[size];
         int off = 0;
         int index = 0;
@@ -149,8 +149,7 @@ public class Utility {
     /**
      * Convert the byte array to an int.
      *
-     * @param b
-     *            The byte array
+     * @param b The byte array
      * @return The integer
      */
     public static int byteArrayToInt(byte[] b) {
@@ -160,10 +159,8 @@ public class Utility {
     /**
      * Convert the byte array to an int starting from the given offset.
      *
-     * @param b
-     *            The byte array
-     * @param offset
-     *            The array offset
+     * @param b      The byte array
+     * @param offset The array offset
      * @return The integer
      */
     public static int byteArrayToInt(byte[] b, int offset) {
@@ -190,7 +187,7 @@ public class Utility {
         for (int i = 0; i < array.length; i++) {
 
 			/*
-			 * newarray[i * 3] = (byte) ((array[i]) & 0xFF); newarray[i * 3 + 1]
+             * newarray[i * 3] = (byte) ((array[i]) & 0xFF); newarray[i * 3 + 1]
 			 * = (byte)((array[i] >> 8)& 0xFF); newarray[i * 3 + 2] =
 			 * (byte)((array[i] >> 16)& 0xFF);
 			 */

@@ -36,7 +36,7 @@ import it.mobistego.utils.Utility;
 
 public class LSB2bit {
 
-
+    private static final String TAG=LSB2bit.class.getName();
     private static int[] binary = {16, 8, 0};
     private static byte[] andByte = {(byte) 0xC0, 0x30, 0x0C, 0x03};
     private static int[] toShift = {6, 4, 2, 0};
@@ -98,16 +98,17 @@ public class LSB2bit {
 
     public static List<Bitmap> encodeMessage(List<Bitmap> splittedImages,
                                              String str, ProgressHandler hand) {
-        List<Bitmap> result = new ArrayList<>(splittedImages.size());
+        List<Bitmap> result = new ArrayList<Bitmap>(splittedImages.size());
         str += END_MESSAGE_COSTANT;
         str = START_MESSAGE_COSTANT + str;
         byte[] msg = str.getBytes();
+        
         MessageEncodingStatus message = new MessageEncodingStatus();
         message.setMessage(str);
         message.setByteArrayMessage(msg);
         message.setCurrentMessageIndex(0);
         message.setMessageEncoded(false);
-
+        Log.i(TAG,"Message lenght "+msg.length);
         for (Bitmap bitm : splittedImages) {
             if (!message.isMessageEncoded()) {
                 int width = bitm.getWidth();
@@ -139,23 +140,23 @@ public class LSB2bit {
             } else
                 result.add(bitm);
         }
+        Log.d(TAG,"Message index "+message.getCurrentMessageIndex());
         return result;
     }
 
     public static String decodeMessage(List<Bitmap> encodedImages) {
 
 
-        MessageDecodingStatus mesgDecoded=new MessageDecodingStatus();
+        MessageDecodingStatus mesgDecoded = new MessageDecodingStatus();
 
-        for(Bitmap bit:encodedImages)
-        {
+        for (Bitmap bit : encodedImages) {
             int[] pixels = new int[bit.getWidth() * bit.getHeight()];
             bit.getPixels(pixels, 0, bit.getWidth(), 0, 0, bit.getWidth(),
                     bit.getHeight());
             byte[] b = null;
             b = Utility.convertArray(pixels);
-            decodeMessage(b, bit.getWidth(), bit.getHeight(),mesgDecoded);
-            if(mesgDecoded.isEnded())
+            decodeMessage(b, bit.getWidth(), bit.getHeight(), mesgDecoded);
+            if (mesgDecoded.isEnded())
                 break;
         }
         return mesgDecoded.getMessage();
@@ -167,10 +168,10 @@ public class LSB2bit {
      * @param oneDPix The byte array image.
      * @param imgCols Image width.
      * @param imgRows Image height.
-     * @param mesg The decoded message.
+     * @param mesg    The decoded message.
      */
     private static void decodeMessage(byte[] oneDPix, int imgCols,
-                                       int imgRows,MessageDecodingStatus mesg) {
+                                      int imgRows, MessageDecodingStatus mesg) {
 
         Vector<Byte> v = new Vector<Byte>();
 
@@ -186,7 +187,7 @@ public class LSB2bit {
                 String str = new String(nonso);
                 // if (END_MESSAGE_COSTANT.equals(str)) {
                 if (mesg.getMessage().endsWith(END_MESSAGE_COSTANT)) {
-                    Log.i("TEST","Decoding ended");
+                    Log.i("TEST", "Decoding ended");
                     mesg.setEnded(true);
                     break;
                 } else {
@@ -226,9 +227,9 @@ public class LSB2bit {
         private String message;
         private boolean ended;
 
-        public MessageDecodingStatus(){
-            message="";
-            ended=false;
+        public MessageDecodingStatus() {
+            message = "";
+            ended = false;
         }
 
         public boolean isEnded() {
@@ -250,6 +251,7 @@ public class LSB2bit {
 
 
     }
+
     private static class MessageEncodingStatus {
         private boolean messageEncoded;
         private int currentMessageIndex;
