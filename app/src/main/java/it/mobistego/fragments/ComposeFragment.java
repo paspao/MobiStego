@@ -3,16 +3,16 @@ package it.mobistego.fragments;
 import android.app.Activity;
 import android.app.Dialog;
 import android.app.DialogFragment;
-import android.app.Fragment;
 import android.graphics.Bitmap;
 import android.graphics.Color;
 import android.graphics.PixelFormat;
-import android.media.effect.EffectFactory;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.Window;
+import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
 
@@ -21,15 +21,15 @@ import it.mobistego.R;
 /**
  * Created by paspao on 28/01/15.
  */
-public class ComposeFragment extends DialogFragment {
+public class ComposeFragment extends DialogFragment implements View.OnClickListener {
 
-
+    private static final String TAG = ComposeFragment.class.getName();
     private OnComposed mCallback;
     private ImageView imageView;
     private EditText editMessage;
     private Bitmap choosenBitmap;
-    
-    
+    private Button buttonEncode;
+    private Button buttonAbort;
 
 
     public interface OnComposed {
@@ -40,7 +40,7 @@ public class ComposeFragment extends DialogFragment {
 
     @Override
     public Dialog onCreateDialog(Bundle savedInstanceState) {
-        Dialog d= super.onCreateDialog(savedInstanceState);
+        Dialog d = super.onCreateDialog(savedInstanceState);
         d.getWindow().requestFeature(Window.FEATURE_NO_TITLE);
         d.getWindow().setFormat(PixelFormat.RGBA_8888);
 
@@ -54,11 +54,15 @@ public class ComposeFragment extends DialogFragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        View view=inflater.inflate(R.layout.compose_layout, container, false);
+        View view = inflater.inflate(R.layout.compose_layout, container, false);
         imageView = (ImageView) view.findViewById(R.id.compose_background);
         editMessage = (EditText) view.findViewById(R.id.compose_edit);
+        buttonEncode = (Button) view.findViewById(R.id.compose_button_encode);
+        buttonAbort = (Button) view.findViewById(R.id.compose_button_encode_abort);
+        buttonEncode.setOnClickListener(this);
+        buttonAbort.setOnClickListener(this);
         //choosenBitmap=(Bitmap)getIntent().getExtras().get(Constants.CHOOSEN_IMAGE);
-        Bitmap tmp=Bitmap.createBitmap(choosenBitmap);
+        Bitmap tmp = Bitmap.createBitmap(choosenBitmap);
         //imageView.setImageBitmap(doGreyscale(tmp));
         imageView.setImageBitmap(tmp);
         return view;
@@ -76,6 +80,24 @@ public class ComposeFragment extends DialogFragment {
         } catch (ClassCastException e) {
             throw new ClassCastException(activity.toString()
                     + " must implement OnComposed");
+        }
+    }
+
+    @Override
+    public void onClick(View v) {
+        if (v != null) {
+            int id = v.getId();
+            switch (id) {
+                case R.id.compose_button_encode:
+                    String message = editMessage.getText().toString();
+                    mCallback.onMessageComposed(message, choosenBitmap);
+                    break;
+                case R.id.compose_button_encode_abort:
+                    break;
+                default:
+                    Log.i(TAG, "Unknown action");
+                    break;
+            }
         }
     }
 
@@ -97,8 +119,8 @@ public class ComposeFragment extends DialogFragment {
         int height = src.getHeight();
 
         // scan through every single pixel
-        for(int x = 0; x < width; ++x) {
-            for(int y = 0; y < height; ++y) {
+        for (int x = 0; x < width; ++x) {
+            for (int y = 0; y < height; ++y) {
                 // get one pixel color
                 pixel = src.getPixel(x, y);
                 // retrieve color of all channels
@@ -107,13 +129,13 @@ public class ComposeFragment extends DialogFragment {
                 G = Color.green(pixel);
                 B = Color.blue(pixel);
                 // take conversion up to one single value
-                R = G = B = (int)(GS_RED * R + GS_GREEN * G + GS_BLUE * B);
+                R = G = B = (int) (GS_RED * R + GS_GREEN * G + GS_BLUE * B);
                 // set new pixel color to output bitmap
                 bmOut.setPixel(x, y, Color.argb(A, R, G, B));
             }
         }
 
-        
+
         // return final image
         return bmOut;
     }

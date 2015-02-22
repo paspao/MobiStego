@@ -2,7 +2,8 @@
 <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:orientation="vertical"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content" android:background="@android:color/transparent">
+    android:layout_height="wrap_content"
+    android:background="@android:color/transparent">
 
     <ImageView
         android:id="@+id/compose_background"
@@ -10,8 +11,7 @@
         android:layout_height="wrap_content"
         android:backgroundTint="@color/abc_background_cache_hint_selector_material_dark"
         android:tintMode="src_over"
-        android:background="@android:color/transparent"
-         />
+        android:background="@android:color/transparent" />
 
     <LinearLayout
         android:layout_gravity="center_vertical"
@@ -31,9 +31,8 @@
             android:hint="@string/enter_text"
             android:inputType="textMultiLine"
             android:minLines="15"
-            
-            android:alpha="0.9"
-             />
+
+            android:alpha="0.9" />
 
         <LinearLayout
             android:layout_weight="2"
@@ -43,17 +42,19 @@
             android:orientation="horizontal">
 
             <Button
+                android:id="@+id/compose_button_encode"
                 android:layout_width="fill_parent"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
-                android:text="@string/encode"/>
+                android:text="@string/encode" />
 
 
             <Button
+                android:id="@+id/compose_button_encode_abort"
                 android:layout_width="fill_parent"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
-                android:text="@string/decode"/>
+                android:text="@string/decode" />
         </LinearLayout>
     </LinearLayout>
 

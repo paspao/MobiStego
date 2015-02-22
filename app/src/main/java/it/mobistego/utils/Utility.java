@@ -1,15 +1,45 @@
 package it.mobistego.utils;
 
 import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
+import android.os.Environment;
 import android.util.Log;
 
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.FilenameFilter;
+import java.io.IOException;
+import java.io.OutputStreamWriter;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Scanner;
+import java.util.UUID;
+
+import it.mobistego.beans.MobiStegoItem;
 
 /**
  * Created by paspao on 05/01/15.
+ * <p/>
+ * <p/>
+ * Copyright (C) 2015  Pasquale Paola
+ * <p/>
+ * This library is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU Lesser General Public
+ * License as published by the Free Software Foundation; either
+ * version 2.1 of the License, or (at your option) any later version.
+ * <p/>
+ * This library is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * Lesser General Public License for more details.
+ * <p/>
+ * You should have received a copy of the GNU Lesser General Public
+ * License along with this library; if not, write to the Free Software
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  */
+
 public class Utility {
 
     public static final int SQUARE_BLOCK = 512;
@@ -92,7 +122,7 @@ public class Utility {
             cols++;
 
         //create a bitmap of a size which can hold the complete image after merging
-        Bitmap bitmap = Bitmap.createBitmap(originalWidth, originalHeight, Bitmap.Config.ARGB_4444);
+        Bitmap bitmap = Bitmap.createBitmap(originalWidth, originalHeight, Bitmap.Config.ARGB_8888);
         //bitmap.setDensity(density);
         //merged=bitmap;
 
@@ -198,5 +228,107 @@ public class Utility {
 
         }
         return newarray;
+    }
+
+    public static MobiStegoItem saveMobiStegoItem(String message, Bitmap srcEncoded) throws IOException {
+        MobiStegoItem result = new MobiStegoItem();
+        String name = UUID.randomUUID().toString();
+        result.setUuid(name);
+        String fileNamePng = name + Constants.FILE_PNG_EXT;
+        String fileNameTxt = name + Constants.FILE_TXT_EXT;
+        File mobiStegoDir = new File(Environment.getExternalStorageDirectory(),
+                Constants.EXT_DIR);
+        File rootDir = new File(mobiStegoDir,
+                name);
+        rootDir.mkdir();
+
+        File image = new File(rootDir,
+                fileNamePng);
+        File txt = new File(rootDir,
+                fileNameTxt);
+        //image.createNewFile();
+        //txt.createNewFile();
+        FileOutputStream foutImage = new FileOutputStream(image);
+        srcEncoded.compress(Bitmap.CompressFormat.PNG, 100, foutImage);
+        foutImage.flush();
+        foutImage.close();
+        result.setBitmap(srcEncoded);
+        FileOutputStream foutText = new FileOutputStream(txt);
+        OutputStreamWriter writer = new OutputStreamWriter(foutText);
+        writer.append(message);
+        writer.flush();
+        writer.close();
+        foutText.flush();
+        foutText.close();
+        result.setMessage(message);
+        return result;
+    }
+
+    public static List<MobiStegoItem> listMobistegoItem() throws FileNotFoundException {
+        List<MobiStegoItem> result = new ArrayList<>();
+        String[] dirs = listMobistegoDir();
+        if (dirs != null)
+            for (String dir : dirs)
+                result.add(loadMobiStegoItem(dir));
+        return result;
+    }
+
+    public static String[] listMobistegoDir() {
+        File mobiStegoDir = new File(Environment.getExternalStorageDirectory(),
+                Constants.EXT_DIR);
+        String[] directories = mobiStegoDir.list(new FilenameFilter() {
+            @Override
+            public boolean accept(File dir, String filename) {
+                return new File(dir, filename).isDirectory();
+            }
+        });
+        return directories;
+    }
+
+    public static MobiStegoItem loadMobiStegoItem(String dirName) throws FileNotFoundException {
+        MobiStegoItem result = new MobiStegoItem();
+        String fileNamePng = dirName + Constants.FILE_PNG_EXT;
+        String fileNameTxt = dirName + Constants.FILE_TXT_EXT;
+        File mobiStegoDir = new File(Environment.getExternalStorageDirectory(),
+                Constants.EXT_DIR);
+        File rootDir = new File(mobiStegoDir,
+                dirName);
+        File image = new File(rootDir,
+                fileNamePng);
+        File txt = new File(rootDir,
+                fileNameTxt);
+        Scanner scan = new Scanner(txt);
+        StringBuilder message = new StringBuilder();
+        while (scan.hasNextLine())
+            message.append(scan.nextLine());
+        scan.close();
+        result.setMessage(message.toString());
+        Bitmap bitm = BitmapFactory.decodeFile(image.getAbsolutePath());
+        result.setBitmap(bitm);
+        result.setEncoded(true);
+        return result;
+    }
+
+    public static boolean deleteMobiStegoItem(MobiStegoItem item) {
+        boolean result = false;
+        String dirName = item.getUuid();
+        String fileNamePng = dirName + Constants.FILE_PNG_EXT;
+        String fileNameTxt = dirName + Constants.FILE_TXT_EXT;
+
+        File mobiStegoDir = new File(Environment.getExternalStorageDirectory(),
+                Constants.EXT_DIR);
+        File rootDir = new File(mobiStegoDir,
+                dirName);
+        File image = new File(rootDir,
+                fileNamePng);
+        File txt = new File(rootDir,
+                fileNameTxt);
+        if (rootDir.exists()) {
+            image.delete();
+            txt.delete();
+            rootDir.delete();
+            result = true;
+        }
+        return result;
     }
 }

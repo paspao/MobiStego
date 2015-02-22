@@ -36,7 +36,7 @@ import it.mobistego.utils.Utility;
 
 public class LSB2bit {
 
-    private static final String TAG=LSB2bit.class.getName();
+    private static final String TAG = LSB2bit.class.getName();
     private static int[] binary = {16, 8, 0};
     private static byte[] andByte = {(byte) 0xC0, 0x30, 0x0C, 0x03};
     private static int[] toShift = {6, 4, 2, 0};
@@ -61,8 +61,6 @@ public class LSB2bit {
         //Array.newInstance(Byte.class, imgRows * imgCols * channels);
         byte[] result = new byte[imgRows * imgCols * channels];
 
-        if (hand != null)
-            hand.setTotal(imgRows * imgCols * channels);
 
         int resultIndex = 0;
 
@@ -77,16 +75,19 @@ public class LSB2bit {
                                 % toShift.length]) & 0x3));// 6
                         if (shiftIndex % toShift.length == 0) {
                             message.incrementMessageIndex();
+                            if (hand != null)
+                                hand.increment(1);
                         }
                         if (message.getCurrentMessageIndex() == message.getByteArrayMessage().length) {
                             message.setMessageEncoded(true);
+                            if (hand != null)
+                                hand.finished();
                         }
                     } else {
                         tmp = (byte) ((((oneDPix[element] >> binary[channelIndex]) & 0xFF)));
                     }
                     result[resultIndex++] = tmp;
-                    if (hand != null)
-                        hand.increment(1);
+
                 }
 
             }
@@ -102,13 +103,16 @@ public class LSB2bit {
         str += END_MESSAGE_COSTANT;
         str = START_MESSAGE_COSTANT + str;
         byte[] msg = str.getBytes();
-        
+
         MessageEncodingStatus message = new MessageEncodingStatus();
         message.setMessage(str);
         message.setByteArrayMessage(msg);
         message.setCurrentMessageIndex(0);
         message.setMessageEncoded(false);
-        Log.i(TAG,"Message lenght "+msg.length);
+        if (hand != null) {
+            hand.setTotal(str.getBytes().length);
+        }
+        Log.i(TAG, "Message lenght " + msg.length);
         for (Bitmap bitm : splittedImages) {
             if (!message.isMessageEncoded()) {
                 int width = bitm.getWidth();
@@ -140,7 +144,7 @@ public class LSB2bit {
             } else
                 result.add(bitm);
         }
-        Log.d(TAG,"Message index "+message.getCurrentMessageIndex());
+        Log.d(TAG, "Message current index " + message.getCurrentMessageIndex());
         return result;
     }
 

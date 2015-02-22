@@ -12,6 +12,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.GridView;
 import android.widget.ImageButton;
 import android.widget.Toast;
 
@@ -19,10 +20,29 @@ import java.io.FileNotFoundException;
 import java.io.InputStream;
 
 import it.mobistego.R;
+import it.mobistego.adapters.GridAdapter;
 import it.mobistego.utils.Constants;
+import it.mobistego.utils.Utility;
 
 /**
  * Created by paspao on 28/01/15.
+ * <p/>
+ * <p/>
+ * Copyright (C) 2015  Pasquale Paola
+ * <p/>
+ * This library is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU Lesser General Public
+ * License as published by the Free Software Foundation; either
+ * version 2.1 of the License, or (at your option) any later version.
+ * <p/>
+ * This library is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * Lesser General Public License for more details.
+ * <p/>
+ * You should have received a copy of the GNU Lesser General Public
+ * License along with this library; if not, write to the Free Software
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  */
 public class MainFragment extends Fragment implements View.OnClickListener {
 
@@ -32,6 +52,7 @@ public class MainFragment extends Fragment implements View.OnClickListener {
     private ImageButton buttonTakePhoto;
     private ImageButton buttonPickPhoto;
     private ImageButton buttonPickPhotoDecode;
+    private GridView gridView;
 
     public interface OnChoosenImage {
         public void onBitmapSelected(Bitmap btm);
@@ -42,13 +63,21 @@ public class MainFragment extends Fragment implements View.OnClickListener {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        View view=inflater.inflate(R.layout.main_layout, container, false);
+        View view = inflater.inflate(R.layout.main_layout, container, false);
+        gridView = (GridView) view.findViewById(R.id.grid_view);
         buttonPickPhoto = (ImageButton) view.findViewById(R.id.main_button_pick_photo);
         buttonTakePhoto = (ImageButton) view.findViewById(R.id.main_button_take_photo);
         buttonPickPhotoDecode = (ImageButton) view.findViewById(R.id.main_button_pick_photo_decode);
         buttonTakePhoto.setOnClickListener(this);
         buttonPickPhoto.setOnClickListener(this);
         buttonPickPhotoDecode.setOnClickListener(this);
+
+        try {
+            gridView.setAdapter(new GridAdapter(getActivity(), Utility.listMobistegoItem()));
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+            //TODO
+        }
         return view;
     }
 

@@ -1,6 +1,5 @@
 package it.mobistego;
 
-import android.app.DialogFragment;
 import android.app.FragmentTransaction;
 import android.graphics.Bitmap;
 import android.os.Bundle;
@@ -9,14 +8,16 @@ import android.support.v4.app.FragmentActivity;
 
 import java.io.File;
 
+import it.mobistego.beans.MobiStegoItem;
 import it.mobistego.fragments.ComposeFragment;
 import it.mobistego.fragments.MainFragment;
+import it.mobistego.tasks.EncodeTask;
 import it.mobistego.utils.Constants;
 
 /**
  * Created by paspao on 17/01/15.
  */
-public class MainActivity extends FragmentActivity implements MainFragment.OnChoosenImage,ComposeFragment.OnComposed {
+public class MainActivity extends FragmentActivity implements MainFragment.OnChoosenImage, ComposeFragment.OnComposed {
 
     private static final String TAG = MainActivity.class.getName();
 
@@ -62,8 +63,11 @@ public class MainActivity extends FragmentActivity implements MainFragment.OnCho
     public void onMessageComposed(String message, Bitmap stegan) {
         MainFragment mainFragment = new MainFragment();
         Bundle args = new Bundle();
-
+        EncodeTask task = new EncodeTask(this);
+        MobiStegoItem item = new MobiStegoItem(message, stegan, Constants.NO_NAME, false);
+        task.execute(item);
         mainFragment.setArguments(args);
+
         FragmentTransaction transaction = getFragmentManager().beginTransaction();
 
         // Replace whatever is in the fragment_container view with this fragment,
