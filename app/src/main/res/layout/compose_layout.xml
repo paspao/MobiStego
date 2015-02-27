@@ -30,9 +30,10 @@
             android:layout_height="fill_parent"
             android:hint="@string/enter_text"
             android:inputType="textMultiLine"
+
             android:minLines="15"
 
-            android:alpha="0.9" />
+            android:alpha="0.6" />
 
         <LinearLayout
             android:layout_weight="2"
@@ -49,12 +50,6 @@
                 android:text="@string/encode" />
 
 
-            <Button
-                android:id="@+id/compose_button_encode_abort"
-                android:layout_width="fill_parent"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:text="@string/decode" />
         </LinearLayout>
     </LinearLayout>
 

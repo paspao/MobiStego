@@ -33,8 +33,14 @@ import it.mobistego.beans.MobiStegoItem;
 
 public class GridAdapter extends BaseAdapter {
 
+    private final static String TAG = GridAdapter.class.getName();
     private List<MobiStegoItem> items;
     private Context context;
+
+    public interface OnGridEvent {
+        public void gridAdapterOnClick();
+
+    }
 
     public GridAdapter(Context context, List<MobiStegoItem> mobileValues) {
         this.context = context;
@@ -53,13 +59,15 @@ public class GridAdapter extends BaseAdapter {
 
             gridView = new View(context);
 
-            // get layout from mobile.xml
+
             gridView = inflater.inflate(R.layout.grid_item, null);
             ImageView image = (ImageView) gridView.findViewById(R.id.grid_image);
             if (items != null) {
                 MobiStegoItem item = items.get(position);
-                if (item != null)
+                if (item != null) {
                     image.setImageBitmap(item.getBitmap());
+
+                }
 
             }
         } else {

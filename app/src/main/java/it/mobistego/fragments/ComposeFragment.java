@@ -29,7 +29,6 @@ public class ComposeFragment extends DialogFragment implements View.OnClickListe
     private EditText editMessage;
     private Bitmap choosenBitmap;
     private Button buttonEncode;
-    private Button buttonAbort;
 
 
     public interface OnComposed {
@@ -58,9 +57,8 @@ public class ComposeFragment extends DialogFragment implements View.OnClickListe
         imageView = (ImageView) view.findViewById(R.id.compose_background);
         editMessage = (EditText) view.findViewById(R.id.compose_edit);
         buttonEncode = (Button) view.findViewById(R.id.compose_button_encode);
-        buttonAbort = (Button) view.findViewById(R.id.compose_button_encode_abort);
+
         buttonEncode.setOnClickListener(this);
-        buttonAbort.setOnClickListener(this);
         //choosenBitmap=(Bitmap)getIntent().getExtras().get(Constants.CHOOSEN_IMAGE);
         Bitmap tmp = Bitmap.createBitmap(choosenBitmap);
         //imageView.setImageBitmap(doGreyscale(tmp));
@@ -92,10 +90,8 @@ public class ComposeFragment extends DialogFragment implements View.OnClickListe
                     String message = editMessage.getText().toString();
                     mCallback.onMessageComposed(message, choosenBitmap);
                     break;
-                case R.id.compose_button_encode_abort:
-                    break;
                 default:
-                    Log.i(TAG, "Unknown action");
+                    Log.d(TAG, "Unknown action");
                     break;
             }
         }

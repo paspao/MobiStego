@@ -55,10 +55,6 @@ public class Utility {
         //To store all the small image chunks in bitmap format in this list
         ArrayList<Bitmap> chunkedImages = new ArrayList<Bitmap>();
 
-        //Getting the scaled bitmap of the source image
-        //BitmapDrawable drawable = (BitmapDrawable) image.getDrawable();
-        //Bitmap bitmap = drawable.getBitmap();
-        //Bitmap scaledBitmap = Bitmap.createBitmap(bitmap, bitmap.getWidth(), bitmap.getHeight(), true);
 
         int rows = bitmap.getHeight() / SQUARE_BLOCK;
         int cols = bitmap.getWidth() / SQUARE_BLOCK;
@@ -66,12 +62,7 @@ public class Utility {
         int chunkH_mod = bitmap.getHeight() % SQUARE_BLOCK;
         int chunkW_mod = bitmap.getWidth() % SQUARE_BLOCK;
 
-        /*Log.d(TAG, "Rows " + rows);
-        Log.d(TAG,"Cols "+cols);
-        Log.d(TAG,"Rows module "+chunkH_mod);
-        Log.d(TAG,"Cols module "+chunkW_mod);
-*/
-        //rows = cols = (int) Math.sqrt(chunkNumbers);
+
         if (chunkH_mod > 0)
             rows++;
         if (chunkW_mod > 0)
@@ -110,11 +101,6 @@ public class Utility {
         int chunkH_mod = originalHeight % SQUARE_BLOCK;
         int chunkW_mod = originalWidth % SQUARE_BLOCK;
 
-        /*Log.d(TAG,"Rows "+rows);
-        Log.d(TAG,"Cols "+cols);
-        Log.d(TAG,"Rows module "+chunkH_mod);
-        Log.d(TAG,"Cols module "+chunkW_mod);*/
-
 
         if (chunkH_mod > 0)
             rows++;
@@ -123,8 +109,6 @@ public class Utility {
 
         //create a bitmap of a size which can hold the complete image after merging
         Bitmap bitmap = Bitmap.createBitmap(originalWidth, originalHeight, Bitmap.Config.ARGB_8888);
-        //bitmap.setDensity(density);
-        //merged=bitmap;
 
         Canvas canvas = new Canvas(bitmap);
         int count = 0;
@@ -139,14 +123,7 @@ public class Utility {
 
             }
         }
-        /*handler.post(new Runnable() {
-            @Override
-            public void run() {
-                imageM.setImageBitmap(merged);
-                imageM.invalidate();
 
-            }
-        });*/
         return bitmap;
     }
 
@@ -293,7 +270,7 @@ public class Utility {
                 mobiStegoItem.getUuid());
         if (rootDir.exists()) {
             result = new File(rootDir,
-                    mobiStegoItem.getUuid() + Constants.FILE_TXT_EXT);
+                    mobiStegoItem.getUuid() + Constants.FILE_PNG_EXT);
         }
         return result;
     }
@@ -318,6 +295,7 @@ public class Utility {
         result.setMessage(message.toString());
         Bitmap bitm = BitmapFactory.decodeFile(image.getAbsolutePath());
         result.setBitmap(bitm);
+        result.setUuid(dirName);
         result.setEncoded(true);
         return result;
     }
@@ -344,4 +322,6 @@ public class Utility {
         }
         return result;
     }
+
+
 }

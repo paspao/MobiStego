@@ -12,15 +12,18 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
 import android.widget.GridView;
 import android.widget.ImageButton;
 import android.widget.Toast;
 
 import java.io.FileNotFoundException;
 import java.io.InputStream;
+import java.util.List;
 
 import it.mobistego.R;
 import it.mobistego.adapters.GridAdapter;
+import it.mobistego.beans.MobiStegoItem;
 import it.mobistego.utils.Constants;
 import it.mobistego.utils.Utility;
 
@@ -44,18 +47,22 @@ import it.mobistego.utils.Utility;
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  */
-public class MainFragment extends Fragment implements View.OnClickListener {
+public class MainFragment extends Fragment implements View.OnClickListener, AdapterView.OnItemClickListener {
 
     private static final String TAG = MainFragment.class.getName();
 
-    private OnChoosenImage mCallback;
+    private OnMainFragment mCallback;
     private ImageButton buttonTakePhoto;
     private ImageButton buttonPickPhoto;
     private ImageButton buttonPickPhotoDecode;
     private GridView gridView;
+    private List<MobiStegoItem> mobiStegoItems;
 
-    public interface OnChoosenImage {
-        public void onBitmapSelected(Bitmap btm);
+
+    public interface OnMainFragment {
+        public void onMainFragmentBitmapSelected(Bitmap btm);
+
+        public void onMainFragmentGridItemSelected(MobiStegoItem mobiStegoItem);
 
     }
 
@@ -71,13 +78,15 @@ public class MainFragment extends Fragment implements View.OnClickListener {
         buttonTakePhoto.setOnClickListener(this);
         buttonPickPhoto.setOnClickListener(this);
         buttonPickPhotoDecode.setOnClickListener(this);
-
         try {
-            gridView.setAdapter(new GridAdapter(getActivity(), Utility.listMobistegoItem()));
+            mobiStegoItems = Utility.listMobistegoItem();
         } catch (FileNotFoundException e) {
             e.printStackTrace();
             //TODO
         }
+        gridView.setAdapter(new GridAdapter(getActivity(), mobiStegoItems));
+        gridView.setOnItemClickListener(this);
+
         return view;
     }
 
@@ -87,7 +96,7 @@ public class MainFragment extends Fragment implements View.OnClickListener {
 
 
         try {
-            mCallback = (OnChoosenImage) activity;
+            mCallback = (OnMainFragment) activity;
 
         } catch (ClassCastException e) {
             throw new ClassCastException(activity.toString()
@@ -125,6 +134,12 @@ public class MainFragment extends Fragment implements View.OnClickListener {
     }
 
     @Override
+    public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+        Log.d(TAG, "Clicked position " + position);
+        mCallback.onMainFragmentGridItemSelected(mobiStegoItems.get(position));
+    }
+
+    @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
         Bitmap imageBitmap = null;
@@ -139,7 +154,7 @@ public class MainFragment extends Fragment implements View.OnClickListener {
                         final InputStream imageStream = getActivity().getContentResolver().openInputStream(imageUri);
                         imageBitmap = BitmapFactory.decodeStream(imageStream);
                         if (imageBitmap != null) {
-                            mCallback.onBitmapSelected(imageBitmap);
+                            mCallback.onMainFragmentBitmapSelected(imageBitmap);
                         }
 
                     } catch (FileNotFoundException e) {
@@ -154,7 +169,7 @@ public class MainFragment extends Fragment implements View.OnClickListener {
                     Bundle extras = data.getExtras();
                     imageBitmap = (Bitmap) extras.get("data");
                     if (imageBitmap != null) {
-                        mCallback.onBitmapSelected(imageBitmap);
+                        mCallback.onMainFragmentBitmapSelected(imageBitmap);
                     }
                     //mImageView.setImageBitmap(imageBitmap);
                 }

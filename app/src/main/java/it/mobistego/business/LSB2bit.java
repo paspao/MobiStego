@@ -216,6 +216,22 @@ public class LSB2bit {
 
     }
 
+    /**
+     * Calculate the numbers of pixel needed
+     *
+     * @param message Message to encode
+     * @return The number of pixel
+     */
+    public static int numberOfPixelForMessage(String message) {
+        int result = -1;
+        if (message != null) {
+            message += END_MESSAGE_COSTANT;
+            message = START_MESSAGE_COSTANT + message;
+            result = message.getBytes().length * 4 / 3;
+        }
+
+        return result;
+    }
 
     public interface ProgressHandler {
 
