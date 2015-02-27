@@ -285,6 +285,19 @@ public class Utility {
         return directories;
     }
 
+    public static File getBitmapFile(MobiStegoItem mobiStegoItem) {
+        File result = null;
+        File mobiStegoDir = new File(Environment.getExternalStorageDirectory(),
+                Constants.EXT_DIR);
+        File rootDir = new File(mobiStegoDir,
+                mobiStegoItem.getUuid());
+        if (rootDir.exists()) {
+            result = new File(rootDir,
+                    mobiStegoItem.getUuid() + Constants.FILE_TXT_EXT);
+        }
+        return result;
+    }
+
     public static MobiStegoItem loadMobiStegoItem(String dirName) throws FileNotFoundException {
         MobiStegoItem result = new MobiStegoItem();
         String fileNamePng = dirName + Constants.FILE_PNG_EXT;
