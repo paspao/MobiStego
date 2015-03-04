@@ -10,6 +10,7 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.List;
 
+import it.mobistego.R;
 import it.mobistego.beans.MobiStegoItem;
 import it.mobistego.business.LSB2bit;
 import it.mobistego.utils.Utility;

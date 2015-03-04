@@ -13,8 +13,8 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
+import android.widget.Button;
 import android.widget.GridView;
-import android.widget.ImageButton;
 import android.widget.Toast;
 
 import java.io.FileNotFoundException;
@@ -52,15 +52,16 @@ public class MainFragment extends Fragment implements View.OnClickListener, Adap
     private static final String TAG = MainFragment.class.getName();
 
     private OnMainFragment mCallback;
-    private ImageButton buttonTakePhoto;
-    private ImageButton buttonPickPhoto;
-    private ImageButton buttonPickPhotoDecode;
+    private Button buttonTakePhoto;
+    private Button buttonPickPhoto;
+    private Button buttonPickPhotoDecode;
     private GridView gridView;
     private List<MobiStegoItem> mobiStegoItems;
 
 
     public interface OnMainFragment {
-        public void onMainFragmentBitmapSelected(Bitmap btm);
+        public void onMainFragmentBitmapSelectedToEncode(Bitmap btm);
+        public void onMainFragmentBitmapSelectedToDecode(Bitmap btm);
 
         public void onMainFragmentGridItemSelected(MobiStegoItem mobiStegoItem);
 
@@ -72,9 +73,9 @@ public class MainFragment extends Fragment implements View.OnClickListener, Adap
                              Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.main_layout, container, false);
         gridView = (GridView) view.findViewById(R.id.grid_view);
-        buttonPickPhoto = (ImageButton) view.findViewById(R.id.main_button_pick_photo);
-        buttonTakePhoto = (ImageButton) view.findViewById(R.id.main_button_take_photo);
-        buttonPickPhotoDecode = (ImageButton) view.findViewById(R.id.main_button_pick_photo_decode);
+        buttonPickPhoto = (Button) view.findViewById(R.id.main_button_pick_photo);
+        buttonTakePhoto = (Button) view.findViewById(R.id.main_button_take_photo);
+        buttonPickPhotoDecode = (Button) view.findViewById(R.id.main_button_pick_photo_decode);
         buttonTakePhoto.setOnClickListener(this);
         buttonPickPhoto.setOnClickListener(this);
         buttonPickPhotoDecode.setOnClickListener(this);
@@ -145,7 +146,21 @@ public class MainFragment extends Fragment implements View.OnClickListener, Adap
         Bitmap imageBitmap = null;
         switch (requestCode) {
             case Constants.SELECT_PHOTO_DECODE:
-                //TODO
+                if (resultCode == Activity.RESULT_OK) {
+                    try {
+                        final Uri imageUri = data.getData();
+                        final InputStream imageStream = getActivity().getContentResolver().openInputStream(imageUri);
+                        imageBitmap = BitmapFactory.decodeStream(imageStream);
+                        if (imageBitmap != null) {
+                            mCallback.onMainFragmentBitmapSelectedToDecode(imageBitmap);
+                        }
+
+                    } catch (FileNotFoundException e) {
+                        Toast.makeText(getActivity(), R.string.filenotfoud, Toast.LENGTH_LONG).show();
+                        Log.e(TAG, e.getMessage());
+                        e.printStackTrace();
+                    }
+                }
                 break;
             case Constants.SELECT_PHOTO:
                 if (resultCode == Activity.RESULT_OK) {
@@ -154,7 +169,7 @@ public class MainFragment extends Fragment implements View.OnClickListener, Adap
                         final InputStream imageStream = getActivity().getContentResolver().openInputStream(imageUri);
                         imageBitmap = BitmapFactory.decodeStream(imageStream);
                         if (imageBitmap != null) {
-                            mCallback.onMainFragmentBitmapSelected(imageBitmap);
+                            mCallback.onMainFragmentBitmapSelectedToEncode(imageBitmap);
                         }
 
                     } catch (FileNotFoundException e) {
@@ -169,7 +184,7 @@ public class MainFragment extends Fragment implements View.OnClickListener, Adap
                     Bundle extras = data.getExtras();
                     imageBitmap = (Bitmap) extras.get("data");
                     if (imageBitmap != null) {
-                        mCallback.onMainFragmentBitmapSelected(imageBitmap);
+                        mCallback.onMainFragmentBitmapSelectedToEncode(imageBitmap);
                     }
                     //mImageView.setImageBitmap(imageBitmap);
                 }

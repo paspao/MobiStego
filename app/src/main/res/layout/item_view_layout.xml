@@ -21,29 +21,26 @@
                 android:layout_weight="1"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_margin="5dp"
-                android:text="Fixed Header"
-                android:textColor="#000"
-                android:textSize="20sp" />
+                android:layout_margin="5dp"/>
 
             <Button
                 android:id="@+id/button_delete"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="X" />
+                android:text="@string/delete" />
 
             <Button
                 android:id="@+id/button_share"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Y" />
+                android:text="@string/share" />
         </LinearLayout>
     </RelativeLayout>
 
     <ScrollView
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:background="#005"
+        
         android:layout_below="@id/header">
 
         <LinearLayout

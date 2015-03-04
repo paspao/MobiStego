@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.app.Dialog;
 import android.app.DialogFragment;
 import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.graphics.Color;
 import android.graphics.PixelFormat;
 import android.os.Bundle;
@@ -61,6 +62,10 @@ public class ComposeFragment extends DialogFragment implements View.OnClickListe
         buttonEncode.setOnClickListener(this);
         //choosenBitmap=(Bitmap)getIntent().getExtras().get(Constants.CHOOSEN_IMAGE);
         Bitmap tmp = Bitmap.createBitmap(choosenBitmap);
+
+
+        if (tmp.getHeight() > 1280 && tmp.getWidth() > 960)
+            tmp=Bitmap.createScaledBitmap(choosenBitmap,tmp.getWidth()/2,tmp.getHeight()/2,false);
         //imageView.setImageBitmap(doGreyscale(tmp));
         imageView.setImageBitmap(tmp);
         return view;
@@ -89,6 +94,7 @@ public class ComposeFragment extends DialogFragment implements View.OnClickListe
                 case R.id.compose_button_encode:
                     String message = editMessage.getText().toString();
                     mCallback.onMessageComposed(message, choosenBitmap);
+                    dismiss();
                     break;
                 default:
                     Log.d(TAG, "Unknown action");

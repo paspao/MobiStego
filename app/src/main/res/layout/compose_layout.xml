@@ -11,6 +11,7 @@
         android:layout_height="wrap_content"
         android:backgroundTint="@color/abc_background_cache_hint_selector_material_dark"
         android:tintMode="src_over"
+        android:scaleType="centerCrop"
         android:background="@android:color/transparent" />
 
     <LinearLayout

@@ -40,32 +40,32 @@
         android:layout_height="wrap_content"
         android:orientation="horizontal">
 
-        <ImageButton
+        <Button
             android:id="@+id/main_button_pick_photo_decode"
             android:layout_weight="1"
-            android:src="@drawable/ic_launcher"
+
             android:layout_width="fill_parent"
             android:layout_gravity="right"
             android:layout_height="wrap_content"
-            android:text="Two" />
+            android:text="@string/decode" />
 
-        <ImageButton
+        <Button
             android:id="@+id/main_button_take_photo"
             android:layout_gravity="left"
-            android:src="@drawable/ic_launcher"
+
             android:layout_width="fill_parent"
             android:layout_weight="1"
             android:layout_height="wrap_content"
-            android:text="One" />
+            android:text="@string/take_photo" />
 
-        <ImageButton
+        <Button
             android:id="@+id/main_button_pick_photo"
             android:layout_weight="1"
-            android:src="@drawable/ic_launcher"
+
             android:layout_width="fill_parent"
             android:layout_gravity="right"
             android:layout_height="wrap_content"
-            android:text="Two" />
+            android:text="@string/pict_photo" />
 
     </LinearLayout>
 </LinearLayout>

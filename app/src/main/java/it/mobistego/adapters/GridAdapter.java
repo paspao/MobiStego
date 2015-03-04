@@ -11,6 +11,7 @@ import java.util.List;
 
 import it.mobistego.R;
 import it.mobistego.beans.MobiStegoItem;
+import it.mobistego.utils.Utility;
 
 /**
  * Copyright (C) 2015  Pasquale Paola
@@ -79,7 +80,10 @@ public class GridAdapter extends BaseAdapter {
 
     @Override
     public int getCount() {
-        return items.size();
+        if(!Utility.isEmpty(items))
+            return items.size();
+        else 
+            return 0;
     }
 
     @Override

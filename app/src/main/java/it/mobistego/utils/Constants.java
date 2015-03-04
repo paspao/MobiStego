@@ -25,6 +25,7 @@ public class Constants {
     public static final String FILE_PNG_EXT = ".png";
     public static final String FILE_TXT_EXT = ".txt";
     public static final String NO_NAME = "NO_NAME";
+    public static final String CONTAINER = "MYCONTAINER";
 
     public static final int SELECT_PHOTO = 1;
     public static final int REQUEST_IMAGE_CAPTURE = 2;

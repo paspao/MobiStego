@@ -13,6 +13,7 @@ import java.io.FilenameFilter;
 import java.io.IOException;
 import java.io.OutputStreamWriter;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 import java.util.Scanner;
 import java.util.UUID;
@@ -42,6 +43,7 @@ import it.mobistego.beans.MobiStegoItem;
 
 public class Utility {
 
+    private final static String TAG=Utility.class.getName();
     public static final int SQUARE_BLOCK = 512;
 
     public static List<Bitmap> splitImage(Bitmap bitmap) {
@@ -108,7 +110,8 @@ public class Utility {
             cols++;
 
         //create a bitmap of a size which can hold the complete image after merging
-        Bitmap bitmap = Bitmap.createBitmap(originalWidth, originalHeight, Bitmap.Config.ARGB_8888);
+        Log.d(TAG,"Size width "+originalWidth+" size height "+originalHeight);
+        Bitmap bitmap = Bitmap.createBitmap(originalWidth, originalHeight, Bitmap.Config.ARGB_4444);
 
         Canvas canvas = new Canvas(bitmap);
         int count = 0;
@@ -293,7 +296,9 @@ public class Utility {
             message.append(scan.nextLine());
         scan.close();
         result.setMessage(message.toString());
-        Bitmap bitm = BitmapFactory.decodeFile(image.getAbsolutePath());
+        BitmapFactory.Options opt=new BitmapFactory.Options();
+        opt.inSampleSize=2;
+        Bitmap bitm = BitmapFactory.decodeFile(image.getAbsolutePath(),opt);
         result.setBitmap(bitm);
         result.setUuid(dirName);
         result.setEncoded(true);
@@ -319,6 +324,34 @@ public class Utility {
             txt.delete();
             rootDir.delete();
             result = true;
+        }
+        return result;
+    }
+
+    public static boolean isEmpty(String str)
+    {
+        boolean result=true;
+        if(str==null);
+        else
+        {
+            str=str.trim();
+            if(str.length()>0 && !str.equals("undefined"))
+                result=false;
+        }
+
+        return result;
+    }
+
+
+    public static boolean isEmpty(Collection<?> collection)
+    {
+        boolean result=true;
+        if (collection == null) {
+            result=true;
+        } else if (collection.isEmpty()) {
+            result=true;
+        } else {
+            result=false;
         }
         return result;
     }

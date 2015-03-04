@@ -1,16 +1,22 @@
 package it.mobistego.tasks;
 
 import android.app.Activity;
+import android.app.FragmentManager;
+import android.app.FragmentTransaction;
 import android.app.ProgressDialog;
 import android.graphics.Bitmap;
 import android.os.AsyncTask;
+import android.os.Bundle;
 import android.util.Log;
 
 import java.io.IOException;
 import java.util.List;
 
+import it.mobistego.R;
 import it.mobistego.beans.MobiStegoItem;
 import it.mobistego.business.LSB2bit;
+import it.mobistego.fragments.MainFragment;
+import it.mobistego.utils.Constants;
 import it.mobistego.utils.Utility;
 
 /**
@@ -41,6 +47,7 @@ public class EncodeTask extends AsyncTask<MobiStegoItem, Integer, MobiStegoItem>
     private ProgressDialog progressDialog;
 
     public EncodeTask(Activity act) {
+        super();
         this.activity = act;
     }
 
@@ -51,7 +58,11 @@ public class EncodeTask extends AsyncTask<MobiStegoItem, Integer, MobiStegoItem>
         maxProgeress = 0;
         if (params.length > 0) {
             MobiStegoItem mobistego = params[0];
+            int originalHeight=mobistego.getBitmap().getHeight();
+            int originalWidth=mobistego.getBitmap().getWidth();
             List<Bitmap> srcList = Utility.splitImage(mobistego.getBitmap());
+            
+            mobistego.getBitmap().recycle();
             List<Bitmap> encodedList = LSB2bit.encodeMessage(srcList, mobistego.getMessage(), new LSB2bit.ProgressHandler() {
                 @Override
                 public void setTotal(int tot) {
@@ -72,8 +83,9 @@ public class EncodeTask extends AsyncTask<MobiStegoItem, Integer, MobiStegoItem>
                     progressDialog.setTitle("Merging images...");
                 }
             });
-
-            Bitmap srcEncoded = Utility.mergeImage(encodedList, mobistego.getBitmap().getHeight(), mobistego.getBitmap().getWidth());
+            //free memory
+            System.gc();
+            Bitmap srcEncoded = Utility.mergeImage(encodedList, originalHeight, originalWidth);
             try {
                 result = Utility.saveMobiStegoItem(mobistego.getMessage(), srcEncoded);
                 result.setEncoded(true);
@@ -85,9 +97,10 @@ public class EncodeTask extends AsyncTask<MobiStegoItem, Integer, MobiStegoItem>
             //free memory
             for (Bitmap bitm : srcList)
                 bitm.recycle();
+
             for (Bitmap bitm : encodedList)
                 bitm.recycle();
-            mobistego.getBitmap().recycle();
+
 
         }
         return result;
@@ -97,6 +110,7 @@ public class EncodeTask extends AsyncTask<MobiStegoItem, Integer, MobiStegoItem>
     protected void onProgressUpdate(Integer... values) {
 
         super.onProgressUpdate(values);
+        progressDialog.show();
         progressDialog.incrementProgressBy(values[0]);
         Log.d(TAG, "Progress " + values[0]);
 
@@ -105,17 +119,28 @@ public class EncodeTask extends AsyncTask<MobiStegoItem, Integer, MobiStegoItem>
     @Override
     protected void onPreExecute() {
         super.onPreExecute();
-        progressDialog = new ProgressDialog(activity); //Here I get an error: The constructor ProgressDialog(PFragment) is undefined
-        progressDialog.setMessage("Loading..");
-        progressDialog.setTitle("Checking Network");
+        progressDialog = new ProgressDialog(activity);
+        progressDialog.setMessage(activity.getString(R.string.loading));
+        progressDialog.setTitle(activity.getString(R.string.encoding));
         progressDialog.setIndeterminate(false);
         progressDialog.setCancelable(false);
-        progressDialog.show();
+        
+        
     }
 
     @Override
     protected void onPostExecute(MobiStegoItem mobiStegoItem) {
         super.onPostExecute(mobiStegoItem);
         progressDialog.dismiss();
+
+        Bundle args = new Bundle();
+        MainFragment mainFragment = new MainFragment();
+        mainFragment.setArguments(args);
+
+
+        FragmentTransaction tx = activity.getFragmentManager().beginTransaction();
+        tx.replace(R.id.listFragment, mainFragment, Constants.CONTAINER);
+
+        tx.commit();
     }
 }
