@@ -7,7 +7,6 @@ import android.content.DialogInterface;
 import android.os.Bundle;
 
 import it.mobistego.R;
-import it.mobistego.utils.Utility;
 
 /**
  * Copyright (C) 2015  Pasquale Paola

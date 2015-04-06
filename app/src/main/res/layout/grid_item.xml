@@ -4,11 +4,19 @@
     android:layout_width="wrap_content"
     android:layout_height="wrap_content"
 
-    android:background="@color/abc_search_url_text_normal">
+    >
 
+    <ProgressBar
+        android:id="@+id/progrss_grid"
+        android:layout_width="wrap_content"
+        android:layout_height="150dp"
+        android:indeterminate="true" />
     <ImageView
         android:id="@+id/grid_image"
         android:layout_width="wrap_content"
         android:layout_height="150dp"
-        android:scaleType="centerCrop" />
+        android:scaleType="centerCrop"
+        android:background="@android:color/transparent"
+        android:visibility="invisible" />
+
 </LinearLayout>

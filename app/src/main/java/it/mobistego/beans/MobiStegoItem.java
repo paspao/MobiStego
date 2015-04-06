@@ -1,6 +1,6 @@
 package it.mobistego.beans;
 
-import android.graphics.Bitmap;
+import java.io.File;
 
 /**
  * Created by paspao on 15/02/15.
@@ -23,7 +23,7 @@ import android.graphics.Bitmap;
 public class MobiStegoItem {
 
     private String message;
-    private Bitmap bitmap;
+    private File bitmap;
     private boolean encoded;
     private String uuid;
 
@@ -32,7 +32,7 @@ public class MobiStegoItem {
 
     }
 
-    public MobiStegoItem(String message, Bitmap bitmap, String uuid, boolean encoded) {
+    public MobiStegoItem(String message, File bitmap, String uuid, boolean encoded) {
         this();
         this.bitmap = bitmap;
         this.encoded = encoded;
@@ -47,11 +47,11 @@ public class MobiStegoItem {
         this.message = message;
     }
 
-    public Bitmap getBitmap() {
+    public File getBitmap() {
         return bitmap;
     }
 
-    public void setBitmap(Bitmap bitmap) {
+    public void setBitmap(File bitmap) {
         this.bitmap = bitmap;
     }
 

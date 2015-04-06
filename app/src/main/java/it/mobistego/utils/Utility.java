@@ -1,9 +1,12 @@
 package it.mobistego.utils;
 
+import android.content.ContentResolver;
+import android.database.Cursor;
 import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
+import android.net.Uri;
 import android.os.Environment;
+import android.provider.MediaStore;
 import android.util.Log;
 
 import java.io.File;
@@ -12,8 +15,10 @@ import java.io.FileOutputStream;
 import java.io.FilenameFilter;
 import java.io.IOException;
 import java.io.OutputStreamWriter;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Date;
 import java.util.List;
 import java.util.Scanner;
 import java.util.UUID;
@@ -45,6 +50,24 @@ public class Utility {
 
     private final static String TAG=Utility.class.getName();
     public static final int SQUARE_BLOCK = 512;
+
+
+    public static File createImageFile() throws IOException {
+        // Create an image file name
+        String timeStamp = new SimpleDateFormat("ddMMyyyy_HHmmss").format(new Date());
+        String imageFileName = "JPEG_" + timeStamp + "_";
+        File storageDir = Environment.getExternalStoragePublicDirectory(
+                Environment.DIRECTORY_PICTURES);
+        File image = File.createTempFile(
+                imageFileName,  /* prefix */
+                ".jpg",         /* suffix */
+                storageDir      /* directory */
+        );
+
+        // Save a file: path for use with ACTION_VIEW intents
+        //mCurrentPhotoPath = "file:" + image.getAbsolutePath();
+        return image;
+    }
 
     public static List<Bitmap> splitImage(Bitmap bitmap) {
 
@@ -232,7 +255,7 @@ public class Utility {
         srcEncoded.compress(Bitmap.CompressFormat.PNG, 100, foutImage);
         foutImage.flush();
         foutImage.close();
-        result.setBitmap(srcEncoded);
+        result.setBitmap(image);
         FileOutputStream foutText = new FileOutputStream(txt);
         OutputStreamWriter writer = new OutputStreamWriter(foutText);
         writer.append(message);
@@ -296,10 +319,10 @@ public class Utility {
             message.append(scan.nextLine());
         scan.close();
         result.setMessage(message.toString());
-        BitmapFactory.Options opt=new BitmapFactory.Options();
-        opt.inSampleSize=2;
-        Bitmap bitm = BitmapFactory.decodeFile(image.getAbsolutePath(),opt);
-        result.setBitmap(bitm);
+        //BitmapFactory.Options opt=new BitmapFactory.Options();
+        //opt.inSampleSize=2;
+        //Bitmap bitm = BitmapFactory.decodeFile(image.getAbsolutePath(),opt);
+        result.setBitmap(image);
         result.setUuid(dirName);
         result.setEncoded(true);
         return result;
@@ -352,6 +375,20 @@ public class Utility {
             result=true;
         } else {
             result=false;
+        }
+        return result;
+    }
+
+    public static String getRealPathFromURI(Uri contentURI, ContentResolver resolver) {
+        String result;
+        Cursor cursor = resolver.query(contentURI, null, null, null, null);
+        if (cursor == null) { // Source is Dropbox or other similar local file path
+            result = contentURI.getPath();
+        } else {
+            cursor.moveToFirst();
+            int idx = cursor.getColumnIndex(MediaStore.Images.ImageColumns.DATA);
+            result = cursor.getString(idx);
+            cursor.close();
         }
         return result;
     }

@@ -1,19 +1,33 @@
 <?xml version="1.0" encoding="utf-8"?>
 <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+
     android:orientation="vertical"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:background="@android:color/transparent">
 
+    <ProgressBar
+        android:id="@+id/progrss_compose"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:indeterminate="true" />
     <ImageView
         android:id="@+id/compose_background"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
         android:backgroundTint="@color/abc_background_cache_hint_selector_material_dark"
-        android:tintMode="src_over"
         android:scaleType="centerCrop"
+        android:visibility="invisible"
         android:background="@android:color/transparent" />
-
+    <!-- <ImageView
+         android:id="@+id/compose_background"
+         android:layout_width="fill_parent"
+         android:layout_height="wrap_content"
+         android:backgroundTint="@color/abc_background_cache_hint_selector_material_dark"
+         android:tintMode="src_over"
+         android:scaleType="centerCrop"
+         android:background="@android:color/transparent" />
+ -->
     <LinearLayout
         android:layout_gravity="center_vertical"
         android:gravity="center_vertical"
@@ -31,7 +45,7 @@
             android:layout_height="fill_parent"
             android:hint="@string/enter_text"
             android:inputType="textMultiLine"
-
+            android:background="#E6E6E699"
             android:minLines="15"
 
             android:alpha="0.6" />

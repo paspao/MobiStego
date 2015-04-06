@@ -10,7 +10,6 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.List;
 
-import it.mobistego.R;
 import it.mobistego.beans.MobiStegoItem;
 import it.mobistego.business.LSB2bit;
 import it.mobistego.utils.Utility;
@@ -165,7 +164,8 @@ public class ApplicationTest extends ApplicationTestCase<Application> {
                 for (MobiStegoItem item : lista) {
                     Log.d(TAG, "Name uuid " + item.getUuid());
                     Log.d(TAG, "Message " + item.getMessage());
-                    List<Bitmap> srcEncodedList = Utility.splitImage(item.getBitmap());
+
+                    List<Bitmap> srcEncodedList = Utility.splitImage(BitmapFactory.decodeFile(item.getBitmap().getAbsolutePath()));
                     String result = LSB2bit.decodeMessage(srcEncodedList);
                     Log.i(TAG, "Original message <" + item.getMessage() + "> Decripted message <" + result + ">");
                     assertEquals(result, item.getMessage());

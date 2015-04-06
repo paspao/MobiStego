@@ -49,10 +49,16 @@
             android:gravity="center_horizontal"
             android:orientation="vertical">
 
+            <ProgressBar
+                android:id="@+id/progrss_view"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:indeterminate="true" />
             <ImageView
                 android:id="@+id/image_view_item"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content" />
+                android:layout_height="wrap_content"
+                android:visibility="invisible" />
 
             <TextView
                 android:id="@+id/text_view_item"

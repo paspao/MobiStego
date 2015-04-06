@@ -4,7 +4,6 @@ import android.app.Activity;
 import android.app.Dialog;
 import android.app.DialogFragment;
 import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.graphics.Color;
 import android.graphics.PixelFormat;
 import android.os.Bundle;
@@ -16,8 +15,12 @@ import android.view.Window;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.ProgressBar;
+
+import java.io.File;
 
 import it.mobistego.R;
+import it.mobistego.tasks.BitmapWorkerTask;
 
 /**
  * Created by paspao on 28/01/15.
@@ -27,14 +30,15 @@ public class ComposeFragment extends DialogFragment implements View.OnClickListe
     private static final String TAG = ComposeFragment.class.getName();
     private OnComposed mCallback;
     private ImageView imageView;
+    private ProgressBar progressBar;
     private EditText editMessage;
-    private Bitmap choosenBitmap;
+    private File choosenBitmap;
     private Button buttonEncode;
 
 
     public interface OnComposed {
 
-        public void onMessageComposed(String message, Bitmap stegan);
+        public void onMessageComposed(String message, File stegan);
 
     }
 
@@ -47,7 +51,7 @@ public class ComposeFragment extends DialogFragment implements View.OnClickListe
         return d;
     }
 
-    public void setChoosenBitmap(Bitmap choosenBitmap) {
+    public void setChoosenBitmap(File choosenBitmap) {
         this.choosenBitmap = choosenBitmap;
     }
 
@@ -56,18 +60,22 @@ public class ComposeFragment extends DialogFragment implements View.OnClickListe
                              Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.compose_layout, container, false);
         imageView = (ImageView) view.findViewById(R.id.compose_background);
+        progressBar = (ProgressBar) view.findViewById(R.id.progrss_compose);
         editMessage = (EditText) view.findViewById(R.id.compose_edit);
         buttonEncode = (Button) view.findViewById(R.id.compose_button_encode);
 
+        //imageView.setImageURI(Uri.fromFile(choosenBitmap));
+        BitmapWorkerTask workerTask = new BitmapWorkerTask(imageView, progressBar);
+        workerTask.execute(choosenBitmap);
         buttonEncode.setOnClickListener(this);
         //choosenBitmap=(Bitmap)getIntent().getExtras().get(Constants.CHOOSEN_IMAGE);
-        Bitmap tmp = Bitmap.createBitmap(choosenBitmap);
+        //Bitmap tmp = Bitmap.createBitmap(choosenBitmap);
 
 
-        if (tmp.getHeight() > 1280 && tmp.getWidth() > 960)
-            tmp=Bitmap.createScaledBitmap(choosenBitmap,tmp.getWidth()/2,tmp.getHeight()/2,false);
+        //if (tmp.getHeight() > 1280 && tmp.getWidth() > 960)
+        //    tmp=Bitmap.createScaledBitmap(choosenBitmap,tmp.getWidth()/2,tmp.getHeight()/2,false);
         //imageView.setImageBitmap(doGreyscale(tmp));
-        imageView.setImageBitmap(tmp);
+        //imageView.setImageBitmap(tmp);
         return view;
     }
 
@@ -94,6 +102,7 @@ public class ComposeFragment extends DialogFragment implements View.OnClickListe
                 case R.id.compose_button_encode:
                     String message = editMessage.getText().toString();
                     mCallback.onMessageComposed(message, choosenBitmap);
+
                     dismiss();
                     break;
                 default:

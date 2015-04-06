@@ -1,10 +1,10 @@
 package it.mobistego.tasks;
 
 import android.app.Activity;
-import android.app.FragmentManager;
 import android.app.FragmentTransaction;
 import android.app.ProgressDialog;
 import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.util.Log;
@@ -58,11 +58,12 @@ public class EncodeTask extends AsyncTask<MobiStegoItem, Integer, MobiStegoItem>
         maxProgeress = 0;
         if (params.length > 0) {
             MobiStegoItem mobistego = params[0];
-            int originalHeight=mobistego.getBitmap().getHeight();
-            int originalWidth=mobistego.getBitmap().getWidth();
-            List<Bitmap> srcList = Utility.splitImage(mobistego.getBitmap());
-            
-            mobistego.getBitmap().recycle();
+            Bitmap bitm = BitmapFactory.decodeFile(mobistego.getBitmap().getAbsolutePath());
+            int originalHeight = bitm.getHeight();
+            int originalWidth = bitm.getWidth();
+            List<Bitmap> srcList = Utility.splitImage(bitm);
+
+            bitm.recycle();
             List<Bitmap> encodedList = LSB2bit.encodeMessage(srcList, mobistego.getMessage(), new LSB2bit.ProgressHandler() {
                 @Override
                 public void setTotal(int tot) {
@@ -91,15 +92,15 @@ public class EncodeTask extends AsyncTask<MobiStegoItem, Integer, MobiStegoItem>
                 result.setEncoded(true);
             } catch (IOException e) {
                 e.printStackTrace();
-                //TODO manage eexception
+                //TODO manage exception
             }
 
             //free memory
-            for (Bitmap bitm : srcList)
-                bitm.recycle();
+            for (Bitmap bitmamp : srcList)
+                bitmamp.recycle();
 
-            for (Bitmap bitm : encodedList)
-                bitm.recycle();
+            for (Bitmap bitmamp : encodedList)
+                bitmamp.recycle();
 
 
         }

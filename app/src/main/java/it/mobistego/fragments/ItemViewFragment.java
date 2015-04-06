@@ -9,10 +9,12 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.ImageView;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import it.mobistego.R;
 import it.mobistego.beans.MobiStegoItem;
+import it.mobistego.tasks.BitmapWorkerTask;
 
 /*
  * Copyright (C) 2015  Pasquale Paola
@@ -36,15 +38,16 @@ public class ItemViewFragment extends Fragment implements View.OnClickListener {
     private final static String TAG = ItemViewFragment.class.getName();
     private MobiStegoItem mobiStegoItem;
     private ImageView imageView;
+    private ProgressBar progressBar;
     private Button buttonDelete;
     private Button buttonShare;
     private TextView textView;
     private OnItemView mCallback;
 
     public interface OnItemView {
-        public void itemViewOnDelete(MobiStegoItem mobiStegoItem);
+        void itemViewOnDelete(MobiStegoItem mobiStegoItem);
 
-        public void itemViewOnShare(MobiStegoItem mobiStegoItem);
+        void itemViewOnShare(MobiStegoItem mobiStegoItem);
     }
 
     @Override
@@ -55,7 +58,9 @@ public class ItemViewFragment extends Fragment implements View.OnClickListener {
         buttonShare = (Button) view.findViewById(R.id.button_share);
         textView = (TextView) view.findViewById(R.id.text_view_item);
         imageView = (ImageView) view.findViewById(R.id.image_view_item);
-        imageView.setImageBitmap(mobiStegoItem.getBitmap());
+        progressBar = (ProgressBar) view.findViewById(R.id.progrss_view);
+        BitmapWorkerTask workerBimt = new BitmapWorkerTask(imageView, progressBar);
+        workerBimt.execute(mobiStegoItem.getBitmap());
         textView.setText(mobiStegoItem.getMessage());
         buttonDelete.setOnClickListener(this);
         buttonShare.setOnClickListener(this);

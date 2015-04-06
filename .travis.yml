@@ -4,7 +4,7 @@ jdk: oraclejdk7
 
 env:
   global:
-    - ANDROID_API_LEVEL=android-21
+    - ANDROID_API_LEVEL=android-22
     - ANDROID_ABI=armeabi-v7a
 android:
   components:
@@ -14,7 +14,7 @@ android:
     - tools
 
     # The BuildTools version used by your project
-    - build-tools-21.1.2
+    - build-tools-22.0.1
 
     # The SDK version used to compile your project
     - $ANDROID_API_LEVEL
@@ -27,7 +27,7 @@ android:
 
     # Specify at least one system image,
     # if you need to run emulator(s) during your tests
-    - sys-img-armeabi-v7a-android-21
+    - sys-img-armeabi-v7a-android-22
     #- sys-img-x86-android-17
 
 before_script:
@@ -37,4 +37,4 @@ before_script:
   #- adb shell input keyevent 82 &
 
 script:
-  - ./gradlew build connectedCheck
+  - ./gradlew build connectedCheck connectedAndroidTest

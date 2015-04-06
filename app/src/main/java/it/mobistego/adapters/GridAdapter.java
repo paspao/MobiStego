@@ -6,11 +6,13 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.ImageView;
+import android.widget.ProgressBar;
 
 import java.util.List;
 
 import it.mobistego.R;
 import it.mobistego.beans.MobiStegoItem;
+import it.mobistego.tasks.BitmapWorkerTask;
 import it.mobistego.utils.Utility;
 
 /**
@@ -62,12 +64,14 @@ public class GridAdapter extends BaseAdapter {
 
 
             gridView = inflater.inflate(R.layout.grid_item, null);
+
             ImageView image = (ImageView) gridView.findViewById(R.id.grid_image);
+            ProgressBar progressBar = (ProgressBar) gridView.findViewById(R.id.progrss_grid);
             if (items != null) {
                 MobiStegoItem item = items.get(position);
                 if (item != null) {
-                    image.setImageBitmap(item.getBitmap());
-
+                    BitmapWorkerTask bitmW = new BitmapWorkerTask(image, progressBar);
+                    bitmW.execute(item.getBitmap());
                 }
 
             }

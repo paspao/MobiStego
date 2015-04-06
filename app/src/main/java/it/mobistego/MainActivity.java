@@ -4,7 +4,6 @@ import android.app.Fragment;
 import android.app.FragmentManager;
 import android.app.FragmentTransaction;
 import android.content.Intent;
-import android.graphics.Bitmap;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
@@ -20,7 +19,7 @@ import it.mobistego.fragments.MainFragment;
 import it.mobistego.tasks.DecodeTask;
 import it.mobistego.tasks.EncodeTask;
 import it.mobistego.utils.Constants;
-import it.mobistego.utils.Utility;
+import it.mobistego.utils.GPU;
 
 /**
  * Created by paspao on 17/01/15.
@@ -44,6 +43,8 @@ import it.mobistego.utils.Utility;
 public class MainActivity extends FragmentActivity implements MainFragment.OnMainFragment, ComposeFragment.OnComposed, ItemViewFragment.OnItemView,DeleteDialogFragment.OnItemDeleted {
 
     private static final String TAG = MainActivity.class.getName();
+    public static int TEXTURE_SIZE_GL10 = -1;
+    public static int TEXTURE_SIZE_GL20 = -1;
 
 
     @Override
@@ -75,11 +76,26 @@ public class MainActivity extends FragmentActivity implements MainFragment.OnMai
         if (!f.exists()) {
             f.mkdirs();
         }
+        if (TEXTURE_SIZE_GL20 == -1 && TEXTURE_SIZE_GL10 == -1) {
+            GPU gpu = new GPU(this);
+            gpu.loadOpenGLGles20Info(new GPU.OnCompleteCallback<GPU.OpenGLGles20Info>() {
+                @Override
+                public void onComplete(GPU.OpenGLGles20Info result) {
+                    TEXTURE_SIZE_GL20 = result.GL_MAX_TEXTURE_SIZE;
+                }
+            });
+            gpu.loadOpenGLGles10Info(new GPU.OnCompleteCallback<GPU.OpenGLGles10Info>() {
+                @Override
+                public void onComplete(GPU.OpenGLGles10Info result) {
+                    TEXTURE_SIZE_GL10 = result.GL_MAX_TEXTURE_SIZE;
+                }
+            });
+        }
 
     }
 
     @Override
-    public void onMainFragmentBitmapSelectedToEncode(Bitmap btm) {
+    public void onMainFragmentBitmapSelectedToEncode(File btm) {
         if (btm != null) {
             ComposeFragment compose = new ComposeFragment();
             Bundle args = new Bundle();
@@ -94,7 +110,7 @@ public class MainActivity extends FragmentActivity implements MainFragment.OnMai
     }
 
     @Override
-    public void onMainFragmentBitmapSelectedToDecode(Bitmap btm) {
+    public void onMainFragmentBitmapSelectedToDecode(File btm) {
         if (btm != null) {
             DecodeTask task = new DecodeTask(this);
             task.execute(btm);
@@ -121,7 +137,7 @@ public class MainActivity extends FragmentActivity implements MainFragment.OnMai
     }
 
     @Override
-    public void onMessageComposed(String message, Bitmap stegan) {
+    public void onMessageComposed(String message, File stegan) {
 
 
         EncodeTask task = new EncodeTask(this);
@@ -160,7 +176,9 @@ public class MainActivity extends FragmentActivity implements MainFragment.OnMai
     @Override
     public void itemViewOnShare(MobiStegoItem mobiStegoItem) {
         Intent emailIntent = new Intent(Intent.ACTION_SEND);
-        File f = Utility.getBitmapFile(mobiStegoItem);
+        emailIntent.setType("vnd.android.cursor.dir/*");
+
+        File f = mobiStegoItem.getBitmap();
         if (f != null) {
 
             emailIntent.putExtra(Intent.EXTRA_STREAM, Uri.fromFile(f));

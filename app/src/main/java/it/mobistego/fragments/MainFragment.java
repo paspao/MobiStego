@@ -4,7 +4,6 @@ import android.app.Activity;
 import android.app.Fragment;
 import android.content.Intent;
 import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.os.Bundle;
 import android.provider.MediaStore;
@@ -13,12 +12,12 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
-import android.widget.Button;
 import android.widget.GridView;
-import android.widget.Toast;
+import android.widget.ImageButton;
 
+import java.io.File;
 import java.io.FileNotFoundException;
-import java.io.InputStream;
+import java.io.IOException;
 import java.util.List;
 
 import it.mobistego.R;
@@ -52,16 +51,18 @@ public class MainFragment extends Fragment implements View.OnClickListener, Adap
     private static final String TAG = MainFragment.class.getName();
 
     private OnMainFragment mCallback;
-    private Button buttonTakePhoto;
-    private Button buttonPickPhoto;
-    private Button buttonPickPhotoDecode;
+    private ImageButton buttonTakePhoto;
+    private ImageButton buttonPickPhoto;
+    private ImageButton buttonPickPhotoDecode;
     private GridView gridView;
     private List<MobiStegoItem> mobiStegoItems;
+    private File filePhotoTaken;
 
 
     public interface OnMainFragment {
-        public void onMainFragmentBitmapSelectedToEncode(Bitmap btm);
-        public void onMainFragmentBitmapSelectedToDecode(Bitmap btm);
+        public void onMainFragmentBitmapSelectedToEncode(File btm);
+
+        public void onMainFragmentBitmapSelectedToDecode(File btm);
 
         public void onMainFragmentGridItemSelected(MobiStegoItem mobiStegoItem);
 
@@ -73,9 +74,9 @@ public class MainFragment extends Fragment implements View.OnClickListener, Adap
                              Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.main_layout, container, false);
         gridView = (GridView) view.findViewById(R.id.grid_view);
-        buttonPickPhoto = (Button) view.findViewById(R.id.main_button_pick_photo);
-        buttonTakePhoto = (Button) view.findViewById(R.id.main_button_take_photo);
-        buttonPickPhotoDecode = (Button) view.findViewById(R.id.main_button_pick_photo_decode);
+        buttonPickPhoto = (ImageButton) view.findViewById(R.id.main_button_pick_photo);
+        buttonTakePhoto = (ImageButton) view.findViewById(R.id.main_button_take_photo);
+        buttonPickPhotoDecode = (ImageButton) view.findViewById(R.id.main_button_pick_photo_decode);
         buttonTakePhoto.setOnClickListener(this);
         buttonPickPhoto.setOnClickListener(this);
         buttonPickPhotoDecode.setOnClickListener(this);
@@ -122,10 +123,19 @@ public class MainFragment extends Fragment implements View.OnClickListener, Adap
                     startActivityForResult(photoPickerIntentDecode, Constants.SELECT_PHOTO_DECODE);
                     break;
                 case R.id.main_button_take_photo:
-                    Intent takePictureIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-                    if (takePictureIntent.resolveActivity(getActivity().getPackageManager()) != null) {
-                        startActivityForResult(takePictureIntent, Constants.REQUEST_IMAGE_CAPTURE);
+                    try {
+                        filePhotoTaken = Utility.createImageFile();
+                        Intent takePictureIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+                        takePictureIntent.putExtra(MediaStore.EXTRA_OUTPUT,
+                                Uri.fromFile(filePhotoTaken));
+                        if (takePictureIntent.resolveActivity(getActivity().getPackageManager()) != null) {
+                            startActivityForResult(takePictureIntent, Constants.REQUEST_IMAGE_CAPTURE);
+                        }
+                    } catch (IOException e) {
+                        Log.e(TAG, e.getMessage());
+                        //e.printStackTrace();
                     }
+
                     break;
                 default:
                     Log.i(TAG, "Unknown action");
@@ -147,44 +157,38 @@ public class MainFragment extends Fragment implements View.OnClickListener, Adap
         switch (requestCode) {
             case Constants.SELECT_PHOTO_DECODE:
                 if (resultCode == Activity.RESULT_OK) {
-                    try {
+
                         final Uri imageUri = data.getData();
-                        final InputStream imageStream = getActivity().getContentResolver().openInputStream(imageUri);
-                        imageBitmap = BitmapFactory.decodeStream(imageStream);
+                    //final InputStream imageStream = getActivity().getContentResolver().openInputStream(imageUri);
+                    //imageBitmap = BitmapFactory.decodeStream(imageStream);
                         if (imageBitmap != null) {
-                            mCallback.onMainFragmentBitmapSelectedToDecode(imageBitmap);
+                            mCallback.onMainFragmentBitmapSelectedToDecode(new File(imageUri.getPath()));
                         }
 
-                    } catch (FileNotFoundException e) {
-                        Toast.makeText(getActivity(), R.string.filenotfoud, Toast.LENGTH_LONG).show();
-                        Log.e(TAG, e.getMessage());
-                        e.printStackTrace();
-                    }
+
                 }
                 break;
             case Constants.SELECT_PHOTO:
                 if (resultCode == Activity.RESULT_OK) {
-                    try {
-                        final Uri imageUri = data.getData();
-                        final InputStream imageStream = getActivity().getContentResolver().openInputStream(imageUri);
-                        imageBitmap = BitmapFactory.decodeStream(imageStream);
-                        if (imageBitmap != null) {
-                            mCallback.onMainFragmentBitmapSelectedToEncode(imageBitmap);
-                        }
 
-                    } catch (FileNotFoundException e) {
-                        Toast.makeText(getActivity(), R.string.filenotfoud, Toast.LENGTH_LONG).show();
-                        Log.e(TAG, e.getMessage());
-                        e.printStackTrace();
-                    }
+                    final Uri imageUri = data.getData();
+                    //final InputStream imageStream = getActivity().getContentResolver().openInputStream(imageUri);
+                    //imageBitmap = BitmapFactory.decodeStream(imageStream);
+                    String path = Utility.getRealPathFromURI(imageUri, getActivity().getContentResolver());
+                    mCallback.onMainFragmentBitmapSelectedToEncode(new File(path));
+
+
                 }
                 break;
             case Constants.REQUEST_IMAGE_CAPTURE:
                 if (resultCode == Activity.RESULT_OK) {
-                    Bundle extras = data.getExtras();
-                    imageBitmap = (Bitmap) extras.get("data");
-                    if (imageBitmap != null) {
-                        mCallback.onMainFragmentBitmapSelectedToEncode(imageBitmap);
+                    if (filePhotoTaken != null) {
+                        //imageBitmap=BitmapFactory.decodeFile(filePhotoTaken.getAbsolutePath());
+
+
+                        mCallback.onMainFragmentBitmapSelectedToEncode(filePhotoTaken);
+
+
                     }
                     //mImageView.setImageBitmap(imageBitmap);
                 }

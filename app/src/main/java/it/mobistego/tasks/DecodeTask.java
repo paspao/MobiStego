@@ -4,10 +4,12 @@ import android.app.Activity;
 import android.app.FragmentTransaction;
 import android.app.ProgressDialog;
 import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.util.Log;
 
+import java.io.File;
 import java.io.IOException;
 import java.util.List;
 
@@ -15,7 +17,6 @@ import it.mobistego.R;
 import it.mobistego.beans.MobiStegoItem;
 import it.mobistego.business.LSB2bit;
 import it.mobistego.fragments.AlertNotMobistegoFragment;
-import it.mobistego.fragments.ComposeFragment;
 import it.mobistego.utils.Utility;
 
 /**
@@ -38,7 +39,7 @@ import it.mobistego.utils.Utility;
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  */
-public class DecodeTask extends AsyncTask<Bitmap,Void,MobiStegoItem>{
+public class DecodeTask extends AsyncTask<File, Void, MobiStegoItem> {
    
     private final static String TAG=DecodeTask.class.getName();
     private Activity activity;
@@ -63,17 +64,18 @@ public class DecodeTask extends AsyncTask<Bitmap,Void,MobiStegoItem>{
     }
     
     @Override
-    protected MobiStegoItem doInBackground(Bitmap... params) {
+    protected MobiStegoItem doInBackground(File... params) {
         MobiStegoItem result=null;
         publishProgress();
-        List<Bitmap> srcEncodedList = Utility.splitImage(params[0]);
+        Bitmap bitmap = BitmapFactory.decodeFile(params[0].getAbsolutePath());
+        List<Bitmap> srcEncodedList = Utility.splitImage(bitmap);
         String decoded = LSB2bit.decodeMessage(srcEncodedList);
         for(Bitmap bitm:srcEncodedList)
             bitm.recycle();
         if(!Utility.isEmpty(decoded)) {
             try {
                 isMobistegoImage=true;
-                result = Utility.saveMobiStegoItem(decoded, params[0]);
+                result = Utility.saveMobiStegoItem(decoded, bitmap);
             } catch (IOException e) {
                 Log.e(TAG, "Error", e);
                 //e.printStackTrace();
