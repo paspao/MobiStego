@@ -15,7 +15,7 @@
         android:id="@+id/compose_background"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
-        android:backgroundTint="@color/abc_background_cache_hint_selector_material_dark"
+
         android:scaleType="centerCrop"
         android:visibility="invisible"
         android:background="@android:color/transparent" />

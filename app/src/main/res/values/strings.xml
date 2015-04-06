@@ -4,10 +4,8 @@
     <string name="app_name">MobiStego</string>
     <string name="main_title">MobiStego</string>
     <string name="enter_text">Enter your text&#8230;</string>
-    <string name="filenotfoud">File not found!</string>
     <string name="action_settings">Settings</string>
-    <string name="ok">Ok</string>
-    <string name="cancel">Cancel</string>
+    <string name="ok">OK</string>
     <string name="encode">Encode</string>
     <string name="decode">Decode</string>
     <string name="pict_photo">Pict</string>

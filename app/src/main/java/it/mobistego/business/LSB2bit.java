@@ -186,7 +186,7 @@ public class LSB2bit {
             tmp = (byte) (tmp | ((oneDPix[i] << toShift[shiftIndex
                     % toShift.length]) & andByte[shiftIndex++ % toShift.length]));
             if (shiftIndex % toShift.length == 0) {
-                v.addElement(new Byte(tmp));
+                v.addElement(Byte.valueOf(tmp));
                 byte[] nonso = {(v.elementAt(v.size() - 1)).byteValue()};
                 String str = new String(nonso);
                 // if (END_MESSAGE_COSTANT.equals(str)) {
