@@ -85,6 +85,9 @@ public class EncodeTask extends AsyncTask<MobiStegoItem, Integer, MobiStegoItem>
                 }
             });
             //free memory
+            for (Bitmap bitmamp : srcList)
+                bitmamp.recycle();
+
             System.gc();
             Bitmap srcEncoded = Utility.mergeImage(encodedList, originalHeight, originalWidth);
             try {
@@ -94,11 +97,7 @@ public class EncodeTask extends AsyncTask<MobiStegoItem, Integer, MobiStegoItem>
                 e.printStackTrace();
                 //TODO manage exception
             }
-
             //free memory
-            for (Bitmap bitmamp : srcList)
-                bitmamp.recycle();
-
             for (Bitmap bitmamp : encodedList)
                 bitmamp.recycle();
 

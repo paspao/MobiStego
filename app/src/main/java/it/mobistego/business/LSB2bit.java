@@ -142,7 +142,7 @@ public class LSB2bit {
                     }
                 result.add(destBitmap);
             } else
-                result.add(bitm);
+                result.add(bitm.copy(bitm.getConfig(), false));
         }
         Log.d(TAG, "Message current index " + message.getCurrentMessageIndex());
         return result;
