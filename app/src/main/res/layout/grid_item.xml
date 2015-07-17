@@ -1,9 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:orientation="vertical"
-    android:layout_width="wrap_content"
+    android:layout_width="fill_parent"
     android:layout_height="wrap_content"
-
+    android:layout_weight="5"
+    android:descendantFocusability="blocksDescendants"
     >
 
     <ProgressBar
@@ -13,10 +14,32 @@
         android:indeterminate="true" />
     <ImageView
         android:id="@+id/grid_image"
-        android:layout_width="wrap_content"
+        android:layout_width="match_parent"
         android:layout_height="150dp"
         android:scaleType="centerCrop"
         android:background="@android:color/transparent"
         android:visibility="gone" />
+
+    <LinearLayout
+        android:id="@+id/grid_item_buttons"
+        android:orientation="horizontal"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:visibility="gone">
+
+        <Button
+            android:id="@+id/button_grid_delete"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/delete"
+            android:layout_weight="1" />
+
+        <Button
+            android:id="@+id/button_grid_share"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/share"
+            android:layout_weight="1" />
+    </LinearLayout>
 
 </LinearLayout>

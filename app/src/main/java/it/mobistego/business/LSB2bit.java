@@ -65,6 +65,7 @@ public class LSB2bit {
         int resultIndex = 0;
 
         for (int row = 0; row < imgRows; row++) {
+
             for (int col = 0; col < imgCols; col++) {
                 int element = row * imgCols + col;
                 byte tmp = 0;
@@ -93,6 +94,8 @@ public class LSB2bit {
             }
 
         }
+
+
         return result;
 
     }
@@ -145,6 +148,7 @@ public class LSB2bit {
                 result.add(bitm.copy(bitm.getConfig(), false));
         }
         Log.d(TAG, "Message current index " + message.getCurrentMessageIndex());
+
         return result;
     }
 

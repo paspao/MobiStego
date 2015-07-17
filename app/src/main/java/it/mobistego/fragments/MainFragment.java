@@ -12,16 +12,18 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
-import android.widget.GridView;
+import android.widget.Button;
 import android.widget.ImageButton;
+import android.widget.ListView;
+
+import com.afollestad.materialdialogs.MaterialDialog;
 
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.List;
 
 import it.mobistego.R;
-import it.mobistego.adapters.GridAdapter;
+import it.mobistego.adapters.ListAdapter;
 import it.mobistego.beans.MobiStegoItem;
 import it.mobistego.utils.Constants;
 import it.mobistego.utils.Utility;
@@ -52,11 +54,14 @@ public class MainFragment extends Fragment implements View.OnClickListener, Adap
 
     private OnMainFragment mCallback;
     private ImageButton buttonTakePhoto;
+    private Button buttonAdd;
     private ImageButton buttonPickPhoto;
     private ImageButton buttonPickPhotoDecode;
-    private GridView gridView;
+    private ListView listView;
     private List<MobiStegoItem> mobiStegoItems;
     private File filePhotoTaken;
+    private ListAdapter listAdapter;
+    private View createdView;
 
 
     public interface OnMainFragment {
@@ -72,24 +77,43 @@ public class MainFragment extends Fragment implements View.OnClickListener, Adap
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        View view = inflater.inflate(R.layout.main_layout, container, false);
-        gridView = (GridView) view.findViewById(R.id.grid_view);
-        buttonPickPhoto = (ImageButton) view.findViewById(R.id.main_button_pick_photo);
-        buttonTakePhoto = (ImageButton) view.findViewById(R.id.main_button_take_photo);
-        buttonPickPhotoDecode = (ImageButton) view.findViewById(R.id.main_button_pick_photo_decode);
-        buttonTakePhoto.setOnClickListener(this);
-        buttonPickPhoto.setOnClickListener(this);
-        buttonPickPhotoDecode.setOnClickListener(this);
-        try {
-            mobiStegoItems = Utility.listMobistegoItem();
-        } catch (FileNotFoundException e) {
-            e.printStackTrace();
-            //TODO
-        }
-        gridView.setAdapter(new GridAdapter(getActivity(), mobiStegoItems));
-        gridView.setOnItemClickListener(this);
+        List<MobiStegoItem> mobiTmp = null;
 
-        return view;
+        mobiTmp = Utility.listMobistegoItem();
+
+        if (createdView == null) {
+            createdView = inflater.inflate(R.layout.main_layout, container, false);
+            listView = (ListView) createdView.findViewById(R.id.list_view);
+            buttonAdd = (Button) createdView.findViewById(R.id.button_add);
+            /*buttonPickPhoto = (ImageButton) createdView.findViewById(R.id.main_button_pick_photo);
+            buttonTakePhoto = (ImageButton) createdView.findViewById(R.id.main_button_take_photo);
+            buttonPickPhotoDecode = (ImageButton) createdView.findViewById(R.id.main_button_pick_photo_decode);
+            buttonTakePhoto.setOnClickListener(this);
+            buttonPickPhoto.setOnClickListener(this);
+            buttonPickPhotoDecode.setOnClickListener(this);
+*/
+            buttonAdd.setOnClickListener(this);
+
+            boolean changed = false;
+            if (mobiStegoItems == null || mobiStegoItems.size() != mobiTmp.size()) {
+                mobiStegoItems = mobiTmp;
+                changed = true;
+            }
+
+            if (listAdapter == null) {
+                listAdapter = new ListAdapter(getActivity(), mobiStegoItems);
+                listView.setAdapter(listAdapter);
+            } else if (changed) {
+
+            }
+
+
+            listView.setOnItemClickListener(this);
+        } else if ((mobiStegoItems != null && mobiTmp != null && mobiStegoItems.size() != mobiTmp.size())) {
+            listAdapter.setItems(mobiStegoItems);
+            listAdapter.notifyDataSetChanged();
+        }
+        return createdView;
     }
 
     @Override
@@ -112,31 +136,51 @@ public class MainFragment extends Fragment implements View.OnClickListener, Adap
         if (v != null) {
             int id = v.getId();
             switch (id) {
-                case R.id.main_button_pick_photo:
-                    Intent photoPickerIntent = new Intent(Intent.ACTION_PICK);
-                    photoPickerIntent.setType("image/*");
-                    startActivityForResult(photoPickerIntent, Constants.SELECT_PHOTO);
-                    break;
-                case R.id.main_button_pick_photo_decode:
-                    Intent photoPickerIntentDecode = new Intent(Intent.ACTION_PICK);
-                    photoPickerIntentDecode.setType("image/*");
-                    startActivityForResult(photoPickerIntentDecode, Constants.SELECT_PHOTO_DECODE);
-                    break;
-                case R.id.main_button_take_photo:
-                    try {
-                        filePhotoTaken = Utility.createImageFile();
-                        Intent takePictureIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-                        takePictureIntent.putExtra(MediaStore.EXTRA_OUTPUT,
-                                Uri.fromFile(filePhotoTaken));
-                        if (takePictureIntent.resolveActivity(getActivity().getPackageManager()) != null) {
-                            startActivityForResult(takePictureIntent, Constants.REQUEST_IMAGE_CAPTURE);
-                        }
-                    } catch (IOException e) {
-                        Log.e(TAG, e.getMessage());
-                        //e.printStackTrace();
-                    }
+                case R.id.button_add:
+                    new MaterialDialog.Builder(getActivity())
+                            .title(R.string.choose)
+                            .items(R.array.operations)
+                            .itemsCallback(new MaterialDialog.ListCallback() {
+                                @Override
+                                public void onSelection(MaterialDialog materialDialog, View view, int i, CharSequence charSequence) {
 
-                    break;
+                                    switch (i) {
+                                        case 0:
+                                            try {
+                                                filePhotoTaken = Utility.createImageFile();
+                                                Intent takePictureIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+                                                takePictureIntent.putExtra(MediaStore.EXTRA_OUTPUT,
+                                                        Uri.fromFile(filePhotoTaken));
+                                                if (takePictureIntent.resolveActivity(getActivity().getPackageManager()) != null) {
+                                                    startActivityForResult(takePictureIntent, Constants.REQUEST_IMAGE_CAPTURE);
+                                                }
+                                            } catch (IOException e) {
+                                                Log.e(TAG, e.getMessage());
+                                                //e.printStackTrace();
+                                            }
+                                            break;
+                                        case 1:
+
+                                            Intent photoPickerIntent = new Intent(Intent.ACTION_PICK);
+                                            photoPickerIntent.setType("image/*");
+                                            startActivityForResult(photoPickerIntent, Constants.SELECT_PHOTO);
+                                            break;
+                                        case 2:
+                                            Intent photoPickerIntentDecode = new Intent(Intent.ACTION_PICK);
+                                            photoPickerIntentDecode.setType("image/*");
+                                            startActivityForResult(photoPickerIntentDecode, Constants.SELECT_PHOTO_DECODE);
+                                            break;
+
+
+                                        default:
+                                            Log.i(TAG, "Unknown action");
+                                            break;
+                                    }
+                                }
+                            })
+
+                            .show();
+
                 default:
                     Log.i(TAG, "Unknown action");
                     break;
@@ -198,4 +242,6 @@ public class MainFragment extends Fragment implements View.OnClickListener, Adap
                 break;
         }
     }
+
+
 }

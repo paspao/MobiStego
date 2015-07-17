@@ -62,13 +62,15 @@ public class BitmapWorkerTask extends AsyncTask<File, Void, Bitmap> {
         int imageHeight = options.outHeight;
         int imageWidth = options.outWidth;
         String imageType = options.outMimeType;
-        if (imageWidth > maxTextureSize) {
+
+        if (maxTextureSize > 0 && imageWidth > maxTextureSize) {
             imageWidth = maxTextureSize;
         }
-        if (imageHeight > maxTextureSize) {
+        if (maxTextureSize > 0 && imageHeight > maxTextureSize) {
             imageHeight = maxTextureSize;
         }
-        options.inSampleSize = calculateInSampleSize(options, imageWidth, imageHeight);
+        options.inSampleSize = calculateInSampleSizeWorstCase(options, imageWidth, imageHeight);
+
         options.inJustDecodeBounds = false;
 
 
@@ -92,12 +94,13 @@ public class BitmapWorkerTask extends AsyncTask<File, Void, Bitmap> {
         }
     }
 
-    public static int calculateInSampleSize(
-            BitmapFactory.Options options, int reqWidth, int reqHeight) {
+    public static int calculateInSampleSizeWorstCase(
+            final BitmapFactory.Options options, final int reqWidth, final int reqHeight) {
+
 
         final int height = options.outHeight;
         final int width = options.outWidth;
-        int inSampleSize = 1;
+        int inSampleSize = 2;
 
         if (height > reqHeight || width > reqWidth) {
 
@@ -113,4 +116,5 @@ public class BitmapWorkerTask extends AsyncTask<File, Void, Bitmap> {
 
         return inSampleSize;
     }
+
 }

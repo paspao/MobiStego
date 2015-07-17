@@ -38,7 +38,7 @@ public class ComposeFragment extends DialogFragment implements View.OnClickListe
 
     public interface OnComposed {
 
-        public void onMessageComposed(String message, File stegan);
+        void onMessageComposed(String message, File stegan);
 
     }
 
@@ -64,18 +64,11 @@ public class ComposeFragment extends DialogFragment implements View.OnClickListe
         editMessage = (EditText) view.findViewById(R.id.compose_edit);
         buttonEncode = (Button) view.findViewById(R.id.compose_button_encode);
 
-        //imageView.setImageURI(Uri.fromFile(choosenBitmap));
+
         BitmapWorkerTask workerTask = new BitmapWorkerTask(imageView, progressBar);
         workerTask.execute(choosenBitmap);
         buttonEncode.setOnClickListener(this);
-        //choosenBitmap=(Bitmap)getIntent().getExtras().get(Constants.CHOOSEN_IMAGE);
-        //Bitmap tmp = Bitmap.createBitmap(choosenBitmap);
 
-
-        //if (tmp.getHeight() > 1280 && tmp.getWidth() > 960)
-        //    tmp=Bitmap.createScaledBitmap(choosenBitmap,tmp.getWidth()/2,tmp.getHeight()/2,false);
-        //imageView.setImageBitmap(doGreyscale(tmp));
-        //imageView.setImageBitmap(tmp);
         return view;
     }
 

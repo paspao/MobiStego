@@ -2,6 +2,8 @@ package it.mobistego.beans;
 
 import java.io.File;
 
+import it.mobistego.utils.Constants;
+
 /**
  * Created by paspao on 15/02/15.
  * Copyright (C) 2015  Pasquale Paola
@@ -24,10 +26,11 @@ public class MobiStegoItem {
 
     private String message;
     private File bitmap;
+    private File bitmapCompressed;
     private boolean encoded;
     private String uuid;
 
-    public MobiStegoItem() {
+    private MobiStegoItem() {
         super();
 
     }
@@ -35,6 +38,9 @@ public class MobiStegoItem {
     public MobiStegoItem(String message, File bitmap, String uuid, boolean encoded) {
         this();
         this.bitmap = bitmap;
+        String tmp = bitmap.getAbsolutePath();
+        tmp = tmp.substring(0, tmp.length() - 4);
+        this.bitmapCompressed = new File(tmp + Constants.FILE_JPG_EXT);
         this.encoded = encoded;
         this.message = message;
     }
@@ -70,4 +76,10 @@ public class MobiStegoItem {
     public String getUuid() {
         return uuid;
     }
+
+    public File getBitmapCompressed() {
+        return bitmapCompressed;
+    }
+
+
 }

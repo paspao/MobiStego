@@ -5,6 +5,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
+import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
 
@@ -12,6 +13,7 @@ import java.util.List;
 
 import it.mobistego.R;
 import it.mobistego.beans.MobiStegoItem;
+import it.mobistego.fragments.ItemViewFragment;
 import it.mobistego.tasks.BitmapWorkerTask;
 import it.mobistego.utils.Utility;
 
@@ -34,24 +36,26 @@ import it.mobistego.utils.Utility;
  */
 
 
-public class GridAdapter extends BaseAdapter {
+public class ListAdapter extends BaseAdapter {
 
-    private final static String TAG = GridAdapter.class.getName();
+    private final static String TAG = ListAdapter.class.getName();
     private List<MobiStegoItem> items;
     private Context context;
+    private ItemViewFragment.OnItemView mCallback;
 
     public interface OnGridEvent {
         public void gridAdapterOnClick();
 
     }
 
-    public GridAdapter(Context context, List<MobiStegoItem> mobileValues) {
+    public ListAdapter(Context context, List<MobiStegoItem> mobileValues) {
         this.context = context;
+        this.mCallback = (ItemViewFragment.OnItemView) context;
         this.items = mobileValues;
     }
 
     @Override
-    public View getView(int position, View convertView, ViewGroup parent) {
+    public View getView(final int position, View convertView, ViewGroup parent) {
 
         LayoutInflater inflater = (LayoutInflater) context
                 .getSystemService(Context.LAYOUT_INFLATER_SERVICE);
@@ -60,18 +64,53 @@ public class GridAdapter extends BaseAdapter {
 
         if (convertView == null) {
 
-            gridView = new View(context);
+
 
 
             gridView = inflater.inflate(R.layout.grid_item, null);
 
             ImageView image = (ImageView) gridView.findViewById(R.id.grid_image);
+            View layoutButton = gridView.findViewById(R.id.grid_item_buttons);
+            Button buttonShare = (Button) gridView.findViewById(R.id.button_grid_share);
+            Button buttonDelete = (Button) gridView.findViewById(R.id.button_grid_delete);
+            buttonDelete.setOnClickListener(new View.OnClickListener() {
+
+                @Override
+                public void onClick(View v) {
+                    if (items != null) {
+                        MobiStegoItem item = items.get(position);
+                        if (item != null) {
+                            mCallback.itemViewOnDelete(item);
+                        }
+
+                    }
+
+
+                }
+            });
+
+            buttonShare.setOnClickListener(new View.OnClickListener() {
+
+                @Override
+                public void onClick(View v) {
+                    if (items != null) {
+                        MobiStegoItem item = items.get(position);
+                        if (item != null) {
+                            mCallback.itemViewOnShare(item);
+                        }
+
+                    }
+
+
+                }
+            });
+            layoutButton.setVisibility(View.VISIBLE);
             ProgressBar progressBar = (ProgressBar) gridView.findViewById(R.id.progrss_grid);
             if (items != null) {
                 MobiStegoItem item = items.get(position);
                 if (item != null) {
                     BitmapWorkerTask bitmW = new BitmapWorkerTask(image, progressBar);
-                    bitmW.execute(item.getBitmap());
+                    bitmW.execute(item.getBitmapCompressed());
                 }
 
             }
@@ -100,5 +139,7 @@ public class GridAdapter extends BaseAdapter {
         return 0;
     }
 
-
+    public void setItems(List<MobiStegoItem> items) {
+        this.items = items;
+    }
 }

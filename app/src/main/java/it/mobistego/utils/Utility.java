@@ -70,6 +70,15 @@ public class Utility {
         return image;
     }
 
+    public static int squareBlockNeeded(int pixels) {
+        int result = 0;
+        int quadrato = SQUARE_BLOCK * SQUARE_BLOCK;
+        int divid = pixels / (quadrato);
+        int resto = pixels % (quadrato);
+        result = divid + (resto > 0 ? 1 : 0);
+        return result;
+    }
+
     public static List<Bitmap> splitImage(Bitmap bitmap) {
 
         //For the number of rows and columns of the grid to be displayed
@@ -235,10 +244,11 @@ public class Utility {
     }
 
     public static MobiStegoItem saveMobiStegoItem(String message, Bitmap srcEncoded) throws IOException {
-        MobiStegoItem result = new MobiStegoItem();
+
         String name = UUID.randomUUID().toString();
-        result.setUuid(name);
-        String fileNamePng = name + Constants.FILE_PNG_EXT;
+
+        String fileNameOriginalPng = name + Constants.FILE_PNG_EXT;
+        String fileNameCompressedJpg = name + Constants.FILE_JPG_EXT;
         String fileNameTxt = name + Constants.FILE_TXT_EXT;
         File mobiStegoDir = new File(Environment.getExternalStorageDirectory(),
                 Constants.EXT_DIR);
@@ -246,17 +256,24 @@ public class Utility {
                 name);
         rootDir.mkdir();
 
-        File image = new File(rootDir,
-                fileNamePng);
+        File originalImage = new File(rootDir,
+                fileNameOriginalPng);
+        File compressedImage = new File(rootDir,
+                fileNameCompressedJpg);
         File txt = new File(rootDir,
                 fileNameTxt);
-        //image.createNewFile();
+        //originalImage.createNewFile();
         //txt.createNewFile();
-        FileOutputStream foutImage = new FileOutputStream(image);
-        srcEncoded.compress(Bitmap.CompressFormat.PNG, 100, foutImage);
-        foutImage.flush();
-        foutImage.close();
-        result.setBitmap(image);
+        FileOutputStream foutOriginalImage = new FileOutputStream(originalImage);
+        srcEncoded.compress(Bitmap.CompressFormat.PNG, 100, foutOriginalImage);
+        foutOriginalImage.flush();
+        foutOriginalImage.close();
+        FileOutputStream foutCompressedImage = new FileOutputStream(compressedImage);
+        srcEncoded.compress(Bitmap.CompressFormat.JPEG, 50, foutCompressedImage);
+        foutCompressedImage.flush();
+        foutCompressedImage.close();
+
+
         FileOutputStream foutText = new FileOutputStream(txt);
         OutputStreamWriter writer = new OutputStreamWriter(foutText);
         writer.append(message);
@@ -264,11 +281,12 @@ public class Utility {
         writer.close();
         foutText.flush();
         foutText.close();
-        result.setMessage(message);
+        MobiStegoItem result = new MobiStegoItem(message, originalImage, name, true);
+
         return result;
     }
 
-    public static List<MobiStegoItem> listMobistegoItem() throws FileNotFoundException {
+    public static List<MobiStegoItem> listMobistegoItem() {
         List<MobiStegoItem> result = new ArrayList<>();
         String[] dirs = listMobistegoDir();
         if (dirs != null)
@@ -302,37 +320,43 @@ public class Utility {
         return result;
     }
 
-    public static MobiStegoItem loadMobiStegoItem(String dirName) throws FileNotFoundException {
-        MobiStegoItem result = new MobiStegoItem();
+    public static MobiStegoItem loadMobiStegoItem(String dirName) {
+
         String fileNamePng = dirName + Constants.FILE_PNG_EXT;
+
         String fileNameTxt = dirName + Constants.FILE_TXT_EXT;
         File mobiStegoDir = new File(Environment.getExternalStorageDirectory(),
                 Constants.EXT_DIR);
         File rootDir = new File(mobiStegoDir,
                 dirName);
-        File image = new File(rootDir,
+        File imageOriginal = new File(rootDir,
                 fileNamePng);
         File txt = new File(rootDir,
                 fileNameTxt);
-        Scanner scan = new Scanner(txt);
+        Scanner scan = null;
+        try {
+            scan = new Scanner(txt);
+        } catch (FileNotFoundException e) {
+            Log.e(TAG, "Problem while loading", e);
+        }
         StringBuilder message = new StringBuilder();
         while (scan.hasNextLine())
             message.append(scan.nextLine());
         scan.close();
-        result.setMessage(message.toString());
+        MobiStegoItem result = new MobiStegoItem(message.toString(), imageOriginal, dirName, true);
+
         //BitmapFactory.Options opt=new BitmapFactory.Options();
         //opt.inSampleSize=2;
-        //Bitmap bitm = BitmapFactory.decodeFile(image.getAbsolutePath(),opt);
-        result.setBitmap(image);
-        result.setUuid(dirName);
-        result.setEncoded(true);
+        //Bitmap bitm = BitmapFactory.decodeFile(imageOriginal.getAbsolutePath(),opt);
         return result;
     }
 
     public static boolean deleteMobiStegoItem(MobiStegoItem item) {
         boolean result = false;
-        String dirName = item.getUuid();
+        String dirName = item.getUuid() == null ? item.getBitmap().getParentFile().getName() : item.getUuid();
+
         String fileNamePng = dirName + Constants.FILE_PNG_EXT;
+        String fileNameJpg = dirName + Constants.FILE_JPG_EXT;
         String fileNameTxt = dirName + Constants.FILE_TXT_EXT;
 
         File mobiStegoDir = new File(Environment.getExternalStorageDirectory(),
@@ -341,11 +365,14 @@ public class Utility {
                 dirName);
         File image = new File(rootDir,
                 fileNamePng);
+        File imageCompressed = new File(rootDir,
+                fileNameJpg);
         File txt = new File(rootDir,
                 fileNameTxt);
         if (rootDir.exists()) {
             image.delete();
             txt.delete();
+            imageCompressed.delete();
             rootDir.delete();
             result = true;
         }

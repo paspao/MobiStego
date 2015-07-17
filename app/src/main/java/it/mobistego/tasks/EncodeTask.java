@@ -58,9 +58,20 @@ public class EncodeTask extends AsyncTask<MobiStegoItem, Integer, MobiStegoItem>
         maxProgeress = 0;
         if (params.length > 0) {
             MobiStegoItem mobistego = params[0];
-            Bitmap bitm = BitmapFactory.decodeFile(mobistego.getBitmap().getAbsolutePath());
+            int pixelNeeded = LSB2bit.numberOfPixelForMessage(mobistego.getMessage());
+            int squareBlockNeeded = Utility.squareBlockNeeded(pixelNeeded);
+
+            BitmapFactory.Options options = new BitmapFactory.Options();
+            options.inJustDecodeBounds = true;
+            BitmapFactory.decodeFile(mobistego.getBitmap().getAbsolutePath(), options);
+            int sample = calculateInSampleSize(options, squareBlockNeeded * Utility.SQUARE_BLOCK, squareBlockNeeded * Utility.SQUARE_BLOCK);
+            options.inJustDecodeBounds = false;
+            options.inSampleSize = sample;
+
+            Bitmap bitm = BitmapFactory.decodeFile(mobistego.getBitmap().getAbsolutePath(), options);
             int originalHeight = bitm.getHeight();
             int originalWidth = bitm.getWidth();
+
             List<Bitmap> srcList = Utility.splitImage(bitm);
 
             bitm.recycle();
@@ -142,5 +153,28 @@ public class EncodeTask extends AsyncTask<MobiStegoItem, Integer, MobiStegoItem>
         tx.replace(R.id.listFragment, mainFragment, Constants.CONTAINER);
 
         tx.commit();
+    }
+
+    public static int calculateInSampleSize(
+            BitmapFactory.Options options, int reqWidth, int reqHeight) {
+        // Raw height and width of image
+        final int height = options.outHeight;
+        final int width = options.outWidth;
+        int inSampleSize = 1;
+
+        if (height > reqHeight || width > reqWidth) {
+
+            final int halfHeight = height / 2;
+            final int halfWidth = width / 2;
+
+            // Calculate the largest inSampleSize value that is a power of 2 and keeps both
+            // height and width larger than the requested height and width.
+            while ((halfHeight / inSampleSize) > reqHeight
+                    && (halfWidth / inSampleSize) > reqWidth) {
+                inSampleSize *= 2;
+            }
+        }
+
+        return inSampleSize;
     }
 }

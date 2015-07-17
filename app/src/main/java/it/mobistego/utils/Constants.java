@@ -23,6 +23,7 @@ public class Constants {
     public static final String CHOOSEN_IMAGE = "CHOOSEN_IMAGE";
     public static final String EXT_DIR = "MobiStego";
     public static final String FILE_PNG_EXT = ".png";
+    public static final String FILE_JPG_EXT = ".jpg";
     public static final String FILE_TXT_EXT = ".txt";
     public static final String NO_NAME = "NO_NAME";
     public static final String CONTAINER = "MYCONTAINER";

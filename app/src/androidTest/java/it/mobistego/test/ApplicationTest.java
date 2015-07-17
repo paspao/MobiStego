@@ -6,7 +6,6 @@ import android.graphics.BitmapFactory;
 import android.test.ApplicationTestCase;
 import android.util.Log;
 
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.List;
 
@@ -170,7 +169,7 @@ public class ApplicationTest extends ApplicationTestCase<Application> {
                     Log.i(TAG, "Original message <" + item.getMessage() + "> Decripted message <" + result + ">");
                     assertEquals(result, item.getMessage());
                 }
-        } catch (FileNotFoundException e) {
+        } catch (Exception e) {
             e.printStackTrace();
             fail();
         }

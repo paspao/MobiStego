@@ -15,11 +15,18 @@
     <string name="send">Send&#8230;</string>
     <string name="encoding">Encoding message</string>
     <string name="decoding">Decoding message</string>
-    <string name="loading">Loading&#8230;</string>
+    <string name="loading">Loading, please wait&#8230;</string>
     <string name="suredelte">Do you want delete this item?</string>
     <string name="yes">Yes</string>
     <string name="no">No</string>
     <string name="no_mobistego_image">Sorry, this is not a MobiStego image</string>
-    
+    <string name="drawer_open">Open navigation drawer</string>
+    <string name="drawer_close">Close navigation drawer</string>
+    <string name="choose">Choose</string>
+    <array name="operations">
+        <item>Encode from camera</item>
+        <item>Encode from gallery</item>
+        <item>Decode from gallery</item>
+    </array>
 
 </resources>

@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical">
@@ -20,8 +21,8 @@
         android:layout_height="wrap_content"
         android:layout_weight="1">
 
-        <GridView
-            android:id="@+id/grid_view"
+        <ListView
+            android:id="@+id/list_view"
             android:layout_width="fill_parent"
             android:layout_height="fill_parent"
             android:columnWidth="90dp"
@@ -32,44 +33,59 @@
             android:gravity="center">
 
 
-        </GridView>
+        </ListView>
     </LinearLayout>
 
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="horizontal"
-        android:background="@color/material_blue_grey_800">
+    <Button
+        android:layout_width="60dp"
+        android:layout_height="60dp"
+        android:text="+"
+        android:textSize="30dp"
+        android:id="@+id/button_add"
 
-        <ImageButton
-            android:id="@+id/main_button_pick_photo_decode"
-            android:layout_weight="1"
-            android:src="@drawable/photo_32"
-            android:background="@color/material_blue_grey_800"
-            android:layout_width="fill_parent"
-            android:layout_gravity="right"
+        android:background="@drawable/fab"
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentRight="true"
+        android:layout_marginBottom="24dp"
+        android:layout_marginRight="24dp" />
+
+    <!--
+        <LinearLayout
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="@string/decode" />
+            android:orientation="horizontal"
+            android:background="@color/material_blue_grey_800">
 
-        <ImageButton
-            android:id="@+id/main_button_take_photo"
-            android:layout_gravity="left"
-            android:src="@drawable/add_camera_32"
-            android:background="@color/material_blue_grey_800"
-            android:layout_width="fill_parent"
-            android:layout_weight="1"
-            android:layout_height="wrap_content"
-            android:text="@string/take_photo" />
+            <ImageButton
+                android:id="@+id/main_button_pick_photo_decode"
+                android:layout_weight="1"
+                android:src="@drawable/photo_32"
+                android:background="@color/material_blue_grey_800"
+                android:layout_width="fill_parent"
+                android:layout_gravity="right"
+                android:layout_height="wrap_content"
+                android:text="@string/decode" />
 
-        <ImageButton
-            android:id="@+id/main_button_pick_photo"
-            android:layout_weight="1"
-            android:src="@drawable/image"
-            android:background="@color/material_blue_grey_800"
-            android:layout_width="fill_parent"
-            android:layout_gravity="right"
-            android:layout_height="wrap_content"
-            android:text="@string/pict_photo" />
+            <ImageButton
+                android:id="@+id/main_button_take_photo"
+                android:layout_gravity="left"
+                android:src="@drawable/add_camera_32"
+                android:background="@color/material_blue_grey_800"
+                android:layout_width="fill_parent"
+                android:layout_weight="1"
+                android:layout_height="wrap_content"
+                android:text="@string/take_photo" />
 
-    </LinearLayout>
-</LinearLayout>
+            <ImageButton
+                android:id="@+id/main_button_pick_photo"
+                android:layout_weight="1"
+                android:src="@drawable/image"
+                android:background="@color/material_blue_grey_800"
+                android:layout_width="fill_parent"
+                android:layout_gravity="right"
+                android:layout_height="wrap_content"
+                android:text="@string/pict_photo" />
+
+        </LinearLayout>-->
+</RelativeLayout>
+

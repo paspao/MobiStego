@@ -43,8 +43,8 @@ import it.mobistego.utils.GPU;
 public class MainActivity extends FragmentActivity implements MainFragment.OnMainFragment, ComposeFragment.OnComposed, ItemViewFragment.OnItemView,DeleteDialogFragment.OnItemDeleted {
 
     private static final String TAG = MainActivity.class.getName();
-    public static int TEXTURE_SIZE_GL10 = -1;
-    public static int TEXTURE_SIZE_GL20 = -1;
+    public volatile static int TEXTURE_SIZE_GL10 = 0;
+    public volatile static int TEXTURE_SIZE_GL20 = 0;
 
 
     @Override
@@ -90,7 +90,9 @@ public class MainActivity extends FragmentActivity implements MainFragment.OnMai
                     TEXTURE_SIZE_GL10 = result.GL_MAX_TEXTURE_SIZE;
                 }
             });
+
         }
+
 
     }
 
