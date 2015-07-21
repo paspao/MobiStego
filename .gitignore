@@ -33,5 +33,6 @@ proguard/
 
 # Log Files
 *.log
-app/app.iml
+#app/app.iml
 MobiStego.iml
+MobiStego/MobiStego-MobiStego.iml
