@@ -3,7 +3,6 @@ package it.mobistego.fragments;
 import android.app.Activity;
 import android.app.Fragment;
 import android.content.Intent;
-import android.graphics.Bitmap;
 import android.net.Uri;
 import android.os.Bundle;
 import android.provider.MediaStore;
@@ -110,6 +109,8 @@ public class MainFragment extends Fragment implements View.OnClickListener, Adap
 
             listView.setOnItemClickListener(this);
         } else if ((mobiStegoItems != null && mobiTmp != null && mobiStegoItems.size() != mobiTmp.size())) {
+            mobiStegoItems = mobiTmp;
+
             listAdapter.setItems(mobiStegoItems);
             listAdapter.notifyDataSetChanged();
         }
@@ -197,7 +198,7 @@ public class MainFragment extends Fragment implements View.OnClickListener, Adap
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-        Bitmap imageBitmap = null;
+
         switch (requestCode) {
             case Constants.SELECT_PHOTO_DECODE:
                 if (resultCode == Activity.RESULT_OK) {
@@ -205,8 +206,9 @@ public class MainFragment extends Fragment implements View.OnClickListener, Adap
                         final Uri imageUri = data.getData();
                     //final InputStream imageStream = getActivity().getContentResolver().openInputStream(imageUri);
                     //imageBitmap = BitmapFactory.decodeStream(imageStream);
-                        if (imageBitmap != null) {
-                            mCallback.onMainFragmentBitmapSelectedToDecode(new File(imageUri.getPath()));
+                    if (imageUri != null) {
+                        String path = Utility.getRealPathFromURI(imageUri, getActivity().getContentResolver());
+                        mCallback.onMainFragmentBitmapSelectedToDecode(new File(path));
                         }
 
 
@@ -243,5 +245,10 @@ public class MainFragment extends Fragment implements View.OnClickListener, Adap
         }
     }
 
-
+    @Override
+    public void onResume() {
+        super.onResume();
+        listAdapter.notifyDataSetChanged();
+        listAdapter.setItems(Utility.listMobistegoItem());
+    }
 }

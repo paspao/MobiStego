@@ -23,6 +23,7 @@
     <string name="drawer_open">Open navigation drawer</string>
     <string name="drawer_close">Close navigation drawer</string>
     <string name="choose">Choose</string>
+    <string name="hidden">Hidden message:</string>
     <array name="operations">
         <item>Encode from camera</item>
         <item>Encode from gallery</item>

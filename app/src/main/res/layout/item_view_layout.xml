@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="match_parent"
+    android:layout_width="fill_parent"
     android:layout_height="match_parent">
     <!-- Header aligned to top -->
     <RelativeLayout
@@ -8,7 +8,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_alignParentTop="true"
-        android:background="#FC9"
+
         android:gravity="fill_horizontal">
 
         <LinearLayout
@@ -38,7 +38,7 @@
     </RelativeLayout>
 
     <ScrollView
-        android:layout_width="match_parent"
+        android:layout_width="fill_parent"
         android:layout_height="match_parent"
         
         android:layout_below="@id/header">
@@ -47,7 +47,8 @@
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
             android:gravity="center_horizontal"
-            android:orientation="vertical">
+            android:orientation="vertical"
+            android:layout_weight="5">
 
             <ProgressBar
                 android:id="@+id/progrss_view"
@@ -56,14 +57,23 @@
                 android:indeterminate="true" />
             <ImageView
                 android:id="@+id/image_view_item"
-                android:layout_width="match_parent"
+                android:layout_width="fill_parent"
                 android:layout_height="wrap_content"
                 android:visibility="invisible" />
 
             <TextView
+                android:id="@+id/text_view_item_label"
+                android:layout_width="match_parent"
+                android:paddingTop="5dp"
+                android:layout_height="wrap_content"
+                android:text="@string/hidden" />
+
+            <TextView
                 android:id="@+id/text_view_item"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content" />
+                android:layout_height="wrap_content"
+                android:fontFamily="Arial"
+                android:textSize="18dp" />
         </LinearLayout>
     </ScrollView>
 </RelativeLayout>

@@ -17,6 +17,7 @@ import it.mobistego.R;
 import it.mobistego.beans.MobiStegoItem;
 import it.mobistego.business.LSB2bit;
 import it.mobistego.fragments.AlertNotMobistegoFragment;
+import it.mobistego.fragments.MainFragment;
 import it.mobistego.utils.Utility;
 
 /**
@@ -68,6 +69,8 @@ public class DecodeTask extends AsyncTask<File, Void, MobiStegoItem> {
         MobiStegoItem result=null;
         publishProgress();
         Bitmap bitmap = BitmapFactory.decodeFile(params[0].getAbsolutePath());
+        if (bitmap == null)
+            return result;
         List<Bitmap> srcEncodedList = Utility.splitImage(bitmap);
         String decoded = LSB2bit.decodeMessage(srcEncodedList);
         for(Bitmap bitm:srcEncodedList)
@@ -106,6 +109,8 @@ public class DecodeTask extends AsyncTask<File, Void, MobiStegoItem> {
 
             transaction.addToBackStack(null);
             compose.show(transaction, "dialog");
+        } else {
+            ((MainFragment.OnMainFragment) activity).onMainFragmentGridItemSelected(mobiStegoItem);
         }
     }
 }
