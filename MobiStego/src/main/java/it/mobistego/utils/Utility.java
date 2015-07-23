@@ -143,7 +143,7 @@ public class Utility {
             cols++;
 
         //create a bitmap of a size which can hold the complete image after merging
-        Log.d(TAG,"Size width "+originalWidth+" size height "+originalHeight);
+        Log.d(TAG, "Size width " + originalWidth + " size height " + originalHeight);
         Bitmap bitmap = Bitmap.createBitmap(originalWidth, originalHeight, Bitmap.Config.ARGB_4444);
 
         Canvas canvas = new Canvas(bitmap);
@@ -334,20 +334,18 @@ public class Utility {
         File txt = new File(rootDir,
                 fileNameTxt);
         Scanner scan = null;
+        MobiStegoItem result = null;
         try {
             scan = new Scanner(txt);
+
+            StringBuilder message = new StringBuilder();
+            while (scan.hasNextLine())
+                message.append(scan.nextLine());
+            scan.close();
+            result = new MobiStegoItem(message.toString(), imageOriginal, dirName, true);
         } catch (FileNotFoundException e) {
             Log.e(TAG, "Problem while loading", e);
         }
-        StringBuilder message = new StringBuilder();
-        while (scan.hasNextLine())
-            message.append(scan.nextLine());
-        scan.close();
-        MobiStegoItem result = new MobiStegoItem(message.toString(), imageOriginal, dirName, true);
-
-        //BitmapFactory.Options opt=new BitmapFactory.Options();
-        //opt.inSampleSize=2;
-        //Bitmap bitm = BitmapFactory.decodeFile(imageOriginal.getAbsolutePath(),opt);
         return result;
     }
 
