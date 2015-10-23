@@ -207,7 +207,7 @@ public class MainFragment extends Fragment implements View.OnClickListener, Adap
                     //final InputStream imageStream = getActivity().getContentResolver().openInputStream(imageUri);
                     //imageBitmap = BitmapFactory.decodeStream(imageStream);
                     if (imageUri != null) {
-                        String path = Utility.getRealPathFromURI(imageUri, getActivity().getContentResolver());
+                        String path = Utility.getRealPathFromURI(getActivity(), imageUri);
                         mCallback.onMainFragmentBitmapSelectedToDecode(new File(path));
                         }
 
@@ -220,7 +220,7 @@ public class MainFragment extends Fragment implements View.OnClickListener, Adap
                     final Uri imageUri = data.getData();
                     //final InputStream imageStream = getActivity().getContentResolver().openInputStream(imageUri);
                     //imageBitmap = BitmapFactory.decodeStream(imageStream);
-                    String path = Utility.getRealPathFromURI(imageUri, getActivity().getContentResolver());
+                    String path = Utility.getRealPathFromURI(getActivity(), imageUri);
                     mCallback.onMainFragmentBitmapSelectedToEncode(new File(path));
 
 

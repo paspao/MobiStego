@@ -45,7 +45,7 @@ public class ApplicationTest extends ApplicationTestCase<Application> {
     public void testAllProcessLsb2Bit() {
 
         getContext().getResources().getDrawable(R.drawable.test);
-        String message = "Hello World!!!";
+        String message = "Hello è World!!!";
         Bitmap src = BitmapFactory.decodeResource(getContext().getResources(),
                 R.drawable.test);
 

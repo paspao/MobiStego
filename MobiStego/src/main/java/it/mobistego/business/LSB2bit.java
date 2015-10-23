@@ -22,6 +22,7 @@ import android.graphics.Bitmap;
 import android.graphics.Color;
 import android.util.Log;
 
+import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Vector;
@@ -105,7 +106,7 @@ public class LSB2bit {
         List<Bitmap> result = new ArrayList<Bitmap>(splittedImages.size());
         str += END_MESSAGE_COSTANT;
         str = START_MESSAGE_COSTANT + str;
-        byte[] msg = str.getBytes();
+        byte[] msg = str.getBytes(Charset.forName("UTF-8"));
 
         MessageEncodingStatus message = new MessageEncodingStatus();
         message.setMessage(str);
@@ -113,7 +114,7 @@ public class LSB2bit {
         message.setCurrentMessageIndex(0);
         message.setMessageEncoded(false);
         if (hand != null) {
-            hand.setTotal(str.getBytes().length);
+            hand.setTotal(str.getBytes(Charset.forName("UTF-8")).length);
         }
         Log.i(TAG, "Message lenght " + msg.length);
         for (Bitmap bitm : splittedImages) {
@@ -192,10 +193,18 @@ public class LSB2bit {
             if (shiftIndex % toShift.length == 0) {
                 v.addElement(Byte.valueOf(tmp));
                 byte[] nonso = {(v.elementAt(v.size() - 1)).byteValue()};
-                String str = new String(nonso);
+                String str = new String(nonso, Charset.forName("UTF-8"));
                 // if (END_MESSAGE_COSTANT.equals(str)) {
                 if (mesg.getMessage().endsWith(END_MESSAGE_COSTANT)) {
                     Log.i("TEST", "Decoding ended");
+                    //fix utf-8 decoding
+                    byte[] temp = new byte[v.size()];
+                    for (int index = 0; index < temp.length; index++)
+                        temp[index] = v.get(index);
+
+                    String stra = new String(temp, Charset.forName("UTF-8"));
+                    mesg.setMessage(stra.substring(0, stra.length() - 1));
+                    //end fix
                     mesg.setEnded(true);
                     break;
                 } else {
@@ -231,11 +240,12 @@ public class LSB2bit {
         if (message != null) {
             message += END_MESSAGE_COSTANT;
             message = START_MESSAGE_COSTANT + message;
-            result = message.getBytes().length * 4 / 3;
+            result = message.getBytes(Charset.forName("UTF-8")).length * 4 / 3;
         }
 
         return result;
     }
+
 
     public interface ProgressHandler {
 

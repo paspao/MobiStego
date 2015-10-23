@@ -1,5 +1,6 @@
 package it.mobistego.utils;
 
+import java.nio.charset.Charset;
 import java.security.SecureRandom;
 
 import javax.crypto.Cipher;
@@ -17,13 +18,13 @@ import javax.crypto.spec.SecretKeySpec;
 public class SimpleCrypto {
 
     public static String encrypt(String seed, String cleartext) throws Exception {
-        byte[] rawKey = getRawKey(seed.getBytes());
-        byte[] result = encrypt(rawKey, cleartext.getBytes());
+        byte[] rawKey = getRawKey(seed.getBytes(Charset.forName("UTF-8")));
+        byte[] result = encrypt(rawKey, cleartext.getBytes(Charset.forName("UTF-8")));
         return toHex(result);
     }
 
     public static String decrypt(String seed, String encrypted) throws Exception {
-        byte[] rawKey = getRawKey(seed.getBytes());
+        byte[] rawKey = getRawKey(seed.getBytes(Charset.forName("UTF-8")));
         byte[] enc = toByte(encrypted);
         byte[] result = decrypt(rawKey, enc);
         return new String(result);
@@ -57,7 +58,7 @@ public class SimpleCrypto {
     }
 
     public static String toHex(String txt) {
-        return toHex(txt.getBytes());
+        return toHex(txt.getBytes(Charset.forName("UTF-8")));
     }
 
     public static String fromHex(String hex) {
