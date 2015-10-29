@@ -12,7 +12,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.Button;
-import android.widget.ImageButton;
 import android.widget.ListView;
 
 import com.afollestad.materialdialogs.MaterialDialog;
@@ -52,10 +51,7 @@ public class MainFragment extends Fragment implements View.OnClickListener, Adap
     private static final String TAG = MainFragment.class.getName();
 
     private OnMainFragment mCallback;
-    private ImageButton buttonTakePhoto;
     private Button buttonAdd;
-    private ImageButton buttonPickPhoto;
-    private ImageButton buttonPickPhotoDecode;
     private ListView listView;
     private List<MobiStegoItem> mobiStegoItems;
     private File filePhotoTaken;
@@ -64,11 +60,11 @@ public class MainFragment extends Fragment implements View.OnClickListener, Adap
 
 
     public interface OnMainFragment {
-        public void onMainFragmentBitmapSelectedToEncode(File btm);
+        void onMainFragmentBitmapSelectedToEncode(File btm);
 
-        public void onMainFragmentBitmapSelectedToDecode(File btm);
+        void onMainFragmentBitmapSelectedToDecode(File btm);
 
-        public void onMainFragmentGridItemSelected(MobiStegoItem mobiStegoItem);
+        void onMainFragmentGridItemSelected(MobiStegoItem mobiStegoItem);
 
     }
 
@@ -76,7 +72,7 @@ public class MainFragment extends Fragment implements View.OnClickListener, Adap
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        List<MobiStegoItem> mobiTmp = null;
+        List<MobiStegoItem> mobiTmp;
 
         mobiTmp = Utility.listMobistegoItem();
 
@@ -84,13 +80,7 @@ public class MainFragment extends Fragment implements View.OnClickListener, Adap
             createdView = inflater.inflate(R.layout.main_layout, container, false);
             listView = (ListView) createdView.findViewById(R.id.list_view);
             buttonAdd = (Button) createdView.findViewById(R.id.button_add);
-            /*buttonPickPhoto = (ImageButton) createdView.findViewById(R.id.main_button_pick_photo);
-            buttonTakePhoto = (ImageButton) createdView.findViewById(R.id.main_button_take_photo);
-            buttonPickPhotoDecode = (ImageButton) createdView.findViewById(R.id.main_button_pick_photo_decode);
-            buttonTakePhoto.setOnClickListener(this);
-            buttonPickPhoto.setOnClickListener(this);
-            buttonPickPhotoDecode.setOnClickListener(this);
-*/
+
             buttonAdd.setOnClickListener(this);
 
             boolean changed = false;
@@ -102,9 +92,10 @@ public class MainFragment extends Fragment implements View.OnClickListener, Adap
             if (listAdapter == null) {
                 listAdapter = new ListAdapter(getActivity(), mobiStegoItems);
                 listView.setAdapter(listAdapter);
-            } else if (changed) {
-
             }
+            /*else if (changed) {
+
+            }*/
 
 
             listView.setOnItemClickListener(this);
@@ -248,7 +239,8 @@ public class MainFragment extends Fragment implements View.OnClickListener, Adap
     @Override
     public void onResume() {
         super.onResume();
-        listAdapter.notifyDataSetChanged();
         listAdapter.setItems(Utility.listMobistegoItem());
+        listAdapter.notifyDataSetChanged();
+
     }
 }

@@ -147,7 +147,7 @@ public class EncodeTask extends AsyncTask<MobiStegoItem, Integer, MobiStegoItem>
         Bundle args = new Bundle();
         MainFragment mainFragment = new MainFragment();
         mainFragment.setArguments(args);
-
+        Utility.listMobistegoItem();
 
         FragmentTransaction tx = activity.getFragmentManager().beginTransaction();
         tx.replace(R.id.listFragment, mainFragment, Constants.CONTAINER);

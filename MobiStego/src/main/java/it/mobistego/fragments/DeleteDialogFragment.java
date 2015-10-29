@@ -32,7 +32,7 @@ public class DeleteDialogFragment extends DialogFragment{
     
     
     public interface OnItemDeleted{
-        public void onDelete();
+        void onDelete();
         
     }
     
