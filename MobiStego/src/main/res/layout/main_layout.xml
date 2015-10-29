@@ -40,6 +40,7 @@
         android:layout_width="60dp"
         android:layout_height="60dp"
         android:text="+"
+        android:textColor="#ffffff"
         android:textSize="30dp"
         android:id="@+id/button_add"
 
