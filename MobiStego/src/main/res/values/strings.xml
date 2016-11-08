@@ -29,5 +29,6 @@
         <item>Encode from gallery</item>
         <item>Decode from gallery</item>
     </array>
+    <string name="add">+</string>
 
 </resources>

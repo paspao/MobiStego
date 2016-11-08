@@ -39,9 +39,9 @@
     <Button
         android:layout_width="60dp"
         android:layout_height="60dp"
-        android:text="+"
+        android:text="@string/add"
         android:textColor="#ffffff"
-        android:textSize="30dp"
+        android:textSize="30sp"
         android:id="@+id/button_add"
 
         android:background="@drawable/fab"

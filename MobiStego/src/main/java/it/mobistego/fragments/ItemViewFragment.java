@@ -8,6 +8,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
@@ -39,8 +40,8 @@ public class ItemViewFragment extends Fragment implements View.OnClickListener {
     private MobiStegoItem mobiStegoItem;
     private ImageView imageView;
     private ProgressBar progressBar;
-    private Button buttonDelete;
-    private Button buttonShare;
+    private ImageButton buttonDelete;
+    private ImageButton buttonShare;
     private TextView textView;
     private OnItemView mCallback;
 
@@ -54,8 +55,8 @@ public class ItemViewFragment extends Fragment implements View.OnClickListener {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.item_view_layout, container, false);
-        buttonDelete = (Button) view.findViewById(R.id.button_delete);
-        buttonShare = (Button) view.findViewById(R.id.button_share);
+        buttonDelete = (ImageButton) view.findViewById(R.id.button_delete);
+        buttonShare = (ImageButton) view.findViewById(R.id.button_share);
         textView = (TextView) view.findViewById(R.id.text_view_item);
         imageView = (ImageView) view.findViewById(R.id.image_view_item);
         progressBar = (ProgressBar) view.findViewById(R.id.progrss_view);

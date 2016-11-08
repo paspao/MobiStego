@@ -5,6 +5,8 @@ import android.app.Dialog;
 import android.app.DialogFragment;
 import android.graphics.Bitmap;
 import android.graphics.Color;
+import android.graphics.ColorMatrix;
+import android.graphics.ColorMatrixColorFilter;
 import android.graphics.PixelFormat;
 import android.os.Bundle;
 import android.util.Log;
@@ -60,6 +62,12 @@ public class ComposeFragment extends DialogFragment implements View.OnClickListe
                              Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.compose_layout, container, false);
         imageView = (ImageView) view.findViewById(R.id.compose_background);
+        ColorMatrix matrix = new ColorMatrix();
+        matrix.setSaturation(0);
+
+        ColorMatrixColorFilter filter = new ColorMatrixColorFilter(matrix);
+        imageView.setColorFilter(filter);
+
         progressBar = (ProgressBar) view.findViewById(R.id.progrss_compose);
         editMessage = (EditText) view.findViewById(R.id.compose_edit);
         buttonEncode = (Button) view.findViewById(R.id.compose_button_encode);

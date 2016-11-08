@@ -44,8 +44,9 @@
             android:gravity="center_vertical"
             android:layout_height="fill_parent"
             android:hint="@string/enter_text"
+            android:textColorHint="#00d600"
             android:inputType="textMultiLine"
-            android:textColor="#e6ffffff"
+            android:textColor="#00d600"
             android:background="#e6535353"
             android:minLines="15"
 

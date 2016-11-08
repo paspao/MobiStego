@@ -1,11 +1,11 @@
 <resources>
 
     <!-- Base application theme. -->
-    <style name="AppTheme" parent="Base.ThemeOverlay.AppCompat.Light">
 
-        <!-- Customize your theme here. -->
-        <item name="colorPrimary">#ff1d79b1</item>
-        <item name="colorPrimaryDark">#ff084d95</item>
+
+    <style name="mobistTheme" parent="Base.Theme.AppCompat.Light" >
+        <item name="colorPrimary">@color/primary_material_light_1</item>
+        <item name="colorPrimaryDark">@color/primary_material_light_2</item>
     </style>
 
 </resources>

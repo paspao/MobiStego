@@ -6,6 +6,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.Button;
+import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
 
@@ -71,8 +72,8 @@ public class ListAdapter extends BaseAdapter {
 
             ImageView image = (ImageView) gridView.findViewById(R.id.grid_image);
             View layoutButton = gridView.findViewById(R.id.grid_item_buttons);
-            Button buttonShare = (Button) gridView.findViewById(R.id.button_grid_share);
-            Button buttonDelete = (Button) gridView.findViewById(R.id.button_grid_delete);
+            ImageButton buttonShare = (ImageButton) gridView.findViewById(R.id.button_grid_share);
+            ImageButton buttonDelete = (ImageButton) gridView.findViewById(R.id.button_grid_delete);
             buttonDelete.setOnClickListener(new View.OnClickListener() {
 
                 @Override

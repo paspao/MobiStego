@@ -1,12 +1,16 @@
 package it.mobistego;
 
+import android.Manifest;
 import android.app.Fragment;
 import android.app.FragmentManager;
 import android.app.FragmentTransaction;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
+import android.support.annotation.NonNull;
+import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.FragmentActivity;
 
 import java.io.File;
@@ -71,11 +75,7 @@ public class MainActivity extends FragmentActivity implements MainFragment.OnMai
     }
 
     private void init() {
-        File f = new File(Environment.getExternalStorageDirectory(),
-                Constants.EXT_DIR);
-        if (!f.exists()) {
-            f.mkdirs();
-        }
+
         if (TEXTURE_SIZE_GL20 == -1 && TEXTURE_SIZE_GL10 == -1) {
             GPU gpu = new GPU(this);
             gpu.loadOpenGLGles20Info(new GPU.OnCompleteCallback<GPU.OpenGLGles20Info>() {
@@ -92,8 +92,28 @@ public class MainActivity extends FragmentActivity implements MainFragment.OnMai
             });
 
         }
+        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED) {
+            ActivityCompat.requestPermissions(this, new String[]{android.Manifest.permission.CAMERA},
+                    123);
+        }
+        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
+            ActivityCompat.requestPermissions(this, new String[]{android.Manifest.permission.WRITE_EXTERNAL_STORAGE},
+                    124);
+        }
 
 
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+        if (requestCode == 124) {
+            File f = new File(Environment.getExternalStorageDirectory(),
+                    Constants.EXT_DIR);
+            if (!f.exists()) {
+                f.mkdirs();
+            }
+        }
     }
 
     @Override
