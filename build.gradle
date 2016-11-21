@@ -2,6 +2,7 @@ buildscript {
     repositories {
 
         //maven { url 'http://itnag094/artifactory/repoall' }
+        jcenter()
         mavenCentral()
 
     }
