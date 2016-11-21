@@ -3,7 +3,7 @@ apply plugin: 'com.android.application'
 
 repositories {
 
-      maven { url 'http://itnag094/artifactory/repoall' }
+      //maven { url 'http://itnag094/artifactory/repoall' }
       mavenCentral()
 
 }
@@ -37,7 +37,7 @@ android {
 
 dependencies {
     //compile fileTree(dir: 'libs', include: ['*.jar'])
-    compile 'com.android.support:appcompat-v7:25.0.0'
+    compile 'com.android.support:appcompat-v7:25.0.1'
     compile 'com.afollestad.material-dialogs:core:0.9.1.0'
 
     //compile 'com.facebook.fresco:fresco:0.1.0+'
