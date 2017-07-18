@@ -7,11 +7,16 @@ import android.app.FragmentTransaction;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.net.Uri;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Environment;
 import android.support.annotation.NonNull;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.FragmentActivity;
+import android.util.Log;
+import android.view.View;
+import android.widget.TextView;
+import android.widget.Toast;
 
 import java.io.File;
 
@@ -24,6 +29,7 @@ import it.mobistego.tasks.DecodeTask;
 import it.mobistego.tasks.EncodeTask;
 import it.mobistego.utils.Constants;
 import it.mobistego.utils.GPU;
+import it.mobistego.utils.Utility;
 
 /**
  * Created by paspao on 17/01/15.
@@ -92,29 +98,11 @@ public class MainActivity extends FragmentActivity implements MainFragment.OnMai
             });
 
         }
-        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED) {
-            ActivityCompat.requestPermissions(this, new String[]{android.Manifest.permission.CAMERA},
-                    123);
-        }
-        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
-            ActivityCompat.requestPermissions(this, new String[]{android.Manifest.permission.WRITE_EXTERNAL_STORAGE},
-                    124);
-        }
 
 
     }
 
-    @Override
-    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
-        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
-        if (requestCode == 124) {
-            File f = new File(Environment.getExternalStorageDirectory(),
-                    Constants.EXT_DIR);
-            if (!f.exists()) {
-                f.mkdirs();
-            }
-        }
-    }
+
 
     @Override
     public void onMainFragmentBitmapSelectedToEncode(File btm) {
@@ -159,11 +147,11 @@ public class MainActivity extends FragmentActivity implements MainFragment.OnMai
     }
 
     @Override
-    public void onMessageComposed(String message, File stegan) {
+    public void onMessageComposed(String message, String password,File stegan) {
 
 
         EncodeTask task = new EncodeTask(this);
-        MobiStegoItem item = new MobiStegoItem(message, stegan, Constants.NO_NAME, false);
+        MobiStegoItem item = new MobiStegoItem(message, stegan, Constants.NO_NAME, false,password);
         task.execute(item);
 
     }
@@ -208,4 +196,39 @@ public class MainActivity extends FragmentActivity implements MainFragment.OnMai
             startActivity(Intent.createChooser(emailIntent, getResources().getString(R.string.send)));
         }
     }
+
+    @Override
+    public void itemViewOnDecrypt(String message, String password, TextView view) {
+            DecodePasswordTask dd=new DecodePasswordTask(view);
+        dd.execute(message,password);
+    }
+    private class DecodePasswordTask extends AsyncTask<String, Void, String> {
+
+        private TextView view;
+        public DecodePasswordTask(TextView view){
+            this.view=view;
+        }
+
+        @Override
+        protected String doInBackground(String... message) {
+            String result=null;
+            try {
+                result=Utility.decrypt(message[0].getBytes("UTF-8"),message[1]);
+            } catch (Exception e) {
+
+                Log.e(TAG,e.getMessage(),e);
+            }
+
+            return result;
+    }
+
+    @Override
+    protected void onPostExecute(String result) {
+        super.onPostExecute(result);
+        if(!Utility.isEmpty(result))
+            view.setText(result);
+        else
+            Toast.makeText(MainActivity.this,R.string.wrong_password,Toast.LENGTH_LONG).show();
+    }
+}
 }

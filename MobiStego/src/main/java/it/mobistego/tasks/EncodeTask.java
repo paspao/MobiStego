@@ -58,6 +58,16 @@ public class EncodeTask extends AsyncTask<MobiStegoItem, Integer, MobiStegoItem>
         maxProgeress = 0;
         if (params.length > 0) {
             MobiStegoItem mobistego = params[0];
+            //Encrypt
+            if(!Utility.isEmpty(mobistego.getPassword()))
+            {
+                try {
+                    String ecnrypted64=Utility.encrypt(mobistego.getMessage(),mobistego.getPassword());
+                    mobistego.setMessage(ecnrypted64);
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+            }
             int pixelNeeded = LSB2bit.numberOfPixelForMessage(mobistego.getMessage());
             int squareBlockNeeded = Utility.squareBlockNeeded(pixelNeeded);
 

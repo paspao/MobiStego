@@ -1,12 +1,12 @@
 buildscript {
     repositories {
 
-        //maven { url 'http://itnag094/artifactory/repoall' }
+        maven { url 'http://itnag094/artifactory/repoall' }
         jcenter()
         mavenCentral()
 
     }
     dependencies {
-        classpath 'com.android.tools.build:gradle:2.2.2'
+        classpath 'com.android.tools.build:gradle:2.3.3'
     }
 }

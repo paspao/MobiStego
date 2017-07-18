@@ -29,13 +29,14 @@ public class MobiStegoItem {
     private File bitmapCompressed;
     private boolean encoded;
     private String uuid;
+    private String password;
 
     private MobiStegoItem() {
         super();
 
     }
 
-    public MobiStegoItem(String message, File bitmap, String uuid, boolean encoded) {
+    public MobiStegoItem(String message, File bitmap, String uuid, boolean encoded,String password) {
         this();
         this.bitmap = bitmap;
         String tmp = bitmap.getAbsolutePath();
@@ -43,6 +44,7 @@ public class MobiStegoItem {
         this.bitmapCompressed = new File(tmp + Constants.FILE_JPG_EXT);
         this.encoded = encoded;
         this.message = message;
+        this.password=password;
     }
 
     public String getMessage() {
@@ -81,5 +83,11 @@ public class MobiStegoItem {
         return bitmapCompressed;
     }
 
+    public String getPassword() {
+        return password;
+    }
 
+    public void setPassword(String password) {
+        this.password = password;
+    }
 }

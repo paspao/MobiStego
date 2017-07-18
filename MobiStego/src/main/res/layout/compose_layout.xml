@@ -51,6 +51,32 @@
             android:minLines="15"
 
             android:alpha="0.6" />
+        <LinearLayout
+            android:layout_weight="2"
+            android:weightSum="2"
+            android:layout_width="fill_parent"
+            android:layout_height="fill_parent"
+            android:orientation="horizontal">
+
+            <CheckBox
+                android:id="@+id/checkBoxSecret"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent" />
+            <EditText
+                android:layout_width="match_parent"
+                android:id="@+id/compose_edit_password"
+                android:layout_height="wrap_content"
+                android:hint="@string/enter_password"
+                android:textColorHint="#00d600"
+                android:inputType="textMultiLine"
+                android:textColor="#00d600"
+                android:background="#e6535353"
+                android:gravity="center_vertical"
+                android:enabled="false"
+                android:minLines="2"/>
+
+
+        </LinearLayout>
 
         <LinearLayout
             android:layout_weight="2"

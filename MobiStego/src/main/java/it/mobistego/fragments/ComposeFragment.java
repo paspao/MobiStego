@@ -15,6 +15,8 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.Window;
 import android.widget.Button;
+import android.widget.CheckBox;
+import android.widget.CompoundButton;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
@@ -27,20 +29,27 @@ import it.mobistego.tasks.BitmapWorkerTask;
 /**
  * Created by paspao on 28/01/15.
  */
-public class ComposeFragment extends DialogFragment implements View.OnClickListener {
+public class ComposeFragment extends DialogFragment implements View.OnClickListener,CompoundButton.OnCheckedChangeListener {
 
     private static final String TAG = ComposeFragment.class.getName();
     private OnComposed mCallback;
     private ImageView imageView;
     private ProgressBar progressBar;
     private EditText editMessage;
+    private EditText editPassword;
+    private CheckBox checkPassword;
     private File choosenBitmap;
     private Button buttonEncode;
+
+    @Override
+    public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+        editPassword.setEnabled(isChecked);
+    }
 
 
     public interface OnComposed {
 
-        void onMessageComposed(String message, File stegan);
+        void onMessageComposed(String message, String password,File stegan);
 
     }
 
@@ -71,11 +80,14 @@ public class ComposeFragment extends DialogFragment implements View.OnClickListe
         progressBar = (ProgressBar) view.findViewById(R.id.progrss_compose);
         editMessage = (EditText) view.findViewById(R.id.compose_edit);
         buttonEncode = (Button) view.findViewById(R.id.compose_button_encode);
+        editPassword= (EditText) view.findViewById(R.id.compose_edit_password);
+        checkPassword=(CheckBox) view.findViewById(R.id.checkBoxSecret);
 
 
         BitmapWorkerTask workerTask = new BitmapWorkerTask(imageView, progressBar);
         workerTask.execute(choosenBitmap);
         buttonEncode.setOnClickListener(this);
+        checkPassword.setOnCheckedChangeListener(this);
 
         return view;
     }
@@ -102,7 +114,9 @@ public class ComposeFragment extends DialogFragment implements View.OnClickListe
             switch (id) {
                 case R.id.compose_button_encode:
                     String message = editMessage.getText().toString();
-                    mCallback.onMessageComposed(message, choosenBitmap);
+                    String password=editPassword.getText().toString();
+
+                    mCallback.onMessageComposed(message,checkPassword.isChecked()?password:null, choosenBitmap);
 
                     dismiss();
                     break;

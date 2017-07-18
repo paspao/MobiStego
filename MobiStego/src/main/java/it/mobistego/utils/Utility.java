@@ -7,6 +7,7 @@ import android.graphics.Canvas;
 import android.net.Uri;
 import android.os.Environment;
 import android.provider.MediaStore;
+import android.util.Base64;
 import android.util.Log;
 
 import java.io.File;
@@ -15,6 +16,13 @@ import java.io.FileOutputStream;
 import java.io.FilenameFilter;
 import java.io.IOException;
 import java.io.OutputStreamWriter;
+import java.io.UnsupportedEncodingException;
+import java.security.InvalidAlgorithmParameterException;
+import java.security.InvalidKeyException;
+import java.security.Key;
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
+import java.security.SecureRandom;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -23,6 +31,13 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Scanner;
 import java.util.UUID;
+
+import javax.crypto.BadPaddingException;
+import javax.crypto.Cipher;
+import javax.crypto.IllegalBlockSizeException;
+import javax.crypto.NoSuchPaddingException;
+import javax.crypto.spec.IvParameterSpec;
+import javax.crypto.spec.SecretKeySpec;
 
 import it.mobistego.beans.MobiStegoItem;
 
@@ -281,7 +296,7 @@ public class Utility {
         writer.close();
         foutText.flush();
         foutText.close();
-        MobiStegoItem result = new MobiStegoItem(message, originalImage, name, true);
+        MobiStegoItem result = new MobiStegoItem(message, originalImage, name, true,"");
 
         return result;
     }
@@ -342,7 +357,7 @@ public class Utility {
             while (scan.hasNextLine())
                 message.append(scan.nextLine());
             scan.close();
-            result = new MobiStegoItem(message.toString(), imageOriginal, dirName, true);
+            result = new MobiStegoItem(message.toString(), imageOriginal, dirName, true,"");
         } catch (FileNotFoundException e) {
             Log.e(TAG, "Problem while loading", e);
         }
@@ -438,4 +453,37 @@ public class Utility {
     }
 
 
+    public static String encrypt(String valueToEnc,String password) throws Exception {
+
+        //byte[] keyAsBytes;
+        //keyAsBytes = password.getBytes("UTF-8");
+        //Key key = new SecretKeySpec(keyAsBytes, "AES");
+        MessageDigest digester = MessageDigest.getInstance("SHA-256");
+        digester.update(String.valueOf(password).getBytes("UTF-8"));
+        byte[] key = digester.digest();
+        SecretKeySpec spec = new SecretKeySpec(key, "AES");
+
+        Cipher c = Cipher.getInstance("AES/ECB/PKCS5Padding");
+        c.init(Cipher.ENCRYPT_MODE, spec);  //////////LINE 20
+        byte[] encValue = c.doFinal(valueToEnc.getBytes("UTF-8"));
+        String encryptedValue = Base64.encodeToString(encValue,Base64.NO_CLOSE);
+        return encryptedValue;
+    }
+    public static String decrypt(byte[] valueToDecode64,String password) throws Exception {
+        byte[] todecode= Base64.decode(valueToDecode64,Base64.NO_WRAP);
+        //byte[] keyAsBytes;
+        //keyAsBytes = password.getBytes("UTF-8");
+        //Key key = new SecretKeySpec(keyAsBytes, "AES");
+        MessageDigest digester = MessageDigest.getInstance("SHA-256");
+        digester.update(String.valueOf(password).getBytes("UTF-8"));
+        byte[] key = digester.digest();
+        SecretKeySpec spec = new SecretKeySpec(key, "AES");
+
+        Cipher c = Cipher.getInstance("AES/ECB/PKCS5Padding");
+        c.init(Cipher.DECRYPT_MODE, spec);  //////////LINE 20
+        byte[] encValue = c.doFinal(todecode);
+        //String encryptedValue = Base64.encodeToString(encValue,Base64.DEFAULT);
+        //return encryptedValue;
+        return new String(encValue,"UTF-8");
+    }
 }

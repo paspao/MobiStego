@@ -77,6 +77,11 @@
                 android:layout_height="wrap_content"
                 android:fontFamily="Arial"
                 android:textSize="18dp" />
+            <Button
+                android:id="@+id/button_decrypt"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/try_decode"/>
         </LinearLayout>
     </ScrollView>
 </RelativeLayout>

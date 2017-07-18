@@ -1,11 +1,18 @@
 package it.mobistego.fragments;
 
+import android.Manifest;
 import android.app.Activity;
+import android.app.AlertDialog;
 import android.app.Fragment;
+import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.net.Uri;
 import android.os.Bundle;
+import android.os.Environment;
 import android.provider.MediaStore;
+import android.support.annotation.NonNull;
+import android.support.v4.app.ActivityCompat;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -13,6 +20,7 @@ import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.ListView;
+import android.widget.Toast;
 
 import com.afollestad.materialdialogs.MaterialDialog;
 
@@ -105,6 +113,16 @@ public class MainFragment extends Fragment implements View.OnClickListener, Adap
             listAdapter.setItems(mobiStegoItems);
             listAdapter.notifyDataSetChanged();
         }
+        if (ActivityCompat.checkSelfPermission(getActivity(), Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED) {
+            ActivityCompat.requestPermissions(getActivity(), new String[]{android.Manifest.permission.CAMERA},
+                    123);
+        }
+        if (ActivityCompat.checkSelfPermission(getActivity(), Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
+            ActivityCompat.requestPermissions(getActivity(), new String[]{android.Manifest.permission.WRITE_EXTERNAL_STORAGE},
+                    124);
+        }
+
+
         return createdView;
     }
 
@@ -189,6 +207,12 @@ public class MainFragment extends Fragment implements View.OnClickListener, Adap
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
+        if (ActivityCompat.checkSelfPermission(getActivity(), Manifest.permission.WRITE_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED) {
+            File f = new File(Environment.getExternalStorageDirectory(),
+                    Constants.EXT_DIR);
+            if (!f.exists()) {
+                f.mkdirs();
+            }
 
         switch (requestCode) {
             case Constants.SELECT_PHOTO_DECODE:
@@ -233,6 +257,11 @@ public class MainFragment extends Fragment implements View.OnClickListener, Adap
             default:
                 Log.i(TAG, "Unknown result");
                 break;
+        }
+        }
+        else
+        {
+            Toast.makeText(getActivity(),R.string.no_permission,Toast.LENGTH_LONG).show();
         }
     }
 

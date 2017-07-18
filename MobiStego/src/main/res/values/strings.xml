@@ -4,8 +4,9 @@
     <string name="app_name">MobiStego</string>
     <string name="main_title">MobiStego</string>
     <string name="enter_text">Enter your text&#8230;</string>
+    <string name="enter_password">Enter your password&#8230;</string>
     <string name="action_settings">Settings</string>
-    <string name="ok">OK</string>
+    <string name="ok">Ok</string>
     <string name="encode">Encode</string>
     <string name="decode">Decode</string>
     <string name="pict_photo">Pict</string>
@@ -19,6 +20,7 @@
     <string name="suredelte">Do you want delete this item?</string>
     <string name="yes">Yes</string>
     <string name="no">No</string>
+    <string name="abort">Abort</string>
     <string name="no_mobistego_image">Sorry, this is not a MobiStego image</string>
     <string name="drawer_open">Open navigation drawer</string>
     <string name="drawer_close">Close navigation drawer</string>
@@ -30,5 +32,9 @@
         <item>Decode from gallery</item>
     </array>
     <string name="add">+</string>
+    <string name="no_permission">No permissions, restart app</string>
+    <string name="try_decode">Try to decode</string>
+    <string name="wrong_password">Wrong password</string>
+
 
 </resources>

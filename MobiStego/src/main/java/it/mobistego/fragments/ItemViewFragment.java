@@ -1,13 +1,16 @@
 package it.mobistego.fragments;
 
 import android.app.Activity;
+import android.app.AlertDialog;
 import android.app.Fragment;
+import android.content.DialogInterface;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
@@ -42,6 +45,7 @@ public class ItemViewFragment extends Fragment implements View.OnClickListener {
     private ProgressBar progressBar;
     private ImageButton buttonDelete;
     private ImageButton buttonShare;
+    private Button buttonDecode;
     private TextView textView;
     private OnItemView mCallback;
 
@@ -49,6 +53,8 @@ public class ItemViewFragment extends Fragment implements View.OnClickListener {
         void itemViewOnDelete(MobiStegoItem mobiStegoItem);
 
         void itemViewOnShare(MobiStegoItem mobiStegoItem);
+
+        void itemViewOnDecrypt(String message,String password,TextView textView);
     }
 
     @Override
@@ -60,11 +66,13 @@ public class ItemViewFragment extends Fragment implements View.OnClickListener {
         textView = (TextView) view.findViewById(R.id.text_view_item);
         imageView = (ImageView) view.findViewById(R.id.image_view_item);
         progressBar = (ProgressBar) view.findViewById(R.id.progrss_view);
+        buttonDecode=(Button) view.findViewById(R.id.button_decrypt);
         BitmapWorkerTask workerBimt = new BitmapWorkerTask(imageView, progressBar);
         workerBimt.execute(mobiStegoItem.getBitmapCompressed());
         textView.setText(mobiStegoItem.getMessage());
         buttonDelete.setOnClickListener(this);
         buttonShare.setOnClickListener(this);
+        buttonDecode.setOnClickListener(this);
         return view;
     }
 
@@ -94,6 +102,29 @@ public class ItemViewFragment extends Fragment implements View.OnClickListener {
                 break;
             case R.id.button_share:
                 mCallback.itemViewOnShare(mobiStegoItem);
+                break;
+            case R.id.button_decrypt:
+                final AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(getActivity());
+                alertDialogBuilder.setMessage(R.string.enter_password);
+                alertDialogBuilder.setView(R.layout.password_dialog);
+                alertDialogBuilder.setPositiveButton(R.string.ok,
+                        new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int arg1) {
+                                EditText editText=(EditText) ((AlertDialog) dialog).findViewById(R.id.text_password_dialog);
+                                mCallback.itemViewOnDecrypt(mobiStegoItem.getMessage(),editText.getText().toString(),textView);
+
+                            }
+                        });
+                alertDialogBuilder.setNegativeButton(R.string.abort,new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        dialog.dismiss();
+                    }
+                });
+
+                AlertDialog alertDialog = alertDialogBuilder.create();
+                alertDialog.show();
                 break;
             default:
                 Log.d(TAG, "Unknown Action");

@@ -4,10 +4,18 @@ import android.app.Application;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.test.ApplicationTestCase;
+import android.util.Base64;
 import android.util.Log;
 
 import java.io.IOException;
+import java.security.InvalidAlgorithmParameterException;
+import java.security.InvalidKeyException;
+import java.security.NoSuchAlgorithmException;
 import java.util.List;
+
+import javax.crypto.BadPaddingException;
+import javax.crypto.IllegalBlockSizeException;
+import javax.crypto.NoSuchPaddingException;
 
 import it.mobistego.beans.MobiStegoItem;
 import it.mobistego.business.LSB2bit;
@@ -174,6 +182,23 @@ public class ApplicationTest extends ApplicationTestCase<Application> {
             fail();
         }
 
+    }
+
+    public void testKeySecret(){
+        try {
+            String encode=Utility.encrypt("CiaoPipppo","pippopippo");
+            //String encoded64=Base64.encodeToString(encode.getBytes("UTF-8"),Base64.NO_CLOSE);
+            Log.i(TAG,"Base64: " +encode);
+
+            String decoded=Utility.decrypt(encode.getBytes("UTF-8"),"pippopippo");
+
+
+            Log.i(TAG,decoded);
+
+        } catch (Exception e) {
+            e.printStackTrace();
+            fail();
+        }
     }
 
 }
