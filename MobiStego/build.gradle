@@ -3,24 +3,25 @@ apply plugin: 'com.android.application'
 
 repositories {
 
-      maven { url 'http://itnag094/artifactory/repoall' }
-      jcenter()
-      mavenCentral()
+    maven { url 'http://itnag094/artifactory/repoall' }
+    jcenter()
+    mavenCentral()
 
 }
 
 android {
+
     compileSdkVersion 25
     buildToolsVersion '26.0.0'
-
     defaultConfig {
         applicationId "it.mobistego"
         minSdkVersion 21
-        multiDexEnabled  true
+        multiDexEnabled true
         targetSdkVersion 26
-        versionCode 12
-        versionName "2.0.11"
+        versionCode 13
+        versionName "2.0.13"
         testInstrumentationRunner "com.android.test.runner.MultiDexTestRunner"
+
     }
     lintOptions {
         abortOnError false
@@ -33,10 +34,10 @@ android {
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }
     }
-
-
     testOptions {
         reportDir = "$project.buildDir/report"
+    }
+    productFlavors {
     }
 }
 
@@ -44,6 +45,5 @@ dependencies {
     //compile fileTree(dir: 'libs', include: ['*.jar'])
     compile 'com.android.support:appcompat-v7:25.3.1'
     compile 'com.afollestad.material-dialogs:core:0.9.1.0'
-
     //compile 'com.facebook.fresco:fresco:0.1.0+'
 }
