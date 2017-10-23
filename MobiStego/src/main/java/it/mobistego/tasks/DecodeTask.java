@@ -78,7 +78,7 @@ public class DecodeTask extends AsyncTask<File, Void, MobiStegoItem> {
         if(!Utility.isEmpty(decoded)) {
             try {
                 isMobistegoImage=true;
-                result = Utility.saveMobiStegoItem(decoded, bitmap);
+                result = Utility.saveMobiStegoItem(decoded, bitmap,activity);
             } catch (IOException e) {
                 Log.e(TAG, "Error", e);
                 //e.printStackTrace();

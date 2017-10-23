@@ -84,7 +84,7 @@ public class EncodeTask extends AsyncTask<MobiStegoItem, Integer, MobiStegoItem>
 
             List<Bitmap> srcList = Utility.splitImage(bitm);
 
-            bitm.recycle();
+
             List<Bitmap> encodedList = LSB2bit.encodeMessage(srcList, mobistego.getMessage(), new LSB2bit.ProgressHandler() {
                 @Override
                 public void setTotal(int tot) {
@@ -106,13 +106,14 @@ public class EncodeTask extends AsyncTask<MobiStegoItem, Integer, MobiStegoItem>
                 }
             });
             //free memory
+            bitm.recycle();
             for (Bitmap bitmamp : srcList)
                 bitmamp.recycle();
 
             System.gc();
             Bitmap srcEncoded = Utility.mergeImage(encodedList, originalHeight, originalWidth);
             try {
-                result = Utility.saveMobiStegoItem(mobistego.getMessage(), srcEncoded);
+                result = Utility.saveMobiStegoItem(mobistego.getMessage(), srcEncoded,activity);
                 result.setEncoded(true);
             } catch (IOException e) {
                 e.printStackTrace();
@@ -157,7 +158,7 @@ public class EncodeTask extends AsyncTask<MobiStegoItem, Integer, MobiStegoItem>
         Bundle args = new Bundle();
         MainFragment mainFragment = new MainFragment();
         mainFragment.setArguments(args);
-        Utility.listMobistegoItem();
+        Utility.listMobistegoItem(activity);
 
         FragmentTransaction tx = activity.getFragmentManager().beginTransaction();
         tx.replace(R.id.listFragment, mainFragment, Constants.CONTAINER);

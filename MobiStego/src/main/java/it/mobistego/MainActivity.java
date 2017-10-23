@@ -25,6 +25,7 @@ import it.mobistego.fragments.ComposeFragment;
 import it.mobistego.fragments.DeleteDialogFragment;
 import it.mobistego.fragments.ItemViewFragment;
 import it.mobistego.fragments.MainFragment;
+import it.mobistego.tasks.DecodePasswordTask;
 import it.mobistego.tasks.DecodeTask;
 import it.mobistego.tasks.EncodeTask;
 import it.mobistego.utils.Constants;
@@ -57,6 +58,7 @@ public class MainActivity extends FragmentActivity implements MainFragment.OnMai
     public volatile static int TEXTURE_SIZE_GL20 = 0;
 
 
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -69,6 +71,7 @@ public class MainActivity extends FragmentActivity implements MainFragment.OnMai
         tx.replace(R.id.listFragment, mainF, Constants.CONTAINER);
 
         tx.commit();
+
 
     }
 
@@ -199,36 +202,9 @@ public class MainActivity extends FragmentActivity implements MainFragment.OnMai
 
     @Override
     public void itemViewOnDecrypt(String message, String password, TextView view) {
-            DecodePasswordTask dd=new DecodePasswordTask(view);
+
+        DecodePasswordTask dd=new DecodePasswordTask(this,view);
         dd.execute(message,password);
     }
-    private class DecodePasswordTask extends AsyncTask<String, Void, String> {
 
-        private TextView view;
-        public DecodePasswordTask(TextView view){
-            this.view=view;
-        }
-
-        @Override
-        protected String doInBackground(String... message) {
-            String result=null;
-            try {
-                result=Utility.decrypt(message[0].getBytes("UTF-8"),message[1]);
-            } catch (Exception e) {
-
-                Log.e(TAG,e.getMessage(),e);
-            }
-
-            return result;
-    }
-
-    @Override
-    protected void onPostExecute(String result) {
-        super.onPostExecute(result);
-        if(!Utility.isEmpty(result))
-            view.setText(result);
-        else
-            Toast.makeText(MainActivity.this,R.string.wrong_password,Toast.LENGTH_LONG).show();
-    }
-}
 }

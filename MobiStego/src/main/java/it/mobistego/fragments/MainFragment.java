@@ -13,6 +13,7 @@ import android.os.Environment;
 import android.provider.MediaStore;
 import android.support.annotation.NonNull;
 import android.support.v4.app.ActivityCompat;
+import android.support.v4.content.FileProvider;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -58,6 +59,8 @@ public class MainFragment extends Fragment implements View.OnClickListener, Adap
 
     private static final String TAG = MainFragment.class.getName();
 
+
+
     private OnMainFragment mCallback;
     private Button buttonAdd;
     private ListView listView;
@@ -82,7 +85,7 @@ public class MainFragment extends Fragment implements View.OnClickListener, Adap
                              Bundle savedInstanceState) {
         List<MobiStegoItem> mobiTmp;
 
-        mobiTmp = Utility.listMobistegoItem();
+        mobiTmp = Utility.listMobistegoItem(getActivity());
 
         if (createdView == null) {
             createdView = inflater.inflate(R.layout.main_layout, container, false);
@@ -157,13 +160,30 @@ public class MainFragment extends Fragment implements View.OnClickListener, Adap
                                     switch (i) {
                                         case 0:
                                             try {
-                                                filePhotoTaken = Utility.createImageFile();
+                                                filePhotoTaken = Utility.createImageFile(getActivity());
                                                 Intent takePictureIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-                                                takePictureIntent.putExtra(MediaStore.EXTRA_OUTPUT,
+                                                if (takePictureIntent.resolveActivity(getActivity().getPackageManager()) != null) {
+                                                    // Create the File where the photo should go
+                                                    File photoFile = null;
+
+                                                    photoFile = filePhotoTaken;
+                                                    Log.i(TAG,""+photoFile.getAbsolutePath());
+
+                                                    // Continue only if the File was successfully created
+                                                    if (photoFile != null) {
+                                                        Uri photoURI = FileProvider.getUriForFile(getActivity(),
+                                                                "it.mobistego.fileprovider",
+                                                                photoFile);
+                                                        takePictureIntent.putExtra(MediaStore.EXTRA_OUTPUT, photoURI);
+                                                        startActivityForResult(takePictureIntent, Constants.REQUEST_IMAGE_CAPTURE);
+                                                    }
+                                                }
+
+                                               /* takePictureIntent.putExtra(MediaStore.EXTRA_OUTPUT,
                                                         Uri.fromFile(filePhotoTaken));
                                                 if (takePictureIntent.resolveActivity(getActivity().getPackageManager()) != null) {
                                                     startActivityForResult(takePictureIntent, Constants.REQUEST_IMAGE_CAPTURE);
-                                                }
+                                                }*/
                                             } catch (IOException e) {
                                                 Log.e(TAG, e.getMessage());
                                                 //e.printStackTrace();
@@ -207,7 +227,7 @@ public class MainFragment extends Fragment implements View.OnClickListener, Adap
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-        if (ActivityCompat.checkSelfPermission(getActivity(), Manifest.permission.WRITE_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED) {
+        //if (ActivityCompat.checkSelfPermission(getActivity(), Manifest.permission.WRITE_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED) {
             File f = new File(Environment.getExternalStorageDirectory(),
                     Constants.EXT_DIR);
             if (!f.exists()) {
@@ -259,16 +279,18 @@ public class MainFragment extends Fragment implements View.OnClickListener, Adap
                 break;
         }
         }
-        else
+      /*  else
         {
             Toast.makeText(getActivity(),R.string.no_permission,Toast.LENGTH_LONG).show();
-        }
-    }
+
+        }*/
+
+
 
     @Override
     public void onResume() {
         super.onResume();
-        listAdapter.setItems(Utility.listMobistegoItem());
+        listAdapter.setItems(Utility.listMobistegoItem(getActivity()));
         listAdapter.notifyDataSetChanged();
 
     }

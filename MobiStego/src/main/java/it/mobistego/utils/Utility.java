@@ -68,12 +68,14 @@ public class Utility {
     public static final int SQUARE_BLOCK = 512;
 
 
-    public static File createImageFile() throws IOException {
+    public static File createImageFile(Context ctx) throws IOException {
         // Create an image file name
+        String mCurrentPhotoPath=null;
         String timeStamp = new SimpleDateFormat("ddMMyyyy_HHmmss", Locale.ITALY).format(new Date());
         String imageFileName = "JPEG_" + timeStamp + "_";
-        File storageDir = Environment.getExternalStoragePublicDirectory(
-                Environment.DIRECTORY_PICTURES);
+        //File storageDir = Environment.getExternalStoragePublicDirectory(
+          //      Environment.DIRECTORY_PICTURES);
+        File storageDir = ctx.getExternalFilesDir(Environment.DIRECTORY_PICTURES);
         File image = File.createTempFile(
                 imageFileName,  /* prefix */
                 ".jpg",         /* suffix */
@@ -81,7 +83,8 @@ public class Utility {
         );
 
         // Save a file: path for use with ACTION_VIEW intents
-        //mCurrentPhotoPath = "file:" + image.getAbsolutePath();
+        mCurrentPhotoPath =  image.getAbsolutePath();
+        Log.d(TAG,"Image file created in "+mCurrentPhotoPath);
         return image;
     }
 
@@ -258,25 +261,28 @@ public class Utility {
         return newarray;
     }
 
-    public static MobiStegoItem saveMobiStegoItem(String message, Bitmap srcEncoded) throws IOException {
+    public static MobiStegoItem saveMobiStegoItem(String message, Bitmap srcEncoded,Context ctx) throws IOException {
 
         String name = UUID.randomUUID().toString();
 
         String fileNameOriginalPng = name + Constants.FILE_PNG_EXT;
         String fileNameCompressedJpg = name + Constants.FILE_JPG_EXT;
         String fileNameTxt = name + Constants.FILE_TXT_EXT;
-        File mobiStegoDir = new File(Environment.getExternalStorageDirectory(),
-                Constants.EXT_DIR);
+
+        File mobiStegoDir = ctx.getExternalFilesDir(Environment.DIRECTORY_DOCUMENTS);
         File rootDir = new File(mobiStegoDir,
                 name);
         rootDir.mkdir();
 
         File originalImage = new File(rootDir,
                 fileNameOriginalPng);
+        originalImage.createNewFile();
         File compressedImage = new File(rootDir,
                 fileNameCompressedJpg);
+        compressedImage.createNewFile();
         File txt = new File(rootDir,
                 fileNameTxt);
+        txt.createNewFile();
         //originalImage.createNewFile();
         //txt.createNewFile();
         FileOutputStream foutOriginalImage = new FileOutputStream(originalImage);
@@ -301,18 +307,17 @@ public class Utility {
         return result;
     }
 
-    public static List<MobiStegoItem> listMobistegoItem() {
+    public static List<MobiStegoItem> listMobistegoItem(Context ctx) {
         List<MobiStegoItem> result = new ArrayList<>();
-        String[] dirs = listMobistegoDir();
+        String[] dirs = listMobistegoDir(ctx);
         if (dirs != null)
             for (String dir : dirs)
-                result.add(loadMobiStegoItem(dir));
+                result.add(loadMobiStegoItem(dir,ctx));
         return result;
     }
 
-    public static String[] listMobistegoDir() {
-        File mobiStegoDir = new File(Environment.getExternalStorageDirectory(),
-                Constants.EXT_DIR);
+    public static String[] listMobistegoDir(Context ctx) {
+        File mobiStegoDir =ctx.getExternalFilesDir(Environment.DIRECTORY_DOCUMENTS);
         String[] directories = mobiStegoDir.list(new FilenameFilter() {
             @Override
             public boolean accept(File dir, String filename) {
@@ -322,10 +327,9 @@ public class Utility {
         return directories;
     }
 
-    public static File getBitmapFile(MobiStegoItem mobiStegoItem) {
+    public static File getBitmapFile(MobiStegoItem mobiStegoItem,Context ctx) {
         File result = null;
-        File mobiStegoDir = new File(Environment.getExternalStorageDirectory(),
-                Constants.EXT_DIR);
+        File mobiStegoDir = ctx.getExternalFilesDir(Environment.DIRECTORY_DOCUMENTS);
         File rootDir = new File(mobiStegoDir,
                 mobiStegoItem.getUuid());
         if (rootDir.exists()) {
@@ -335,13 +339,12 @@ public class Utility {
         return result;
     }
 
-    public static MobiStegoItem loadMobiStegoItem(String dirName) {
+    public static MobiStegoItem loadMobiStegoItem(String dirName,Context ctx) {
 
         String fileNamePng = dirName + Constants.FILE_PNG_EXT;
 
         String fileNameTxt = dirName + Constants.FILE_TXT_EXT;
-        File mobiStegoDir = new File(Environment.getExternalStorageDirectory(),
-                Constants.EXT_DIR);
+        File mobiStegoDir =ctx.getExternalFilesDir(Environment.DIRECTORY_DOCUMENTS);
         File rootDir = new File(mobiStegoDir,
                 dirName);
         File imageOriginal = new File(rootDir,
@@ -364,7 +367,7 @@ public class Utility {
         return result;
     }
 
-    public static boolean deleteMobiStegoItem(MobiStegoItem item) {
+    public static boolean deleteMobiStegoItem(MobiStegoItem item,Context ctx) {
         boolean result = false;
         String dirName = item.getUuid() == null ? item.getBitmap().getParentFile().getName() : item.getUuid();
 
@@ -372,8 +375,7 @@ public class Utility {
         String fileNameJpg = dirName + Constants.FILE_JPG_EXT;
         String fileNameTxt = dirName + Constants.FILE_TXT_EXT;
 
-        File mobiStegoDir = new File(Environment.getExternalStorageDirectory(),
-                Constants.EXT_DIR);
+        File mobiStegoDir = ctx.getExternalFilesDir(Environment.DIRECTORY_DOCUMENTS);
         File rootDir = new File(mobiStegoDir,
                 dirName);
         File image = new File(rootDir,

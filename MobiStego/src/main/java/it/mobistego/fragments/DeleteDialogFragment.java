@@ -46,7 +46,7 @@ public class DeleteDialogFragment extends DialogFragment{
         builder.setMessage(R.string.suredelte)
                 .setPositiveButton(R.string.yes, new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int id) {
-                        Utility.deleteMobiStegoItem(mobiStegoItem);
+                        Utility.deleteMobiStegoItem(mobiStegoItem,getActivity());
                         mCallback.onDelete();
 
                     }

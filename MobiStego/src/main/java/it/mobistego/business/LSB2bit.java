@@ -136,7 +136,7 @@ public class LSB2bit {
                 int masterIndex = 0;
                 for (int j = 0; j < height; j++)
                     for (int i = 0; i < width; i++) {
-                        // The unique way to write correctly the sourceBitmap, android bug!!!
+
                         destBitmap.setPixel(i, j, Color.argb(0xFF,
                                 oneDMod[masterIndex] >> 16 & 0xFF,
                                 oneDMod[masterIndex] >> 8 & 0xFF,
