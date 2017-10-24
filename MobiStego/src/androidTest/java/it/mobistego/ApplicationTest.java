@@ -1,21 +1,22 @@
-package it.mobistego.test;
+package it.mobistego;
 
-import android.app.Application;
+
+import org.junit.Before;
+import org.junit.Test;
+
+import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
-import android.test.ApplicationTestCase;
-import android.util.Base64;
+
+import android.support.test.InstrumentationRegistry;
+import android.support.test.runner.AndroidJUnit4;
 import android.util.Log;
 
-import java.io.IOException;
-import java.security.InvalidAlgorithmParameterException;
-import java.security.InvalidKeyException;
-import java.security.NoSuchAlgorithmException;
-import java.util.List;
+import junit.framework.Assert;
 
-import javax.crypto.BadPaddingException;
-import javax.crypto.IllegalBlockSizeException;
-import javax.crypto.NoSuchPaddingException;
+import java.io.IOException;
+
+import java.util.List;
 
 import it.mobistego.beans.MobiStegoItem;
 import it.mobistego.business.LSB2bit;
@@ -39,23 +40,36 @@ import it.mobistego.utils.Utility;
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  */
 
-public class ApplicationTest extends ApplicationTestCase<Application> {
+@org.junit.runner.RunWith(AndroidJUnit4.class)
+public class ApplicationTest {
 
 
     private static String TAG = ApplicationTest.class.getName();
 
     private int total;
 
-    public ApplicationTest() {
-        super(Application.class);
+    private Context context;
+
+    @Before
+    public void setUp() {
+        // In case you need the context in your test
+        context = InstrumentationRegistry.getContext();
     }
 
+
+    private Context getContext(){
+
+
+        return context;
+    }
+
+    @Test
     public void testAllProcessLsb2Bit() {
 
-        getContext().getResources().getDrawable(R.drawable.test);
+        getContext().getResources().getDrawable(it.mobistego.test.R.drawable.test);
         String message = "Hello è World!!!";
         Bitmap src = BitmapFactory.decodeResource(getContext().getResources(),
-                R.drawable.test);
+                it.mobistego.test.R.drawable.test);
 
         List<Bitmap> srcList = Utility.splitImage(src);
         List<Bitmap> encodedList = LSB2bit.encodeMessage(srcList, message, new LSB2bit.ProgressHandler() {
@@ -81,15 +95,15 @@ public class ApplicationTest extends ApplicationTestCase<Application> {
         String result = LSB2bit.decodeMessage(srcEncodedList);
         Log.i(TAG, "Original message <" + message + "> Decripted message <" + result + ">");
 
-        assertEquals(result, message);
+        Assert.assertEquals(result, message);
 
 
     }
 
-
+    @Test
     public void testLsb2Bit() {
 
-        getContext().getResources().getDrawable(R.drawable.test);
+        getContext().getResources().getDrawable(it.mobistego.test.R.drawable.test);
         String message = "Hello World!!!";
         Bitmap src = BitmapFactory.decodeResource(getContext().getResources(),
                 it.mobistego.test.R.drawable.test);
@@ -117,18 +131,18 @@ public class ApplicationTest extends ApplicationTestCase<Application> {
         Log.i(TAG, "Orignal message <" + message + "> Decripted message <" + resultAsSoon + ">");
 
 
-        assertEquals(resultAsSoon, message);
+        Assert.assertEquals(resultAsSoon, message);
 
 
     }
 
-
+    @Test
     public void ignoretestSaving() {
 
-        getContext().getResources().getDrawable(R.drawable.test);
+        getContext().getResources().getDrawable(it.mobistego.test.R.drawable.test);
         String message = "Hello World!!!";
         Bitmap src = BitmapFactory.decodeResource(getContext().getResources(),
-                R.drawable.test);
+                it.mobistego.test.R.drawable.test);
 
         List<Bitmap> srcList = Utility.splitImage(src);
         List<Bitmap> encodedList = LSB2bit.encodeMessage(srcList, message, new LSB2bit.ProgressHandler() {
@@ -153,20 +167,20 @@ public class ApplicationTest extends ApplicationTestCase<Application> {
         List<Bitmap> srcEncodedList = Utility.splitImage(srcEncoded);
         String result = LSB2bit.decodeMessage(srcEncodedList);
         Log.i(TAG, "Original message <" + message + "> Decripted message <" + result + ">");
-        assertEquals(result, message);
+        Assert.assertEquals(result, message);
         MobiStegoItem m;
         try {
-            m = Utility.saveMobiStegoItem(message, srcEncoded);
+            m = Utility.saveMobiStegoItem(message, srcEncoded,getContext());
         } catch (IOException e) {
             e.printStackTrace();
-            fail();
+            Assert.fail();
         }
 
     }
-
+    @Test
     public void testLoadingGallery() {
         try {
-            List<MobiStegoItem> lista = Utility.listMobistegoItem();
+            List<MobiStegoItem> lista = Utility.listMobistegoItem(getContext());
             if (lista != null)
                 for (MobiStegoItem item : lista) {
                     Log.d(TAG, "Name uuid " + item.getUuid());
@@ -175,15 +189,15 @@ public class ApplicationTest extends ApplicationTestCase<Application> {
                     List<Bitmap> srcEncodedList = Utility.splitImage(BitmapFactory.decodeFile(item.getBitmap().getAbsolutePath()));
                     String result = LSB2bit.decodeMessage(srcEncodedList);
                     Log.i(TAG, "Original message <" + item.getMessage() + "> Decripted message <" + result + ">");
-                    assertEquals(result, item.getMessage());
+                    Assert.assertEquals(result, item.getMessage());
                 }
         } catch (Exception e) {
             e.printStackTrace();
-            fail();
+            Assert.fail();
         }
 
     }
-
+    @Test
     public void testKeySecret(){
         try {
             String encode=Utility.encrypt("CiaoPipppo","pippopippo");
@@ -197,7 +211,7 @@ public class ApplicationTest extends ApplicationTestCase<Application> {
 
         } catch (Exception e) {
             e.printStackTrace();
-            fail();
+            Assert.fail();
         }
     }
 
