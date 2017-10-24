@@ -50,7 +50,7 @@ public class BitmapWorkerTask extends AsyncTask<File, Void, Bitmap> {
     @Override
     protected Bitmap doInBackground(File... params) {
         data = params[0];
-        BitmapFactory.decodeFile(data.getAbsolutePath());
+        //BitmapFactory.decodeFile(data.getAbsolutePath());
         int maxTextureSize = MainActivity.TEXTURE_SIZE_GL20;
 
         if (maxTextureSize <= 0)
@@ -58,10 +58,10 @@ public class BitmapWorkerTask extends AsyncTask<File, Void, Bitmap> {
         Log.d(TAG, "Max texture size " + maxTextureSize);
         BitmapFactory.Options options = new BitmapFactory.Options();
         options.inJustDecodeBounds = true;
-        BitmapFactory.decodeFile(data.getAbsolutePath(), options);
+        //BitmapFactory.decodeFile(data.getAbsolutePath(), options);
         int imageHeight = options.outHeight;
         int imageWidth = options.outWidth;
-        String imageType = options.outMimeType;
+        //String imageType = options.outMimeType;
 
         if (maxTextureSize > 0 && imageWidth > maxTextureSize) {
             imageWidth = maxTextureSize;

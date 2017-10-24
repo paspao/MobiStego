@@ -18,8 +18,8 @@ android {
         minSdkVersion 21
         multiDexEnabled true
         targetSdkVersion 26
-        versionCode 13
-        versionName "2.0.13"
+        versionCode 14
+        versionName "2.0.14"
         testInstrumentationRunner "com.android.test.runner.MultiDexTestRunner"
 
     }
