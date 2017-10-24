@@ -33,28 +33,27 @@ android:
     - sys-img-armeabi-v7a-google_apis-$ANDROID_API_LEVEL
     - sys-img-armeabi-v7a-google_apis-$EMULATOR_API_LEVEL
 
-#before_install:
-before_script:
-  - echo no | android create avd --force -n test -t "android-"$EMULATOR_API_LEVEL --abi sys-img-armeabi-v7a-google_apis
+before_install:
+  - echo no | avdmanager create avd --force -n test -k "system-images;android-25;default;armeabi-v7a"
   - emulator -avd test -no-skin -no-audio -no-window &
-  #- android-wait-for-emulator
 
-#before_script:
-  #- android-wait-for-emulator
-  #- adb shell input keyevent 82 &
+before_script:
+  - android-wait-for-emulator
+  - adb shell input keyevent 82 &
 
 before_cache:
   - rm -f $HOME/.gradle/caches/modules-2/modules-2.lock
+  - rm -rf $HOME/.gradle/caches/*/plugin-resolution/
 
 cache:
   directories:
     - $HOME/.gradle/caches/
     - $HOME/.gradle/wrapper/
-    - ${TRAVIS_BUILD_DIR}/gradle/caches/
-    - ${TRAVIS_BUILD_DIR}/gradle/wrapper/dists/
+    - $HOME/.android/build-cache
 
+install: ./gradlew clean assemble assembleAndroidTest --stacktrace
 
 script:
-  - ./gradle build connectedCheck
+  - ./gradlew check connectedCheck --stacktrace
   #- ./gradle assembleDebug
   #- ./gradlew clean check connectedCheck -x library:signArchives -PdisablePreDex
