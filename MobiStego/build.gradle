@@ -3,9 +3,7 @@ apply plugin: 'com.android.application'
 
 repositories {
 
-    maven {
-        url 'https://maven.google.com'
-    }
+    maven { url 'http://itnag094/artifactory/repoall' }
     jcenter()
     mavenCentral()
 
@@ -13,8 +11,8 @@ repositories {
 
 android {
 
-    compileSdkVersion 26
-    buildToolsVersion '26.0.0'
+    compileSdkVersion 25
+    buildToolsVersion '26.0.2'
     defaultConfig {
         applicationId "it.mobistego"
         minSdkVersion 21
