@@ -12,11 +12,11 @@ android:
     - android-26
     - extra-android-m2repository
     - extra-google-m2repository
-    - sys-img-armeabi-v7a-android-26
-#    - sys-img-armeabi-v7a-google_apis-25
+#    - sys-img-armeabi-v7a-android-26
+    - sys-img-armeabi-v7a-google_apis-26
 
 before_script:
-  - echo no | android create avd --force -n test -t "android-26" --abi armeabi-v7a
+  - echo no | android create avd --force -n test -t "android-26" --abi armeabi-v7a --tag google_apis
   - emulator -avd test -no-window &
 #  - curl https://raw.githubusercontent.com/travis-ci/travis-cookbooks/master/community-cookbooks/android-sdk/files/default/android-wait-for-emulator > android-wait-for-emulator
 #  - chmod u+x android-wait-for-emulator
