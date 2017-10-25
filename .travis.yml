@@ -13,7 +13,7 @@ android:
     - extra-android-m2repository
     - extra-google-m2repository
 #    - sys-img-armeabi-v7a-android-26
-    - sys-img-armeabi-v7a-google_apis-26
+#    - sys-img-armeabi-v7a-google_apis-26
 
 before_script:
 #  - echo no | android create avd --force -n test -t "android-25" --abi armeabi-v7a --tag google_apis
@@ -26,5 +26,5 @@ before_script:
 #  - sdkmanager --licenses
 
 script:
-   - gradle build
+   - ./gradlew build
    #connectedCheck
