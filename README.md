@@ -2,6 +2,11 @@ MobiStego
 =========
 ![Travis CI](https://travis-ci.org/paspao/MobiStego.svg)
 [![Codacy Badge](https://api.codacy.com/project/badge/Grade/6db5cf9b40e34ac9adc917583cd5f769)](https://www.codacy.com/app/paspao/MobiStego?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=paspao/MobiStego&amp;utm_campaign=Badge_Grade)
+[![Open Source Love](https://badges.frapsoft.com/os/v1/open-source.png?v=103)](https://github.com/ellerbrock/open-source-badges/)
+[![GPL Licence](https://badges.frapsoft.com/os/gpl/gpl.svg?v=103)](https://opensource.org/licenses/GPL-3.0/)
+[![Maintainability](https://api.codeclimate.com/v1/badges/fcfd6571c8f9f3d6f7b8/maintainability)](https://codeclimate.com/github/paspao/MobiStego/maintainability)
+[![Test Coverage](https://api.codeclimate.com/v1/badges/fcfd6571c8f9f3d6f7b8/test_coverage)](https://codeclimate.com/github/paspao/MobiStego/test_coverage)
+
 
 [<img src="https://play.google.com/intl/en_us/badges/images/generic/en_badge_web_generic.png" 
       alt="Download from Google Play" 
