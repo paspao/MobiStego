@@ -14,6 +14,9 @@ android:
     - extra-google-m2repository
     - sys-img-armeabi-v7a-google_apis-25
 
+licenses:
+    - 'android-sdk-license-.+'
+
 before_script:
   - echo no | android create avd --force -n test -t "android-25" --abi armeabi-v7a --tag google_apis
   - emulator -avd test -no-window &
