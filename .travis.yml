@@ -1,6 +1,8 @@
 language: android
 jdk:
   - oraclejdk8
+os:
+  - linux
 android:
   components:
     - tools # to get the new `repository-11.xml`
@@ -15,7 +17,9 @@ android:
     - sys-img-armeabi-v7a-google_apis-25
 
 licenses:
-    - 'android-sdk-license-.+'
+    - android-sdk-license-.+
+    - android-sdk-preview-license-.+
+    - google-gdk-license-.+
 
 before_script:
   - echo no | android create avd --force -n test -t "android-25" --abi armeabi-v7a --tag google_apis
