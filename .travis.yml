@@ -18,7 +18,7 @@ android:
     - extra-google-m2repository
 #    - sys-img-armeabi-v7a-android-26
     - sys-img-armeabi-v7a-google_apis-22
-    - sys-img-x86-google_apis-22
+#    - sys-img-x86-google_apis-22
 
 before_cache:
     - rm -f ${TRAVIS_BUILD_DIR}/gradle/caches/modules-2/modules-2.lock,
@@ -32,7 +32,7 @@ cache:
 
 
 before_script:
-  - echo no | android create avd --force -n test -t "android-22" --abi x86 --tag google_apis
+  - echo no | android create avd --force -n test -t "android-22" --abi armeabi-v7a --tag google_apis
 #  - echo no | sdkmanager create avd  -n test
   - emulator -avd test  -no-window -camera-back none -camera-front none  &
 #  - curl https://raw.githubusercontent.com/travis-ci/travis-cookbooks/master/community-cookbooks/android-sdk/files/default/android-wait-for-emulator > android-wait-for-emulator
@@ -42,4 +42,4 @@ before_script:
 #  - sdkmanager --licenses
 
 script:
-   - ./gradlew clean build connectedCheck
+   - ./gradlew clean build connectedCheck -PdisablePreDex
