@@ -53,7 +53,7 @@ public class ApplicationTest {
     @Before
     public void setUp() {
         // In case you need the context in your test
-        context = InstrumentationRegistry.getContext();
+        context = InstrumentationRegistry.getTargetContext();
     }
 
 
