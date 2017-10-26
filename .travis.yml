@@ -4,7 +4,7 @@ jdk:
 os:
   - linux
 
-sudo: false
+sudo: required
 
 android:
   components:
@@ -41,4 +41,4 @@ before_script:
 #  - sdkmanager --licenses
 
 script:
-   - ./gradlew clean build connectedCheck -PdisablePreDex
+   - ./gradlew clean build connectedCheck
