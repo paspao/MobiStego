@@ -4,8 +4,11 @@ import android.Manifest;
 import android.app.Fragment;
 import android.app.FragmentManager;
 import android.app.FragmentTransaction;
+import android.content.ComponentName;
 import android.content.Intent;
+import android.content.pm.LabeledIntent;
 import android.content.pm.PackageManager;
+import android.content.pm.ResolveInfo;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -19,6 +22,8 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import java.io.File;
+import java.util.ArrayList;
+import java.util.List;
 
 import it.mobistego.beans.MobiStegoItem;
 import it.mobistego.fragments.ComposeFragment;
@@ -188,15 +193,44 @@ public class MainActivity extends FragmentActivity implements MainFragment.OnMai
 
     @Override
     public void itemViewOnShare(MobiStegoItem mobiStegoItem) {
+        PackageManager pm = getPackageManager();
         Intent emailIntent = new Intent(Intent.ACTION_SEND);
-        emailIntent.setType("vnd.android.cursor.dir/*");
+        //emailIntent.setType("vnd.android.cursor.item/*");
+        emailIntent.setType("vnd.android.cursor.item/*");
+        Intent openInChooser = Intent.createChooser(new Intent(), getResources().getString(R.string.send));
 
         File f = mobiStegoItem.getBitmap();
         if (f != null) {
 
-            emailIntent.putExtra(Intent.EXTRA_STREAM, Uri.fromFile(f));
 
-            startActivity(Intent.createChooser(emailIntent, getResources().getString(R.string.send)));
+            List<ResolveInfo> resInfo = pm.queryIntentActivities(emailIntent, 0);
+            List<LabeledIntent> intentList = new ArrayList<>();
+            for (int i = 0; i < resInfo.size(); i++) {
+                // Extract the label, append it, and repackage it in a LabeledIntent
+                ResolveInfo ri = resInfo.get(i);
+                String packageName = ri.activityInfo.packageName;
+                if(packageName.contains("whatsapp")||packageName.contains("telegram"))
+                    continue;
+
+                Intent intent = new Intent();
+                intent.setComponent(new ComponentName(packageName, ri.activityInfo.name));
+                intent.setAction(Intent.ACTION_SEND);
+                intent.setType("vnd.android.cursor.item/*");
+                intent.putExtra(Intent.EXTRA_STREAM, Uri.fromFile(f));
+
+                intentList.add(new LabeledIntent(intent, packageName, ri.loadLabel(pm), ri.icon));
+
+            }
+
+            // convert intentList to array
+            LabeledIntent[] extraIntents = intentList.toArray( new LabeledIntent[ intentList.size() ]);
+
+            openInChooser.putExtra(Intent.EXTRA_INITIAL_INTENTS, extraIntents);
+            startActivity(openInChooser);
+
+
+
+            //startActivity(Intent.createChooser(emailIntent, getResources().getString(R.string.send)));
         }
     }
 
