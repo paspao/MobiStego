@@ -22,7 +22,7 @@ android:
 before_script:
   - echo no | android create avd --force -n test -t "android-22" --abi armeabi-v7a --tag google_apis
 #  - echo no | sdkmanager create avd  -n test
-  - emulator -avd test -no-skin -no-audio -no-window &
+  - emulator -avd test -no-window &
 #  - curl https://raw.githubusercontent.com/travis-ci/travis-cookbooks/master/community-cookbooks/android-sdk/files/default/android-wait-for-emulator > android-wait-for-emulator
 #  - chmod u+x android-wait-for-emulator
   - android-wait-for-emulator
