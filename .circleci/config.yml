@@ -12,14 +12,14 @@ jobs:
           key: jars-{{ checksum "build.gradle" }}-{{ checksum  "MobiStego/build.gradle" }}
       - run:
                 name: Update
-                command: sdkmanager --update
+                command: ${ANDROID_HOME}/tools/bin/sdkmanager --update
       - run:
           name: Setup emulator
-          command: sdkmanager "system-images;android-25;google_apis;armeabi-v7a" && sdkmanager --update && echo "no" | avdmanager create avd -n test -k "system-images;android-25;google_apis;armeabi-v7a"
+          command: sdkmanager "system-images;android-25;google_apis;armeabi-v7a" && ${ANDROID_HOME}/tools/bin/sdkmanager --update && echo "no" | avdmanager create avd -n test -k "system-images;android-25;google_apis;armeabi-v7a"
       - run:
           name: Launch emulator
           #export LD_LIBRARY_PATH=${ANDROID_HOME}/emulator/lib64:${ANDROID_HOME}/emulator/lib64/qt/lib &&
-          command: emulator -avd test -noaudio -no-boot-anim -no-window -accel on
+          command: ${ANDROID_HOME}/emulator/emulator64-arm -avd test -noaudio -no-boot-anim -no-window -accel on
           background: true
       - run:
           name: Download Dependencies
