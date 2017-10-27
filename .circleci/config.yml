@@ -6,13 +6,14 @@ jobs:
       - image: circleci/android:api-26-alpha
     environment:
       JVM_OPTS: -Xmx6400m
+      _JAVA_OPTIONS: "-XX:+UnlockExperimentalVMOptions -XX:+UseCGroupMemoryLimitForHeap"
     steps:
       - checkout
       - restore_cache:
           key: jars-{{ checksum "build.gradle" }}-{{ checksum  "MobiStego/build.gradle" }}
       - run:
-                name: Update
-                command: ${ANDROID_HOME}/tools/bin/sdkmanager --update
+          name: Update
+          command: ${ANDROID_HOME}/tools/bin/sdkmanager --update
       - run:
           name: Setup emulator
           command: sdkmanager "system-images;android-25;google_apis;armeabi-v7a" && ${ANDROID_HOME}/tools/bin/sdkmanager --update && echo "no" | avdmanager create avd -n test -k "system-images;android-25;google_apis;armeabi-v7a"
