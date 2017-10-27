@@ -1,6 +1,7 @@
 MobiStego
 =========
 ![Travis CI](https://travis-ci.org/paspao/MobiStego.svg)
+[![CircleCI](https://circleci.com/gh/paspao/MobiStego/tree/master.svg?style=svg)](https://circleci.com/gh/paspao/MobiStego/tree/master)
 [![Codacy Badge](https://api.codacy.com/project/badge/Grade/6db5cf9b40e34ac9adc917583cd5f769)](https://www.codacy.com/app/paspao/MobiStego?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=paspao/MobiStego&amp;utm_campaign=Badge_Grade)
 [![Open Source Love](https://badges.frapsoft.com/os/v1/open-source.png?v=103)](https://github.com/ellerbrock/open-source-badges/)
 [![GPL Licence](https://badges.frapsoft.com/os/gpl/gpl.svg?v=103)](https://opensource.org/licenses/GPL-3.0/)
