@@ -2,7 +2,7 @@
 <resources>
 
     <string name="app_name">MobiStego</string>
-    <string name="main_title">MobiStego</string>
+    <string name="slogan">your message hider</string>
     <string name="enter_text">Enter your text&#8230;</string>
     <string name="enter_password">Enter your password&#8230;</string>
     <string name="action_settings">Settings</string>
@@ -17,7 +17,7 @@
     <string name="encoding">Encoding message</string>
     <string name="decoding">Decoding message</string>
     <string name="loading">Loading, please wait&#8230;</string>
-    <string name="suredelte">Do you want delete this item?</string>
+    <string name="sure_delete">Do you want delete this item?</string>
     <string name="yes">Yes</string>
     <string name="no">No</string>
     <string name="abort">Abort</string>
@@ -32,9 +32,8 @@
         <item>Decode from gallery</item>
     </array>
     <string name="add">+</string>
-    <string name="no_permission">No permissions, restart app</string>
+    <string name="no_permission">No permissions granted</string>
     <string name="try_decode">Try to decode</string>
     <string name="wrong_password">Wrong password</string>
-
 
 </resources>

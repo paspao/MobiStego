@@ -5,7 +5,6 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
-import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
@@ -44,11 +43,6 @@ public class ListAdapter extends BaseAdapter {
     private Context context;
     private ItemViewFragment.OnItemView mCallback;
 
-    public interface OnGridEvent {
-        public void gridAdapterOnClick();
-
-    }
-
     public ListAdapter(Context context, List<MobiStegoItem> mobileValues) {
         this.context = context;
         this.mCallback = (ItemViewFragment.OnItemView) context;
@@ -58,15 +52,11 @@ public class ListAdapter extends BaseAdapter {
     @Override
     public View getView(final int position, View convertView, ViewGroup parent) {
 
-        LayoutInflater inflater = (LayoutInflater) context
-                .getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+        LayoutInflater inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
 
         View gridView;
 
         if (convertView == null) {
-
-
-
 
             gridView = inflater.inflate(R.layout.grid_item, null);
 
@@ -74,36 +64,28 @@ public class ListAdapter extends BaseAdapter {
             View layoutButton = gridView.findViewById(R.id.grid_item_buttons);
             ImageButton buttonShare = (ImageButton) gridView.findViewById(R.id.button_grid_share);
             ImageButton buttonDelete = (ImageButton) gridView.findViewById(R.id.button_grid_delete);
-            buttonDelete.setOnClickListener(new View.OnClickListener() {
-
-                @Override
-                public void onClick(View v) {
-                    if (items != null) {
-                        MobiStegoItem item = items.get(position);
-                        if (item != null) {
-                            mCallback.itemViewOnDelete(item);
-                        }
-
+            buttonDelete.setOnClickListener(v -> {
+                if (items != null) {
+                    MobiStegoItem item = items.get(position);
+                    if (item != null) {
+                        mCallback.itemViewOnDelete(item);
                     }
 
-
                 }
+
+
             });
 
-            buttonShare.setOnClickListener(new View.OnClickListener() {
-
-                @Override
-                public void onClick(View v) {
-                    if (items != null) {
-                        MobiStegoItem item = items.get(position);
-                        if (item != null) {
-                            mCallback.itemViewOnShare(item);
-                        }
-
+            buttonShare.setOnClickListener(v -> {
+                if (items != null) {
+                    MobiStegoItem item = items.get(position);
+                    if (item != null) {
+                        mCallback.itemViewOnShare(item);
                     }
 
-
                 }
+
+
             });
             layoutButton.setVisibility(View.VISIBLE);
             ProgressBar progressBar = (ProgressBar) gridView.findViewById(R.id.progrss_grid);
@@ -124,9 +106,9 @@ public class ListAdapter extends BaseAdapter {
 
     @Override
     public int getCount() {
-        if(!Utility.isEmpty(items))
+        if (!Utility.isEmpty(items))
             return items.size();
-        else 
+        else
             return 0;
     }
 
@@ -143,4 +125,10 @@ public class ListAdapter extends BaseAdapter {
     public void setItems(List<MobiStegoItem> items) {
         this.items = items;
     }
+
+    public interface OnGridEvent {
+        public void gridAdapterOnClick();
+
+    }
+
 }

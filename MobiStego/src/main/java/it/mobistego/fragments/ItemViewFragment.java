@@ -1,9 +1,6 @@
 package it.mobistego.fragments;
 
 import android.app.Activity;
-import android.app.AlertDialog;
-import android.app.Fragment;
-import android.content.DialogInterface;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -15,6 +12,10 @@ import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
+
+import androidx.annotation.NonNull;
+import androidx.appcompat.app.AlertDialog;
+import androidx.fragment.app.Fragment;
 
 import it.mobistego.R;
 import it.mobistego.beans.MobiStegoItem;
@@ -49,24 +50,15 @@ public class ItemViewFragment extends Fragment implements View.OnClickListener {
     private TextView textView;
     private OnItemView mCallback;
 
-    public interface OnItemView {
-        void itemViewOnDelete(MobiStegoItem mobiStegoItem);
-
-        void itemViewOnShare(MobiStegoItem mobiStegoItem);
-
-        void itemViewOnDecrypt(String message,String password,TextView textView);
-    }
-
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
-                             Bundle savedInstanceState) {
+    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.item_view_layout, container, false);
         buttonDelete = (ImageButton) view.findViewById(R.id.button_delete);
         buttonShare = (ImageButton) view.findViewById(R.id.button_share);
         textView = (TextView) view.findViewById(R.id.text_view_item);
         imageView = (ImageView) view.findViewById(R.id.image_view_item);
         progressBar = (ProgressBar) view.findViewById(R.id.progrss_view);
-        buttonDecode=(Button) view.findViewById(R.id.button_decrypt);
+        buttonDecode = (Button) view.findViewById(R.id.button_decrypt);
         BitmapWorkerTask workerBimt = new BitmapWorkerTask(imageView, progressBar);
         workerBimt.execute(mobiStegoItem.getBitmapCompressed());
         textView.setText(mobiStegoItem.getMessage());
@@ -77,7 +69,7 @@ public class ItemViewFragment extends Fragment implements View.OnClickListener {
     }
 
     @Override
-    public void onAttach(Activity activity) {
+    public void onAttach(@NonNull Activity activity) {
         super.onAttach(activity);
 
 
@@ -108,20 +100,12 @@ public class ItemViewFragment extends Fragment implements View.OnClickListener {
                 alertDialogBuilder.setMessage(R.string.enter_password);
                 alertDialogBuilder.setView(R.layout.password_dialog);
                 alertDialogBuilder.setPositiveButton(R.string.ok,
-                        new DialogInterface.OnClickListener() {
-                            @Override
-                            public void onClick(DialogInterface dialog, int arg1) {
-                                EditText editText=(EditText) ((AlertDialog) dialog).findViewById(R.id.text_password_dialog);
-                                mCallback.itemViewOnDecrypt(mobiStegoItem.getMessage(),editText.getText().toString(),textView);
+                        (dialog, arg1) -> {
+                            EditText editText = (EditText) ((AlertDialog) dialog).findViewById(R.id.text_password_dialog);
+                            mCallback.itemViewOnDecrypt(mobiStegoItem.getMessage(), editText.getText().toString(), textView);
 
-                            }
                         });
-                alertDialogBuilder.setNegativeButton(R.string.abort,new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        dialog.dismiss();
-                    }
-                });
+                alertDialogBuilder.setNegativeButton(R.string.abort, (dialog, which) -> dialog.dismiss());
 
                 AlertDialog alertDialog = alertDialogBuilder.create();
                 alertDialog.show();
@@ -132,5 +116,12 @@ public class ItemViewFragment extends Fragment implements View.OnClickListener {
         }
     }
 
+    public interface OnItemView {
+        void itemViewOnDelete(MobiStegoItem mobiStegoItem);
+
+        void itemViewOnShare(MobiStegoItem mobiStegoItem);
+
+        void itemViewOnDecrypt(String message, String password, TextView textView);
+    }
 
 }

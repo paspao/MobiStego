@@ -1,29 +1,23 @@
 package it.mobistego;
 
-import android.Manifest;
-import android.app.Fragment;
-import android.app.FragmentManager;
-import android.app.FragmentTransaction;
 import android.content.ComponentName;
 import android.content.Intent;
 import android.content.pm.LabeledIntent;
 import android.content.pm.PackageManager;
 import android.content.pm.ResolveInfo;
 import android.net.Uri;
-import android.os.AsyncTask;
 import android.os.Bundle;
-import android.os.Environment;
-import android.support.annotation.NonNull;
-import android.support.v4.app.ActivityCompat;
-import android.support.v4.app.FragmentActivity;
-import android.util.Log;
-import android.view.View;
 import android.widget.TextView;
-import android.widget.Toast;
+
+import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentActivity;
+import androidx.fragment.app.FragmentManager;
+import androidx.fragment.app.FragmentTransaction;
 
 import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Random;
 
 import it.mobistego.beans.MobiStegoItem;
 import it.mobistego.fragments.ComposeFragment;
@@ -35,7 +29,6 @@ import it.mobistego.tasks.DecodeTask;
 import it.mobistego.tasks.EncodeTask;
 import it.mobistego.utils.Constants;
 import it.mobistego.utils.GPU;
-import it.mobistego.utils.Utility;
 
 /**
  * Created by paspao on 17/01/15.
@@ -56,28 +49,33 @@ import it.mobistego.utils.Utility;
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA*
  */
-public class MainActivity extends FragmentActivity implements MainFragment.OnMainFragment, ComposeFragment.OnComposed, ItemViewFragment.OnItemView,DeleteDialogFragment.OnItemDeleted {
+public class MainActivity extends FragmentActivity implements MainFragment.OnMainFragment, ComposeFragment.OnComposed, ItemViewFragment.OnItemView, DeleteDialogFragment.OnItemDeleted {
 
     private static final String TAG = MainActivity.class.getName();
+    private static final String ALLOWED_CHARACTERS = "0123456789qwertyuiopasdfghjklzxcvbnm";
     public volatile static int TEXTURE_SIZE_GL10 = 0;
     public volatile static int TEXTURE_SIZE_GL20 = 0;
 
-
+    private static String getRandomString(final int sizeOfRandomString) {
+        final Random random = new Random();
+        final StringBuilder sb = new StringBuilder(sizeOfRandomString);
+        for (int i = 0; i < sizeOfRandomString; ++i)
+            sb.append(ALLOWED_CHARACTERS.charAt(random.nextInt(ALLOWED_CHARACTERS.length())));
+        return sb.toString();
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.main_fragment);
         init();
-        FragmentManager ft = getFragmentManager();
+        FragmentManager ft = getSupportFragmentManager();
         FragmentTransaction tx = ft.beginTransaction();
         MainFragment mainF = new MainFragment();
 
         tx.replace(R.id.listFragment, mainF, Constants.CONTAINER);
 
-        tx.commit();
-
-
+        tx.commitAllowingStateLoss();
     }
 
     @Override
@@ -92,24 +90,13 @@ public class MainActivity extends FragmentActivity implements MainFragment.OnMai
 
         if (TEXTURE_SIZE_GL20 == -1 && TEXTURE_SIZE_GL10 == -1) {
             GPU gpu = new GPU(this);
-            gpu.loadOpenGLGles20Info(new GPU.OnCompleteCallback<GPU.OpenGLGles20Info>() {
-                @Override
-                public void onComplete(GPU.OpenGLGles20Info result) {
-                    TEXTURE_SIZE_GL20 = result.GL_MAX_TEXTURE_SIZE;
-                }
-            });
-            gpu.loadOpenGLGles10Info(new GPU.OnCompleteCallback<GPU.OpenGLGles10Info>() {
-                @Override
-                public void onComplete(GPU.OpenGLGles10Info result) {
-                    TEXTURE_SIZE_GL10 = result.GL_MAX_TEXTURE_SIZE;
-                }
-            });
+            gpu.loadOpenGLGles20Info(result -> TEXTURE_SIZE_GL20 = result.GL_MAX_TEXTURE_SIZE);
+            gpu.loadOpenGLGles10Info(result -> TEXTURE_SIZE_GL10 = result.GL_MAX_TEXTURE_SIZE);
 
         }
 
 
     }
-
 
 
     @Override
@@ -119,7 +106,7 @@ public class MainActivity extends FragmentActivity implements MainFragment.OnMai
             Bundle args = new Bundle();
             compose.setChoosenBitmap(btm);
             compose.setArguments(args);
-            FragmentTransaction transaction = getFragmentManager().beginTransaction();
+            FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
 
             transaction.addToBackStack(null);
             compose.show(transaction, "dialog");
@@ -132,7 +119,7 @@ public class MainActivity extends FragmentActivity implements MainFragment.OnMai
         if (btm != null) {
             DecodeTask task = new DecodeTask(this);
             task.execute(btm);
-            
+
             //TODO update grid list
         }
     }
@@ -144,22 +131,22 @@ public class MainActivity extends FragmentActivity implements MainFragment.OnMai
             Bundle args = new Bundle();
             viewFragment.setArguments(args);
             viewFragment.setMobiStegoItem(mobiStegoItem);
-            FragmentTransaction transaction = getFragmentManager().beginTransaction();
+            FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
 
-            Fragment mainFrag = getFragmentManager().findFragmentByTag(Constants.CONTAINER);
+            Fragment mainFrag = getSupportFragmentManager().findFragmentByTag(Constants.CONTAINER);
 
             transaction.replace(mainFrag.getId(), viewFragment);
             transaction.addToBackStack(null);
-            transaction.commit();
+            transaction.commitAllowingStateLoss();
         }
     }
 
     @Override
-    public void onMessageComposed(String message, String password,File stegan) {
+    public void onMessageComposed(String message, String password, File stegan) {
 
 
         EncodeTask task = new EncodeTask(this);
-        MobiStegoItem item = new MobiStegoItem(message, stegan, Constants.NO_NAME, false,password);
+        MobiStegoItem item = new MobiStegoItem(message, stegan, Constants.NO_NAME, false, password);
         task.execute(item);
 
     }
@@ -171,7 +158,7 @@ public class MainActivity extends FragmentActivity implements MainFragment.OnMai
         Bundle args = new Bundle();
         deleteDialogFragment.setMobiStegoItem(mobiStegoItem);
         deleteDialogFragment.setArguments(args);
-        FragmentTransaction transaction = getFragmentManager().beginTransaction();
+        FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
 
 
         transaction.addToBackStack(null);
@@ -182,13 +169,13 @@ public class MainActivity extends FragmentActivity implements MainFragment.OnMai
 
     @Override
     public void onDelete() {
-        FragmentManager ft = getFragmentManager();
+        FragmentManager ft = getSupportFragmentManager();
         FragmentTransaction tx = ft.beginTransaction();
         MainFragment mainF = new MainFragment();
 
         tx.replace(R.id.listFragment, mainF, Constants.CONTAINER);
 
-        tx.commit();
+        tx.commitAllowingStateLoss();
     }
 
     @Override
@@ -201,15 +188,13 @@ public class MainActivity extends FragmentActivity implements MainFragment.OnMai
 
         File f = mobiStegoItem.getBitmap();
         if (f != null) {
-
-
             List<ResolveInfo> resInfo = pm.queryIntentActivities(emailIntent, 0);
             List<LabeledIntent> intentList = new ArrayList<>();
             for (int i = 0; i < resInfo.size(); i++) {
                 // Extract the label, append it, and repackage it in a LabeledIntent
                 ResolveInfo ri = resInfo.get(i);
                 String packageName = ri.activityInfo.packageName;
-                if(packageName.contains("whatsapp")||packageName.contains("telegram"))
+                if (packageName.contains("whatsapp") || packageName.contains("telegram"))
                     continue;
 
                 Intent intent = new Intent();
@@ -223,11 +208,10 @@ public class MainActivity extends FragmentActivity implements MainFragment.OnMai
             }
 
             // convert intentList to array
-            LabeledIntent[] extraIntents = intentList.toArray( new LabeledIntent[ intentList.size() ]);
+            LabeledIntent[] extraIntents = intentList.toArray(new LabeledIntent[intentList.size()]);
 
             openInChooser.putExtra(Intent.EXTRA_INITIAL_INTENTS, extraIntents);
             startActivity(openInChooser);
-
 
 
             //startActivity(Intent.createChooser(emailIntent, getResources().getString(R.string.send)));
@@ -237,8 +221,8 @@ public class MainActivity extends FragmentActivity implements MainFragment.OnMai
     @Override
     public void itemViewOnDecrypt(String message, String password, TextView view) {
 
-        DecodePasswordTask dd=new DecodePasswordTask(this,view);
-        dd.execute(message,password);
+        DecodePasswordTask dd = new DecodePasswordTask(this, view);
+        dd.execute(message, password);
     }
 
 }

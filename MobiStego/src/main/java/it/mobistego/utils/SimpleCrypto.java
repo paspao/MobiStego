@@ -77,8 +77,8 @@ public class SimpleCrypto {
         if (buf == null)
             return "";
         StringBuffer result = new StringBuffer(2 * buf.length);
-        for (int i = 0; i < buf.length; i++) {
-            appendHex(result, buf[i]);
+        for (byte b : buf) {
+            appendHex(result, b);
         }
         return result.toString();
     }

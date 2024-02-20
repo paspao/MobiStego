@@ -1,21 +1,19 @@
 package it.mobistego;
 
-
-import org.junit.Before;
-import org.junit.Test;
-
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
-
-import android.support.test.InstrumentationRegistry;
-import android.support.test.runner.AndroidJUnit4;
 import android.util.Log;
 
-import junit.framework.Assert;
+import androidx.test.ext.junit.runners.AndroidJUnit4;
+import androidx.test.platform.app.InstrumentationRegistry;
+
+import org.junit.Assert;
+import org.junit.Before;
+import org.junit.Test;
+import org.junit.runner.RunWith;
 
 import java.io.IOException;
-
 import java.util.List;
 
 import it.mobistego.beans.MobiStegoItem;
@@ -40,33 +38,28 @@ import it.mobistego.utils.Utility;
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  */
 
-@org.junit.runner.RunWith(AndroidJUnit4.class)
+@RunWith(AndroidJUnit4.class)
 public class ApplicationTest {
 
-
-    private static String TAG = ApplicationTest.class.getName();
+    private static final String TAG = ApplicationTest.class.getName();
 
     private int total;
 
-    private Context context;
-
     @Before
     public void setUp() {
-        // In case you need the context in your test
-        context = InstrumentationRegistry.getTargetContext();
     }
 
+    private Context getContext() {
+        return InstrumentationRegistry.getInstrumentation().getContext();
+    }
 
-    private Context getContext(){
-
-
-        return context;
+    private Context getInstrumentationContext() {
+        return InstrumentationRegistry.getInstrumentation().getTargetContext();
     }
 
     @Test
     public void testAllProcessLsb2Bit() {
-
-        getContext().getResources().getDrawable(it.mobistego.test.R.drawable.test);
+        //getContext().getResources().getDrawable(it.mobistego.test.R.drawable.test);
         String message = "Hello è World!!!";
         Bitmap src = BitmapFactory.decodeResource(getContext().getResources(),
                 it.mobistego.test.R.drawable.test);
@@ -75,35 +68,28 @@ public class ApplicationTest {
         List<Bitmap> encodedList = LSB2bit.encodeMessage(srcList, message, new LSB2bit.ProgressHandler() {
             @Override
             public void setTotal(int tot) {
-
             }
 
             @Override
             public void increment(int inc) {
-
             }
 
             @Override
             public void finished() {
-
             }
         });
-
 
         Bitmap srcEncoded = Utility.mergeImage(encodedList, src.getHeight(), src.getWidth());
         List<Bitmap> srcEncodedList = Utility.splitImage(srcEncoded);
         String result = LSB2bit.decodeMessage(srcEncodedList);
-        Log.i(TAG, "Original message <" + message + "> Decripted message <" + result + ">");
+        Log.i(TAG, "Original message <" + message + "> Decrypted message <" + result + ">");
 
         Assert.assertEquals(result, message);
-
-
     }
 
     @Test
     public void testLsb2Bit() {
-
-        getContext().getResources().getDrawable(it.mobistego.test.R.drawable.test);
+        //getContext().getResources().getDrawable(it.mobistego.test.R.drawable.test);
         String message = "Hello World!!!";
         Bitmap src = BitmapFactory.decodeResource(getContext().getResources(),
                 it.mobistego.test.R.drawable.test);
@@ -123,12 +109,12 @@ public class ApplicationTest {
 
             @Override
             public void finished() {
-                Log.d(TAG, "Encoding finised!..Now merging");
+                Log.d(TAG, "Encoding finished!..Now merging");
             }
         });
 
         String resultAsSoon = LSB2bit.decodeMessage(encodedList);
-        Log.i(TAG, "Orignal message <" + message + "> Decripted message <" + resultAsSoon + ">");
+        Log.i(TAG, "Original message <" + message + "> Decrypted message <" + resultAsSoon + ">");
 
 
         Assert.assertEquals(resultAsSoon, message);
@@ -137,9 +123,8 @@ public class ApplicationTest {
     }
 
     @Test
-    public void ignoretestSaving() {
-
-        getContext().getResources().getDrawable(it.mobistego.test.R.drawable.test);
+    public void ignoreTestSaving() {
+        //getContext().getResources().getDrawable(it.mobistego.test.R.drawable.test);
         String message = "Hello World!!!";
         Bitmap src = BitmapFactory.decodeResource(getContext().getResources(),
                 it.mobistego.test.R.drawable.test);
@@ -166,29 +151,30 @@ public class ApplicationTest {
         Bitmap srcEncoded = Utility.mergeImage(encodedList, src.getHeight(), src.getWidth());
         List<Bitmap> srcEncodedList = Utility.splitImage(srcEncoded);
         String result = LSB2bit.decodeMessage(srcEncodedList);
-        Log.i(TAG, "Original message <" + message + "> Decripted message <" + result + ">");
+        Log.i(TAG, "Original message <" + message + "> Decrypted message <" + result + ">");
         Assert.assertEquals(result, message);
         MobiStegoItem m;
         try {
-            m = Utility.saveMobiStegoItem(message, srcEncoded,getContext());
+            m = Utility.saveMobiStegoItem(message, srcEncoded, getInstrumentationContext());
         } catch (IOException e) {
             e.printStackTrace();
             Assert.fail();
         }
 
     }
+
     @Test
     public void testLoadingGallery() {
         try {
-            List<MobiStegoItem> lista = Utility.listMobistegoItem(getContext());
-            if (lista != null)
-                for (MobiStegoItem item : lista) {
+            List<MobiStegoItem> list = Utility.listMobistegoItem(getInstrumentationContext());
+            if (list != null)
+                for (MobiStegoItem item : list) {
                     Log.d(TAG, "Name uuid " + item.getUuid());
                     Log.d(TAG, "Message " + item.getMessage());
 
                     List<Bitmap> srcEncodedList = Utility.splitImage(BitmapFactory.decodeFile(item.getBitmap().getAbsolutePath()));
                     String result = LSB2bit.decodeMessage(srcEncodedList);
-                    Log.i(TAG, "Original message <" + item.getMessage() + "> Decripted message <" + result + ">");
+                    Log.i(TAG, "Original message <" + item.getMessage() + "> Decrypted message <" + result + ">");
                     Assert.assertEquals(result, item.getMessage());
                 }
         } catch (Exception e) {
@@ -197,17 +183,18 @@ public class ApplicationTest {
         }
 
     }
+
     @Test
-    public void testKeySecret(){
+    public void testKeySecret() {
         try {
-            String encode=Utility.encrypt("CiaoPipppo","pippopippo");
+            String encode = Utility.encrypt("CiaoPipppo", "pippopippo");
             //String encoded64=Base64.encodeToString(encode.getBytes("UTF-8"),Base64.NO_CLOSE);
-            Log.i(TAG,"Base64: " +encode);
+            Log.i(TAG, "Base64: " + encode);
 
-            String decoded=Utility.decrypt(encode.getBytes("UTF-8"),"pippopippo");
+            String decoded = Utility.decrypt(encode.getBytes("UTF-8"), "pippopippo");
 
 
-            Log.i(TAG,decoded);
+            Log.i(TAG, decoded);
 
         } catch (Exception e) {
             e.printStackTrace();

@@ -1,99 +1,100 @@
 <?xml version="1.0" encoding="utf-8"?>
 <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
-
-    android:orientation="vertical"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:background="@android:color/transparent">
+    android:background="@android:color/transparent"
+    android:orientation="vertical">
 
     <ProgressBar
-        android:id="@+id/progrss_compose"
+        android:id="@+id/progress_compose"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:indeterminate="true" />
-    <ImageView
-        android:id="@+id/compose_background"
-        android:layout_width="fill_parent"
-        android:layout_height="wrap_content"
 
+    <androidx.appcompat.widget.AppCompatImageView
+        android:id="@+id/compose_background"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@android:color/transparent"
         android:scaleType="fitCenter"
-        android:visibility="invisible"
-        android:background="@android:color/transparent" />
+        android:visibility="invisible" />
+
     <!-- <ImageView
          android:id="@+id/compose_background"
-         android:layout_width="fill_parent"
+         android:layout_width="match_parent"
          android:layout_height="wrap_content"
          android:backgroundTint="@color/abc_background_cache_hint_selector_material_dark"
          android:tintMode="src_over"
          android:scaleType="centerCrop"
          android:background="@android:color/transparent" />
  -->
-    <LinearLayout
-        android:layout_gravity="center_vertical"
-        android:gravity="center_vertical"
-        android:layout_width="fill_parent"
+
+    <androidx.appcompat.widget.LinearLayoutCompat
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_gravity="center_vertical"
+        android:layout_margin="22dp"
+        android:gravity="center_vertical"
         android:orientation="vertical"
-        android:weightSum="3"
-        android:layout_margin="22dp">
+        android:weightSum="3">
 
-        <EditText
-            android:layout_weight="1"
+        <androidx.appcompat.widget.AppCompatEditText
             android:id="@+id/compose_edit"
-            android:layout_width="fill_parent"
-            android:gravity="center_vertical"
-            android:layout_height="fill_parent"
-            android:hint="@string/enter_text"
-            android:textColorHint="#00d600"
-            android:inputType="textMultiLine"
-            android:textColor="#00d600"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:alpha="0.6"
             android:background="#e6535353"
+            android:gravity="center_vertical"
+            android:hint="@string/enter_text"
+            android:inputType="textMultiLine"
             android:minLines="15"
+            android:textColor="#00d600"
+            android:textColorHint="#00d600" />
 
-            android:alpha="0.6" />
-        <LinearLayout
+        <androidx.appcompat.widget.LinearLayoutCompat
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
             android:layout_weight="2"
-            android:weightSum="2"
-            android:layout_width="fill_parent"
-            android:layout_height="fill_parent"
-            android:orientation="horizontal">
+            android:orientation="horizontal"
+            android:weightSum="2">
 
-            <CheckBox
+            <androidx.appcompat.widget.AppCompatCheckBox
                 android:id="@+id/checkBoxSecret"
                 android:layout_width="wrap_content"
                 android:layout_height="match_parent" />
-            <EditText
-                android:layout_width="match_parent"
+
+            <androidx.appcompat.widget.AppCompatEditText
                 android:id="@+id/compose_edit_password"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:hint="@string/enter_password"
-                android:textColorHint="#00d600"
-                android:inputType="textMultiLine"
-                android:textColor="#00d600"
                 android:background="#e6535353"
-                android:gravity="center_vertical"
                 android:enabled="false"
-                android:minLines="2"/>
+                android:gravity="center_vertical"
+                android:hint="@string/enter_password"
+                android:inputType="textMultiLine"
+                android:minLines="2"
+                android:textColor="#00d600"
+                android:textColorHint="#00d600" />
 
+        </androidx.appcompat.widget.LinearLayoutCompat>
 
-        </LinearLayout>
-
-        <LinearLayout
+        <androidx.appcompat.widget.LinearLayoutCompat
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
             android:layout_weight="2"
-            android:weightSum="2"
-            android:layout_width="fill_parent"
-            android:layout_height="fill_parent"
-            android:orientation="horizontal">
+            android:orientation="horizontal"
+            android:weightSum="2">
 
-            <Button
+            <androidx.appcompat.widget.AppCompatButton
                 android:id="@+id/compose_button_encode"
-                android:layout_width="fill_parent"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
                 android:text="@string/encode" />
 
+        </androidx.appcompat.widget.LinearLayoutCompat>
 
-        </LinearLayout>
-    </LinearLayout>
+    </androidx.appcompat.widget.LinearLayoutCompat>
 
 </FrameLayout>

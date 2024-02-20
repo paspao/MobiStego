@@ -1,10 +1,11 @@
 package it.mobistego.fragments;
 
-import android.app.AlertDialog;
 import android.app.Dialog;
-import android.app.DialogFragment;
-import android.content.DialogInterface;
 import android.os.Bundle;
+
+import androidx.annotation.NonNull;
+import androidx.appcompat.app.AlertDialog;
+import androidx.fragment.app.DialogFragment;
 
 import it.mobistego.R;
 
@@ -27,20 +28,18 @@ import it.mobistego.R;
  */
 public class AlertNotMobistegoFragment extends DialogFragment {
 
-
+    @NonNull
     @Override
     public Dialog onCreateDialog(Bundle savedInstanceState) {
 
         AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
         builder.setMessage(R.string.no_mobistego_image)
-                .setNeutralButton(R.string.ok, new DialogInterface.OnClickListener() {
-                    public void onClick(DialogInterface dialog, int id) {
+                .setNeutralButton(R.string.ok, (dialog, id) -> {
                     //do nothing
 
-                    }
                 });
 
         return builder.create();
     }
-    
+
 }

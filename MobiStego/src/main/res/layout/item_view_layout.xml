@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="fill_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
     android:layout_height="match_parent">
     <!-- Header aligned to top -->
     <RelativeLayout
@@ -8,80 +9,87 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_alignParentTop="true"
-
         android:gravity="fill_horizontal">
 
-        <LinearLayout
-            android:layout_width="fill_parent"
+        <androidx.appcompat.widget.LinearLayoutCompat
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:gravity="center_horizontal"
             android:orientation="horizontal">
 
-            <TextView
-                android:layout_weight="1"
+            <androidx.appcompat.widget.AppCompatTextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_margin="5dp"/>
+                android:layout_margin="5dp"
+                android:layout_weight="1" />
 
-            <ImageButton
+            <androidx.appcompat.widget.AppCompatImageButton
                 android:id="@+id/button_delete"
-                android:src="@android:drawable/ic_menu_delete"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="@string/delete" />
+                android:text="@string/delete"
+                app:srcCompat="@android:drawable/ic_menu_delete" />
 
-            <ImageButton
+            <androidx.appcompat.widget.AppCompatImageButton
                 android:id="@+id/button_share"
-                android:src="@android:drawable/ic_menu_share"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="@string/share" />
-        </LinearLayout>
+                android:text="@string/share"
+                app:srcCompat="@android:drawable/ic_menu_share" />
+
+        </androidx.appcompat.widget.LinearLayoutCompat>
+
     </RelativeLayout>
 
     <ScrollView
-        android:layout_width="fill_parent"
+        android:layout_width="match_parent"
         android:layout_height="match_parent"
-        
         android:layout_below="@id/header">
 
-        <LinearLayout
-            android:layout_width="fill_parent"
+        <androidx.appcompat.widget.LinearLayoutCompat
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:layout_weight="5"
             android:gravity="center_horizontal"
-            android:orientation="vertical"
-            android:layout_weight="5">
+            android:orientation="vertical">
 
             <ProgressBar
                 android:id="@+id/progrss_view"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:indeterminate="true" />
-            <ImageView
+
+            <androidx.appcompat.widget.AppCompatImageView
                 android:id="@+id/image_view_item"
                 android:layout_width="match_parent"
                 android:layout_height="150dp"
                 android:scaleType="centerCrop"
                 android:visibility="invisible" />
 
-            <TextView
+            <androidx.appcompat.widget.AppCompatTextView
                 android:id="@+id/text_view_item_label"
                 android:layout_width="match_parent"
-                android:paddingTop="5dp"
                 android:layout_height="wrap_content"
+                android:layout_margin="16dp"
+                android:paddingTop="5dp"
                 android:text="@string/hidden" />
 
-            <TextView
+            <androidx.appcompat.widget.AppCompatTextView
                 android:id="@+id/text_view_item"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:fontFamily="Arial"
-                android:textSize="18dp" />
-            <Button
+                android:layout_margin="16dp"
+                android:textAppearance="?android:attr/textAppearanceMedium"
+                app:fontFamily="Arial" />
+
+            <androidx.appcompat.widget.AppCompatButton
                 android:id="@+id/button_decrypt"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="@string/try_decode"/>
-        </LinearLayout>
+                android:text="@string/try_decode" />
+
+        </androidx.appcompat.widget.LinearLayoutCompat>
+
     </ScrollView>
+
 </RelativeLayout>

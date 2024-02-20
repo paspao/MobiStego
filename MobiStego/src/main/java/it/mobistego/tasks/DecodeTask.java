@@ -1,13 +1,14 @@
 package it.mobistego.tasks;
 
-import android.app.Activity;
-import android.app.FragmentTransaction;
 import android.app.ProgressDialog;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.util.Log;
+
+import androidx.fragment.app.FragmentActivity;
+import androidx.fragment.app.FragmentTransaction;
 
 import java.io.File;
 import java.io.IOException;
@@ -22,7 +23,7 @@ import it.mobistego.utils.Utility;
 
 /**
  * Created by paspao on 15/02/15.
- * 
+ * <p>
  * <p/>
  * Copyright (C) 2015  Pasquale Paola
  * <p/>
@@ -41,16 +42,16 @@ import it.mobistego.utils.Utility;
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  */
 public class DecodeTask extends AsyncTask<File, Void, MobiStegoItem> {
-   
-    private final static String TAG=DecodeTask.class.getName();
-    private Activity activity;
+
+    private final static String TAG = DecodeTask.class.getName();
+    private FragmentActivity activity;
     private ProgressDialog progressDialog;
     private boolean isMobistegoImage;
-    
-    public DecodeTask(Activity m){
+
+    public DecodeTask(FragmentActivity m) {
         super();
-        this.activity=m;
-        isMobistegoImage=false;
+        this.activity = m;
+        isMobistegoImage = false;
     }
 
     @Override
@@ -61,30 +62,29 @@ public class DecodeTask extends AsyncTask<File, Void, MobiStegoItem> {
         progressDialog.setTitle(activity.getString(R.string.decoding));
         progressDialog.setIndeterminate(true);
         progressDialog.setCancelable(false);
-        
     }
-    
+
     @Override
     protected MobiStegoItem doInBackground(File... params) {
-        MobiStegoItem result=null;
+        MobiStegoItem result = null;
         publishProgress();
         Bitmap bitmap = BitmapFactory.decodeFile(params[0].getAbsolutePath());
         if (bitmap == null)
             return result;
         List<Bitmap> srcEncodedList = Utility.splitImage(bitmap);
         String decoded = LSB2bit.decodeMessage(srcEncodedList);
-        for(Bitmap bitm:srcEncodedList)
+        for (Bitmap bitm : srcEncodedList)
             bitm.recycle();
-        if(!Utility.isEmpty(decoded)) {
+        if (!Utility.isEmpty(decoded)) {
             try {
-                isMobistegoImage=true;
-                result = Utility.saveMobiStegoItem(decoded, bitmap,activity);
+                isMobistegoImage = true;
+                result = Utility.saveMobiStegoItem(decoded, bitmap, activity);
             } catch (IOException e) {
                 Log.e(TAG, "Error", e);
                 //e.printStackTrace();
             }
         }
-        
+
         return result;
     }
 
@@ -98,14 +98,13 @@ public class DecodeTask extends AsyncTask<File, Void, MobiStegoItem> {
     protected void onPostExecute(MobiStegoItem mobiStegoItem) {
         super.onPostExecute(mobiStegoItem);
         progressDialog.dismiss();
-        if(!isMobistegoImage)
-        {
+        if (!isMobistegoImage) {
 
             AlertNotMobistegoFragment compose = new AlertNotMobistegoFragment();
             Bundle args = new Bundle();
 
             compose.setArguments(args);
-            FragmentTransaction transaction = activity.getFragmentManager().beginTransaction();
+            FragmentTransaction transaction = activity.getSupportFragmentManager().beginTransaction();
 
             transaction.addToBackStack(null);
             compose.show(transaction, "dialog");
@@ -113,4 +112,5 @@ public class DecodeTask extends AsyncTask<File, Void, MobiStegoItem> {
             ((MainFragment.OnMainFragment) activity).onMainFragmentGridItemSelected(mobiStegoItem);
         }
     }
+
 }

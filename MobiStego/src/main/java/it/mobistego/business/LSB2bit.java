@@ -41,8 +41,8 @@ public class LSB2bit {
     private static int[] binary = {16, 8, 0};
     private static byte[] andByte = {(byte) 0xC0, 0x30, 0x0C, 0x03};
     private static int[] toShift = {6, 4, 2, 0};
-    public static String END_MESSAGE_COSTANT = "#!@";
-    public static String START_MESSAGE_COSTANT = "@!#";
+    public static String END_MESSAGE_CONSTANT = "#!@";
+    public static String START_MESSAGE_CONSTANT = "@!#";
 
     /**
      * This method represent the core of LSB on 2 bit (Encoding).
@@ -69,7 +69,7 @@ public class LSB2bit {
 
             for (int col = 0; col < imgCols; col++) {
                 int element = row * imgCols + col;
-                byte tmp = 0;
+                byte tmp;
 
                 for (int channelIndex = 0; channelIndex < channels; channelIndex++) {
                     if (!message.isMessageEncoded()) {
@@ -103,9 +103,9 @@ public class LSB2bit {
 
     public static List<Bitmap> encodeMessage(List<Bitmap> splittedImages,
                                              String str, ProgressHandler hand) {
-        List<Bitmap> result = new ArrayList<Bitmap>(splittedImages.size());
-        str += END_MESSAGE_COSTANT;
-        str = START_MESSAGE_COSTANT + str;
+        List<Bitmap> result = new ArrayList<>(splittedImages.size());
+        str += END_MESSAGE_CONSTANT;
+        str = START_MESSAGE_CONSTANT + str;
         byte[] msg = str.getBytes(Charset.forName("UTF-8"));
 
         MessageEncodingStatus message = new MessageEncodingStatus();
@@ -162,8 +162,7 @@ public class LSB2bit {
             int[] pixels = new int[bit.getWidth() * bit.getHeight()];
             bit.getPixels(pixels, 0, bit.getWidth(), 0, 0, bit.getWidth(),
                     bit.getHeight());
-            byte[] b = null;
-            b = Utility.convertArray(pixels);
+            byte[] b = Utility.convertArray(pixels);
             decodeMessage(b, bit.getWidth(), bit.getHeight(), mesgDecoded);
             if (mesgDecoded.isEnded())
                 break;
@@ -182,20 +181,20 @@ public class LSB2bit {
     private static void decodeMessage(byte[] oneDPix, int imgCols,
                                       int imgRows, MessageDecodingStatus mesg) {
 
-        Vector<Byte> v = new Vector<Byte>();
+        Vector<Byte> v = new Vector<>();
 
 
         int shiftIndex = 4;
         byte tmp = 0x00;
-        for (int i = 0; i < oneDPix.length; i++) {
-            tmp = (byte) (tmp | ((oneDPix[i] << toShift[shiftIndex
+        for (byte dPix : oneDPix) {
+            tmp = (byte) (tmp | ((dPix << toShift[shiftIndex
                     % toShift.length]) & andByte[shiftIndex++ % toShift.length]));
             if (shiftIndex % toShift.length == 0) {
                 v.addElement(Byte.valueOf(tmp));
                 byte[] nonso = {(v.elementAt(v.size() - 1)).byteValue()};
                 String str = new String(nonso, Charset.forName("UTF-8"));
-                // if (END_MESSAGE_COSTANT.equals(str)) {
-                if (mesg.getMessage().endsWith(END_MESSAGE_COSTANT)) {
+                // if (END_MESSAGE_CONSTANT.equals(str)) {
+                if (mesg.getMessage().endsWith(END_MESSAGE_CONSTANT)) {
                     Log.i("TEST", "Decoding ended");
                     //fix utf-8 decoding
                     byte[] temp = new byte[v.size()];
@@ -209,8 +208,8 @@ public class LSB2bit {
                     break;
                 } else {
                     mesg.setMessage(mesg.getMessage() + str);
-                    if (mesg.getMessage().length() == START_MESSAGE_COSTANT.length()
-                            && !START_MESSAGE_COSTANT.equals(mesg.getMessage())) {
+                    if (mesg.getMessage().length() == START_MESSAGE_CONSTANT.length()
+                            && !START_MESSAGE_CONSTANT.equals(mesg.getMessage())) {
                         mesg.setMessage(null);
                         mesg.setEnded(true);
                         break;
@@ -222,9 +221,9 @@ public class LSB2bit {
 
         }
         if (mesg.getMessage() != null)
-            mesg.setMessage(mesg.getMessage().substring(START_MESSAGE_COSTANT.length(), mesg.getMessage()
+            mesg.setMessage(mesg.getMessage().substring(START_MESSAGE_CONSTANT.length(), mesg.getMessage()
                     .length()
-                    - END_MESSAGE_COSTANT.length()));
+                    - END_MESSAGE_CONSTANT.length()));
 
 
     }
@@ -238,8 +237,8 @@ public class LSB2bit {
     public static int numberOfPixelForMessage(String message) {
         int result = -1;
         if (message != null) {
-            message += END_MESSAGE_COSTANT;
-            message = START_MESSAGE_COSTANT + message;
+            message += END_MESSAGE_CONSTANT;
+            message = START_MESSAGE_CONSTANT + message;
             result = message.getBytes(Charset.forName("UTF-8")).length * 4 / 3;
         }
 

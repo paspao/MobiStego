@@ -2,7 +2,6 @@ package it.mobistego.fragments;
 
 import android.app.Activity;
 import android.app.Dialog;
-import android.app.DialogFragment;
 import android.graphics.Bitmap;
 import android.graphics.Color;
 import android.graphics.ColorMatrix;
@@ -21,6 +20,9 @@ import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
 
+import androidx.annotation.NonNull;
+import androidx.fragment.app.DialogFragment;
+
 import java.io.File;
 
 import it.mobistego.R;
@@ -29,7 +31,7 @@ import it.mobistego.tasks.BitmapWorkerTask;
 /**
  * Created by paspao on 28/01/15.
  */
-public class ComposeFragment extends DialogFragment implements View.OnClickListener,CompoundButton.OnCheckedChangeListener {
+public class ComposeFragment extends DialogFragment implements View.OnClickListener, CompoundButton.OnCheckedChangeListener {
 
     private static final String TAG = ComposeFragment.class.getName();
     private OnComposed mCallback;
@@ -40,93 +42,6 @@ public class ComposeFragment extends DialogFragment implements View.OnClickListe
     private CheckBox checkPassword;
     private File choosenBitmap;
     private Button buttonEncode;
-
-    @Override
-    public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-        editPassword.setEnabled(isChecked);
-    }
-
-
-    public interface OnComposed {
-
-        void onMessageComposed(String message, String password,File stegan);
-
-    }
-
-    @Override
-    public Dialog onCreateDialog(Bundle savedInstanceState) {
-        Dialog d = super.onCreateDialog(savedInstanceState);
-        d.getWindow().requestFeature(Window.FEATURE_NO_TITLE);
-        d.getWindow().setFormat(PixelFormat.RGBA_8888);
-
-        return d;
-    }
-
-    public void setChoosenBitmap(File choosenBitmap) {
-        this.choosenBitmap = choosenBitmap;
-    }
-
-    @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
-                             Bundle savedInstanceState) {
-        View view = inflater.inflate(R.layout.compose_layout, container, false);
-        imageView = (ImageView) view.findViewById(R.id.compose_background);
-        ColorMatrix matrix = new ColorMatrix();
-        matrix.setSaturation(0);
-
-        ColorMatrixColorFilter filter = new ColorMatrixColorFilter(matrix);
-        imageView.setColorFilter(filter);
-
-        progressBar = (ProgressBar) view.findViewById(R.id.progrss_compose);
-        editMessage = (EditText) view.findViewById(R.id.compose_edit);
-        buttonEncode = (Button) view.findViewById(R.id.compose_button_encode);
-        editPassword= (EditText) view.findViewById(R.id.compose_edit_password);
-        checkPassword=(CheckBox) view.findViewById(R.id.checkBoxSecret);
-
-
-        BitmapWorkerTask workerTask = new BitmapWorkerTask(imageView, progressBar);
-        workerTask.execute(choosenBitmap);
-        buttonEncode.setOnClickListener(this);
-        checkPassword.setOnCheckedChangeListener(this);
-
-        return view;
-    }
-
-
-    @Override
-    public void onAttach(Activity activity) {
-        super.onAttach(activity);
-
-
-        try {
-            mCallback = (OnComposed) activity;
-
-        } catch (ClassCastException e) {
-            throw new ClassCastException(activity.toString()
-                    + " must implement OnComposed");
-        }
-    }
-
-    @Override
-    public void onClick(View v) {
-        if (v != null) {
-            int id = v.getId();
-            switch (id) {
-                case R.id.compose_button_encode:
-                    String message = editMessage.getText().toString();
-                    String password=editPassword.getText().toString();
-
-                    mCallback.onMessageComposed(message,checkPassword.isChecked()?password:null, choosenBitmap);
-
-                    dismiss();
-                    break;
-                default:
-                    Log.d(TAG, "Unknown action");
-                    break;
-            }
-        }
-    }
-
 
     public static Bitmap doGreyscale(Bitmap src) {
         // constant factors
@@ -164,6 +79,93 @@ public class ComposeFragment extends DialogFragment implements View.OnClickListe
 
         // return final image
         return bmOut;
+    }
+
+    @Override
+    public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+        editPassword.setEnabled(isChecked);
+    }
+
+    @NonNull
+    @Override
+    public Dialog onCreateDialog(Bundle savedInstanceState) {
+        Dialog d = super.onCreateDialog(savedInstanceState);
+        d.getWindow().requestFeature(Window.FEATURE_NO_TITLE);
+        d.getWindow().setFormat(PixelFormat.RGBA_8888);
+
+        return d;
+    }
+
+    public void setChoosenBitmap(File choosenBitmap) {
+        this.choosenBitmap = choosenBitmap;
+    }
+
+    @Override
+    public View onCreateView(LayoutInflater inflater, ViewGroup container,
+                             Bundle savedInstanceState) {
+        View view = inflater.inflate(R.layout.compose_layout, container, false);
+        imageView = (ImageView) view.findViewById(R.id.compose_background);
+        ColorMatrix matrix = new ColorMatrix();
+        matrix.setSaturation(0);
+
+        ColorMatrixColorFilter filter = new ColorMatrixColorFilter(matrix);
+        imageView.setColorFilter(filter);
+
+        progressBar = (ProgressBar) view.findViewById(R.id.progress_compose);
+        editMessage = (EditText) view.findViewById(R.id.compose_edit);
+        buttonEncode = (Button) view.findViewById(R.id.compose_button_encode);
+        editPassword = (EditText) view.findViewById(R.id.compose_edit_password);
+        checkPassword = (CheckBox) view.findViewById(R.id.checkBoxSecret);
+
+
+        BitmapWorkerTask workerTask = new BitmapWorkerTask(imageView, progressBar);
+        workerTask.execute(choosenBitmap);
+        buttonEncode.setOnClickListener(this);
+        checkPassword.setOnCheckedChangeListener(this);
+
+        return view;
+    }
+
+
+    @Override
+    public void onAttach(@NonNull Activity activity) {
+        super.onAttach(activity);
+
+
+        try {
+            mCallback = (OnComposed) activity;
+
+        } catch (ClassCastException e) {
+            throw new ClassCastException(activity.toString()
+                    + " must implement OnComposed");
+        }
+    }
+
+    @Override
+    public void onClick(View v) {
+        if (v != null) {
+            int id = v.getId();
+            switch (id) {
+                case R.id.compose_button_encode:
+                    String message = editMessage.getText().toString();
+                    String password = editPassword.getText().toString();
+
+                    mCallback.onMessageComposed(message, checkPassword.isChecked() ? password : null, choosenBitmap);
+
+                    dismiss();
+                    break;
+                default:
+                    Log.d(TAG, "Unknown action");
+                    break;
+            }
+        }
+    }
+
+
+    public interface OnComposed {
+
+        void onMessageComposed(String message, String password, File stegan);
+
     }
 
 }
