@@ -1,11 +1,12 @@
 package it.mobistego.fragments;
 
 import android.app.Activity;
-import android.app.AlertDialog;
 import android.app.Dialog;
-import android.app.DialogFragment;
-import android.content.DialogInterface;
 import android.os.Bundle;
+
+import androidx.annotation.NonNull;
+import androidx.appcompat.app.AlertDialog;
+import androidx.fragment.app.DialogFragment;
 
 import it.mobistego.R;
 import it.mobistego.beans.MobiStegoItem;
@@ -28,40 +29,32 @@ import it.mobistego.utils.Utility;
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  */
-public class DeleteDialogFragment extends DialogFragment{
-    
-    
-    public interface OnItemDeleted{
-        void onDelete();
-        
-    }
-    
+public class DeleteDialogFragment extends DialogFragment {
+
+
     private OnItemDeleted mCallback;
-    
     private MobiStegoItem mobiStegoItem;
+
+    @NonNull
     @Override
     public Dialog onCreateDialog(Bundle savedInstanceState) {
 
         AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
-        builder.setMessage(R.string.suredelte)
-                .setPositiveButton(R.string.yes, new DialogInterface.OnClickListener() {
-                    public void onClick(DialogInterface dialog, int id) {
-                        Utility.deleteMobiStegoItem(mobiStegoItem,getActivity());
-                        mCallback.onDelete();
+        builder.setMessage(R.string.sure_delete)
+                .setPositiveButton(R.string.yes, (dialog, id) -> {
+                    Utility.deleteMobiStegoItem(mobiStegoItem, getActivity());
+                    mCallback.onDelete();
 
-                    }
                 })
-                .setNegativeButton(R.string.no, new DialogInterface.OnClickListener() {
-                    public void onClick(DialogInterface dialog, int id) {
-                        //do nothing
-                    }
+                .setNegativeButton(R.string.no, (dialog, id) -> {
+                    //do nothing
                 });
-        
+
         return builder.create();
     }
 
     @Override
-    public void onAttach(Activity activity) {
+    public void onAttach(@NonNull Activity activity) {
         super.onAttach(activity);
 
 
@@ -77,4 +70,10 @@ public class DeleteDialogFragment extends DialogFragment{
     public void setMobiStegoItem(MobiStegoItem mobiStegoItem) {
         this.mobiStegoItem = mobiStegoItem;
     }
+
+    public interface OnItemDeleted {
+        void onDelete();
+
+    }
+
 }

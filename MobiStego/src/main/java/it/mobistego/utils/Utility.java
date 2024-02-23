@@ -13,16 +13,9 @@ import android.util.Log;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
-import java.io.FilenameFilter;
 import java.io.IOException;
 import java.io.OutputStreamWriter;
-import java.io.UnsupportedEncodingException;
-import java.security.InvalidAlgorithmParameterException;
-import java.security.InvalidKeyException;
-import java.security.Key;
 import java.security.MessageDigest;
-import java.security.NoSuchAlgorithmException;
-import java.security.SecureRandom;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -32,11 +25,7 @@ import java.util.Locale;
 import java.util.Scanner;
 import java.util.UUID;
 
-import javax.crypto.BadPaddingException;
 import javax.crypto.Cipher;
-import javax.crypto.IllegalBlockSizeException;
-import javax.crypto.NoSuchPaddingException;
-import javax.crypto.spec.IvParameterSpec;
 import javax.crypto.spec.SecretKeySpec;
 
 import it.mobistego.beans.MobiStegoItem;
@@ -64,17 +53,16 @@ import it.mobistego.beans.MobiStegoItem;
 
 public class Utility {
 
-    private final static String TAG=Utility.class.getName();
     public static final int SQUARE_BLOCK = 512;
-
+    private final static String TAG = Utility.class.getName();
 
     public static File createImageFile(Context ctx) throws IOException {
         // Create an image file name
-        String mCurrentPhotoPath=null;
+        String mCurrentPhotoPath;
         String timeStamp = new SimpleDateFormat("ddMMyyyy_HHmmss", Locale.ITALY).format(new Date());
         String imageFileName = "JPEG_" + timeStamp + "_";
         //File storageDir = Environment.getExternalStoragePublicDirectory(
-          //      Environment.DIRECTORY_PICTURES);
+        //      Environment.DIRECTORY_PICTURES);
         File storageDir = ctx.getExternalFilesDir(Environment.DIRECTORY_PICTURES);
         File image = File.createTempFile(
                 imageFileName,  /* prefix */
@@ -83,18 +71,16 @@ public class Utility {
         );
 
         // Save a file: path for use with ACTION_VIEW intents
-        mCurrentPhotoPath =  image.getAbsolutePath();
-        Log.d(TAG,"Image file created in "+mCurrentPhotoPath);
+        mCurrentPhotoPath = image.getAbsolutePath();
+        Log.d(TAG, "Image file created in " + mCurrentPhotoPath);
         return image;
     }
 
     public static int squareBlockNeeded(int pixels) {
-        int result = 0;
         int quadrato = SQUARE_BLOCK * SQUARE_BLOCK;
         int divid = pixels / (quadrato);
         int resto = pixels % (quadrato);
-        result = divid + (resto > 0 ? 1 : 0);
-        return result;
+        return divid + (resto > 0 ? 1 : 0);
     }
 
     public static List<Bitmap> splitImage(Bitmap bitmap) {
@@ -106,7 +92,7 @@ public class Utility {
         int chunkHeight, chunkWidth;
 
         //To store all the small image chunks in bitmap format in this list
-        ArrayList<Bitmap> chunkedImages = new ArrayList<Bitmap>();
+        ArrayList<Bitmap> chunkedImages = new ArrayList<>();
 
 
         int rows = bitmap.getHeight() / SQUARE_BLOCK;
@@ -247,11 +233,11 @@ public class Utility {
 
         for (int i = 0; i < array.length; i++) {
 
-			/*
+            /*
              * newarray[i * 3] = (byte) ((array[i]) & 0xFF); newarray[i * 3 + 1]
-			 * = (byte)((array[i] >> 8)& 0xFF); newarray[i * 3 + 2] =
-			 * (byte)((array[i] >> 16)& 0xFF);
-			 */
+             * = (byte)((array[i] >> 8)& 0xFF); newarray[i * 3 + 2] =
+             * (byte)((array[i] >> 16)& 0xFF);
+             */
 
             newarray[i * 3] = (byte) ((array[i] >> 16) & 0xFF);
             newarray[i * 3 + 1] = (byte) ((array[i] >> 8) & 0xFF);
@@ -261,7 +247,7 @@ public class Utility {
         return newarray;
     }
 
-    public static MobiStegoItem saveMobiStegoItem(String message, Bitmap srcEncoded,Context ctx) throws IOException {
+    public static MobiStegoItem saveMobiStegoItem(String message, Bitmap srcEncoded, Context ctx) throws IOException {
 
         String name = UUID.randomUUID().toString();
 
@@ -302,7 +288,7 @@ public class Utility {
         writer.close();
         foutText.flush();
         foutText.close();
-        MobiStegoItem result = new MobiStegoItem(message, originalImage, name, true,"");
+        MobiStegoItem result = new MobiStegoItem(message, originalImage, name, true, "");
 
         return result;
     }
@@ -312,22 +298,20 @@ public class Utility {
         String[] dirs = listMobistegoDir(ctx);
         if (dirs != null)
             for (String dir : dirs)
-                result.add(loadMobiStegoItem(dir,ctx));
+                result.add(loadMobiStegoItem(dir, ctx));
         return result;
     }
 
     public static String[] listMobistegoDir(Context ctx) {
-        File mobiStegoDir =ctx.getExternalFilesDir(Environment.DIRECTORY_DOCUMENTS);
-        String[] directories = mobiStegoDir.list(new FilenameFilter() {
-            @Override
-            public boolean accept(File dir, String filename) {
-                return new File(dir, filename).isDirectory();
-            }
-        });
-        return directories;
+        File mobiStegoDir = ctx.getExternalFilesDir(Environment.DIRECTORY_DOCUMENTS);
+        if (mobiStegoDir != null) {
+            return mobiStegoDir.list((dir, filename) -> new File(dir, filename).isDirectory());
+        } else {
+            return null;
+        }
     }
 
-    public static File getBitmapFile(MobiStegoItem mobiStegoItem,Context ctx) {
+    public static File getBitmapFile(MobiStegoItem mobiStegoItem, Context ctx) {
         File result = null;
         File mobiStegoDir = ctx.getExternalFilesDir(Environment.DIRECTORY_DOCUMENTS);
         File rootDir = new File(mobiStegoDir,
@@ -339,35 +323,35 @@ public class Utility {
         return result;
     }
 
-    public static MobiStegoItem loadMobiStegoItem(String dirName,Context ctx) {
+    public static MobiStegoItem loadMobiStegoItem(String dirName, Context ctx) {
 
         String fileNamePng = dirName + Constants.FILE_PNG_EXT;
 
         String fileNameTxt = dirName + Constants.FILE_TXT_EXT;
-        File mobiStegoDir =ctx.getExternalFilesDir(Environment.DIRECTORY_DOCUMENTS);
+        File mobiStegoDir = ctx.getExternalFilesDir(Environment.DIRECTORY_DOCUMENTS);
         File rootDir = new File(mobiStegoDir,
                 dirName);
         File imageOriginal = new File(rootDir,
                 fileNamePng);
         File txt = new File(rootDir,
                 fileNameTxt);
-        Scanner scan = null;
+
         MobiStegoItem result = null;
         try {
-            scan = new Scanner(txt);
+            Scanner scan = new Scanner(txt);
 
             StringBuilder message = new StringBuilder();
             while (scan.hasNextLine())
                 message.append(scan.nextLine());
             scan.close();
-            result = new MobiStegoItem(message.toString(), imageOriginal, dirName, true,"");
+            result = new MobiStegoItem(message.toString(), imageOriginal, dirName, true, "");
         } catch (FileNotFoundException e) {
             Log.e(TAG, "Problem while loading", e);
         }
         return result;
     }
 
-    public static boolean deleteMobiStegoItem(MobiStegoItem item,Context ctx) {
+    public static boolean deleteMobiStegoItem(MobiStegoItem item, Context ctx) {
         boolean result = false;
         String dirName = item.getUuid() == null ? item.getBitmap().getParentFile().getName() : item.getUuid();
 
@@ -394,30 +378,27 @@ public class Utility {
         return result;
     }
 
-    public static boolean isEmpty(String str)
-    {
-        boolean result=true;
-        if(str==null);
-        else
-        {
-            str=str.trim();
-            if(str.length()>0 && !str.equals("undefined"))
-                result=false;
+    public static boolean isEmpty(String str) {
+        boolean result = true;
+        if (str == null) ;
+        else {
+            str = str.trim();
+            if (!str.isEmpty() && !str.equals("undefined"))
+                result = false;
         }
 
         return result;
     }
 
 
-    public static boolean isEmpty(Collection<?> collection)
-    {
-        boolean result=true;
+    public static boolean isEmpty(Collection<?> collection) {
+        boolean result;
         if (collection == null) {
-            result=true;
+            result = true;
         } else if (collection.isEmpty()) {
-            result=true;
+            result = true;
         } else {
-            result=false;
+            result = false;
         }
         return result;
     }
@@ -455,7 +436,7 @@ public class Utility {
     }
 
 
-    public static String encrypt(String valueToEnc,String password) throws Exception {
+    public static String encrypt(String valueToEnc, String password) throws Exception {
 
         //byte[] keyAsBytes;
         //keyAsBytes = password.getBytes("UTF-8");
@@ -468,11 +449,12 @@ public class Utility {
         Cipher c = Cipher.getInstance("AES/ECB/PKCS5Padding");
         c.init(Cipher.ENCRYPT_MODE, spec);  //////////LINE 20
         byte[] encValue = c.doFinal(valueToEnc.getBytes("UTF-8"));
-        String encryptedValue = Base64.encodeToString(encValue,Base64.NO_CLOSE);
+        String encryptedValue = Base64.encodeToString(encValue, Base64.NO_CLOSE);
         return encryptedValue;
     }
-    public static String decrypt(byte[] valueToDecode64,String password) throws Exception {
-        byte[] todecode= Base64.decode(valueToDecode64,Base64.NO_WRAP);
+
+    public static String decrypt(byte[] valueToDecode64, String password) throws Exception {
+        byte[] todecode = Base64.decode(valueToDecode64, Base64.NO_WRAP);
         //byte[] keyAsBytes;
         //keyAsBytes = password.getBytes("UTF-8");
         //Key key = new SecretKeySpec(keyAsBytes, "AES");
@@ -486,6 +468,6 @@ public class Utility {
         byte[] encValue = c.doFinal(todecode);
         //String encryptedValue = Base64.encodeToString(encValue,Base64.DEFAULT);
         //return encryptedValue;
-        return new String(encValue,"UTF-8");
+        return new String(encValue, "UTF-8");
     }
 }

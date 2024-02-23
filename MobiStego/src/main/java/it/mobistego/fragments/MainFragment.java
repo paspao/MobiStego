@@ -2,28 +2,27 @@ package it.mobistego.fragments;
 
 import android.Manifest;
 import android.app.Activity;
-import android.app.AlertDialog;
-import android.app.Fragment;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
 import android.provider.MediaStore;
-import android.support.annotation.NonNull;
-import android.support.v4.app.ActivityCompat;
-import android.support.v4.content.FileProvider;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
-import android.widget.Button;
 import android.widget.ListView;
 import android.widget.Toast;
 
+import androidx.annotation.NonNull;
+import androidx.core.app.ActivityCompat;
+import androidx.core.content.FileProvider;
+import androidx.fragment.app.Fragment;
+
 import com.afollestad.materialdialogs.MaterialDialog;
+import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
 import java.io.File;
 import java.io.IOException;
@@ -58,31 +57,17 @@ import it.mobistego.utils.Utility;
 public class MainFragment extends Fragment implements View.OnClickListener, AdapterView.OnItemClickListener {
 
     private static final String TAG = MainFragment.class.getName();
-
-
-
+    private final int REQUEST_CODE = 123;
     private OnMainFragment mCallback;
-    private Button buttonAdd;
+    private FloatingActionButton buttonAdd;
     private ListView listView;
     private List<MobiStegoItem> mobiStegoItems;
     private File filePhotoTaken;
     private ListAdapter listAdapter;
     private View createdView;
 
-
-    public interface OnMainFragment {
-        void onMainFragmentBitmapSelectedToEncode(File btm);
-
-        void onMainFragmentBitmapSelectedToDecode(File btm);
-
-        void onMainFragmentGridItemSelected(MobiStegoItem mobiStegoItem);
-
-    }
-
-
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
-                             Bundle savedInstanceState) {
+    public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         List<MobiStegoItem> mobiTmp;
 
         mobiTmp = Utility.listMobistegoItem(getActivity());
@@ -90,14 +75,14 @@ public class MainFragment extends Fragment implements View.OnClickListener, Adap
         if (createdView == null) {
             createdView = inflater.inflate(R.layout.main_layout, container, false);
             listView = (ListView) createdView.findViewById(R.id.list_view);
-            buttonAdd = (Button) createdView.findViewById(R.id.button_add);
+            buttonAdd = (FloatingActionButton) createdView.findViewById(R.id.button_add);
 
             buttonAdd.setOnClickListener(this);
 
-            boolean changed = false;
+            //boolean changed = false;
             if (mobiStegoItems == null || mobiStegoItems.size() != mobiTmp.size()) {
                 mobiStegoItems = mobiTmp;
-                changed = true;
+                //changed = true;
             }
 
             if (listAdapter == null) {
@@ -117,10 +102,10 @@ public class MainFragment extends Fragment implements View.OnClickListener, Adap
             listAdapter.notifyDataSetChanged();
         }
         if (ActivityCompat.checkSelfPermission(getActivity(), Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED
-                ||ActivityCompat.checkSelfPermission(getActivity(), Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED
-                ) {
-            ActivityCompat.requestPermissions(getActivity(), new String[]{android.Manifest.permission.CAMERA,android.Manifest.permission.WRITE_EXTERNAL_STORAGE},
-                    123);
+                || ActivityCompat.checkSelfPermission(getActivity(), Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED
+        ) {
+            ActivityCompat.requestPermissions(getActivity(), new String[]{android.Manifest.permission.CAMERA, android.Manifest.permission.WRITE_EXTERNAL_STORAGE},
+                    REQUEST_CODE);
         }
 
 
@@ -128,7 +113,7 @@ public class MainFragment extends Fragment implements View.OnClickListener, Adap
     }
 
     @Override
-    public void onAttach(Activity activity) {
+    public void onAttach(@NonNull Activity activity) {
         super.onAttach(activity);
 
 
@@ -141,7 +126,6 @@ public class MainFragment extends Fragment implements View.OnClickListener, Adap
         }
     }
 
-
     @Override
     public void onClick(View v) {
         if (v != null) {
@@ -151,59 +135,66 @@ public class MainFragment extends Fragment implements View.OnClickListener, Adap
                     new MaterialDialog.Builder(getActivity())
                             .title(R.string.choose)
                             .items(R.array.operations)
-                            .itemsCallback(new MaterialDialog.ListCallback() {
-                                @Override
-                                public void onSelection(MaterialDialog materialDialog, View view, int i, CharSequence charSequence) {
+                            .itemsCallback((materialDialog, view, i, charSequence) -> {
 
-                                    switch (i) {
-                                        case 0:
-                                            try {
-                                                filePhotoTaken = Utility.createImageFile(getActivity());
-                                                Intent takePictureIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-                                                if (takePictureIntent.resolveActivity(getActivity().getPackageManager()) != null) {
-                                                    // Create the File where the photo should go
-                                                    File photoFile = null;
+                                switch (i) {
+                                    case 0:
+                                        try {
+                                            filePhotoTaken = Utility.createImageFile(getActivity());
+                                            Intent takePictureIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+                                            if (takePictureIntent.resolveActivity(getActivity().getPackageManager()) != null) {
+                                                // Create the File where the photo should go
+                                                File photoFile = filePhotoTaken;
+                                                Log.i(TAG, "" + photoFile.getAbsolutePath());
 
-                                                    photoFile = filePhotoTaken;
-                                                    Log.i(TAG,""+photoFile.getAbsolutePath());
-
-                                                    // Continue only if the File was successfully created
-                                                    if (photoFile != null) {
-                                                        Uri photoURI = FileProvider.getUriForFile(getActivity(),
-                                                                "it.mobistego.fileprovider",
-                                                                photoFile);
-                                                        takePictureIntent.putExtra(MediaStore.EXTRA_OUTPUT, photoURI);
+                                                // Continue only if the File was successfully created
+                                                if (photoFile != null) {
+                                                    Uri photoURI = FileProvider.getUriForFile(getActivity(),
+                                                            "it.mobistego.fileprovider",
+                                                            photoFile);
+                                                    takePictureIntent.putExtra(MediaStore.EXTRA_OUTPUT, photoURI);
+                                                    if (hasPermission(Manifest.permission.CAMERA)) {
                                                         startActivityForResult(takePictureIntent, Constants.REQUEST_IMAGE_CAPTURE);
+                                                    } else {
+                                                        Toast.makeText(getActivity(), R.string.no_permission, Toast.LENGTH_LONG).show();
                                                     }
                                                 }
-
-                                               /* takePictureIntent.putExtra(MediaStore.EXTRA_OUTPUT,
-                                                        Uri.fromFile(filePhotoTaken));
-                                                if (takePictureIntent.resolveActivity(getActivity().getPackageManager()) != null) {
-                                                    startActivityForResult(takePictureIntent, Constants.REQUEST_IMAGE_CAPTURE);
-                                                }*/
-                                            } catch (IOException e) {
-                                                Log.e(TAG, e.getMessage());
-                                                //e.printStackTrace();
                                             }
-                                            break;
-                                        case 1:
 
-                                            Intent photoPickerIntent = new Intent(Intent.ACTION_PICK);
-                                            photoPickerIntent.setType("image/*");
+                                           /* takePictureIntent.putExtra(MediaStore.EXTRA_OUTPUT,
+                                                    Uri.fromFile(filePhotoTaken));
+                                            if (takePictureIntent.resolveActivity(getActivity().getPackageManager()) != null) {
+                                                startActivityForResult(takePictureIntent, Constants.REQUEST_IMAGE_CAPTURE);
+                                            }*/
+                                        } catch (IOException e) {
+                                            Log.e(TAG, e.getMessage());
+                                            //e.printStackTrace();
+                                        }
+                                        break;
+                                    case 1:
+
+                                        Intent photoPickerIntent = new Intent(Intent.ACTION_PICK);
+                                        photoPickerIntent.setType("image/*");
+                                        if (hasPermission(Manifest.permission.WRITE_EXTERNAL_STORAGE)) {
                                             startActivityForResult(photoPickerIntent, Constants.SELECT_PHOTO);
-                                            break;
-                                        case 2:
-                                            Intent photoPickerIntentDecode = new Intent(Intent.ACTION_PICK);
-                                            photoPickerIntentDecode.setType("image/*");
+                                        } else {
+                                            Toast.makeText(getActivity(), R.string.no_permission, Toast.LENGTH_LONG).show();
+                                        }
+                                        break;
+                                    case 2:
+                                        Intent photoPickerIntentDecode = new Intent(Intent.ACTION_PICK);
+                                        photoPickerIntentDecode.setType("image/*");
+                                        if (hasPermission(Manifest.permission.WRITE_EXTERNAL_STORAGE)) {
                                             startActivityForResult(photoPickerIntentDecode, Constants.SELECT_PHOTO_DECODE);
-                                            break;
+                                        } else {
+                                            Toast.makeText(getActivity(), R.string.no_permission, Toast.LENGTH_LONG).show();
+                                        }
+                                        break;
 
 
-                                        default:
-                                            Log.i(TAG, "Unknown action");
-                                            break;
-                                    }
+                                    default:
+                                        Log.i(TAG, "Unknown action");
+                                        break;
                                 }
                             })
 
@@ -216,6 +207,10 @@ public class MainFragment extends Fragment implements View.OnClickListener, Adap
         }
     }
 
+    boolean hasPermission(String permission) {
+        return ActivityCompat.checkSelfPermission(getActivity(), permission) == PackageManager.PERMISSION_GRANTED;
+    }
+
     @Override
     public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
         Log.d(TAG, "Clicked position " + position);
@@ -226,23 +221,23 @@ public class MainFragment extends Fragment implements View.OnClickListener, Adap
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
         //if (ActivityCompat.checkSelfPermission(getActivity(), Manifest.permission.WRITE_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED) {
-            File f = new File(Environment.getExternalStorageDirectory(),
-                    Constants.EXT_DIR);
-            if (!f.exists()) {
-                f.mkdirs();
-            }
+        File f = new File(Environment.getExternalStorageDirectory(),
+                Constants.EXT_DIR);
+        if (!f.exists()) {
+            f.mkdirs();
+        }
 
         switch (requestCode) {
             case Constants.SELECT_PHOTO_DECODE:
                 if (resultCode == Activity.RESULT_OK) {
 
-                        final Uri imageUri = data.getData();
+                    final Uri imageUri = data.getData();
                     //final InputStream imageStream = getActivity().getContentResolver().openInputStream(imageUri);
                     //imageBitmap = BitmapFactory.decodeStream(imageStream);
                     if (imageUri != null) {
                         String path = Utility.getRealPathFromURI(getActivity(), imageUri);
                         mCallback.onMainFragmentBitmapSelectedToDecode(new File(path));
-                        }
+                    }
 
 
                 }
@@ -276,14 +271,7 @@ public class MainFragment extends Fragment implements View.OnClickListener, Adap
                 Log.i(TAG, "Unknown result");
                 break;
         }
-        }
-      /*  else
-        {
-            Toast.makeText(getActivity(),R.string.no_permission,Toast.LENGTH_LONG).show();
-
-        }*/
-
-
+    }
 
     @Override
     public void onResume() {
@@ -292,4 +280,20 @@ public class MainFragment extends Fragment implements View.OnClickListener, Adap
         listAdapter.notifyDataSetChanged();
 
     }
+      /*  else
+        {
+            Toast.makeText(getActivity(),R.string.no_permission,Toast.LENGTH_LONG).show();
+
+        }*/
+
+
+    public interface OnMainFragment {
+        void onMainFragmentBitmapSelectedToEncode(File btm);
+
+        void onMainFragmentBitmapSelectedToDecode(File btm);
+
+        void onMainFragmentGridItemSelected(MobiStegoItem mobiStegoItem);
+
+    }
+
 }

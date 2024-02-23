@@ -36,7 +36,7 @@ public class MobiStegoItem {
 
     }
 
-    public MobiStegoItem(String message, File bitmap, String uuid, boolean encoded,String password) {
+    public MobiStegoItem(String message, File bitmap, String uuid, boolean encoded, String password) {
         this();
         this.bitmap = bitmap;
         String tmp = bitmap.getAbsolutePath();
@@ -44,7 +44,7 @@ public class MobiStegoItem {
         this.bitmapCompressed = new File(tmp + Constants.FILE_JPG_EXT);
         this.encoded = encoded;
         this.message = message;
-        this.password=password;
+        this.password = password;
     }
 
     public String getMessage() {
@@ -71,12 +71,12 @@ public class MobiStegoItem {
         this.encoded = encoded;
     }
 
-    public void setUuid(String uuid) {
-        this.uuid = uuid;
-    }
-
     public String getUuid() {
         return uuid;
+    }
+
+    public void setUuid(String uuid) {
+        this.uuid = uuid;
     }
 
     public File getBitmapCompressed() {
@@ -90,4 +90,5 @@ public class MobiStegoItem {
     public void setPassword(String password) {
         this.password = password;
     }
+
 }

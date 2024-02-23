@@ -39,9 +39,9 @@ public class BitmapWorkerTask extends AsyncTask<File, Void, Bitmap> {
 
     public BitmapWorkerTask(ImageView imageView, ProgressBar progr) {
         // Use a WeakReference to ensure the ImageView can be garbage collected
-        imageViewReference = new WeakReference<ImageView>(imageView);
+        imageViewReference = new WeakReference<>(imageView);
         if (progr != null)
-            progressBarWeakReference = new WeakReference<ProgressBar>(progr);
+            progressBarWeakReference = new WeakReference<>(progr);
         else
             progressBarWeakReference = null;
     }

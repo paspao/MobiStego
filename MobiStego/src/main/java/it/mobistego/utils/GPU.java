@@ -22,7 +22,6 @@ package it.mobistego.utils;
  */
 
 
-import android.app.Activity;
 import android.app.ActivityManager;
 import android.content.Context;
 import android.content.pm.ConfigurationInfo;
@@ -30,6 +29,9 @@ import android.opengl.GLES10;
 import android.opengl.GLES20;
 import android.opengl.GLSurfaceView;
 import android.widget.FrameLayout;
+
+import androidx.annotation.NonNull;
+import androidx.fragment.app.FragmentActivity;
 
 import java.nio.IntBuffer;
 import java.util.ArrayList;
@@ -43,6 +45,82 @@ import javax.microedition.khronos.opengles.GL10;
 public class GPU {
 
     // region OpenGLGles10
+
+    private static FragmentActivity context;
+
+    // endregion
+
+    // region OpenGLGles20
+    private volatile static IntBuffer buffer = IntBuffer.allocate(1);
+
+    // endregion
+
+    // region glGet
+    private volatile static IntBuffer buffer2 = IntBuffer.allocate(2);
+    private volatile static int[] arrayBuffer = new int[1];
+
+    public GPU(final FragmentActivity context) {
+        GPU.context = context;
+    }
+
+    public synchronized static String glGetString(int value) {
+        return GLES10.glGetString(value);
+    }
+
+    public synchronized static int glGetIntegerv(int value) {
+        buffer.clear();
+        GLES10.glGetIntegerv(value, buffer);
+        return buffer.get(0);
+    }
+
+    public synchronized static int[] glGetIntegerv(int value, int size) {
+        final IntBuffer buffer = IntBuffer.allocate(size);
+        GLES10.glGetIntegerv(value, buffer);
+        return buffer.array();
+    }
+
+    public synchronized static int[] glGetShaderPrecisionFormat(int shaderType, int precisionType) {
+        if (!supportsOpenGLES2()) return new int[]{0, 0, 0};
+        buffer2.clear();
+        GLES20.glGetShaderPrecisionFormat(shaderType, precisionType, buffer2, buffer);
+        return new int[]{buffer2.get(0), buffer2.get(1), buffer.get(0)};
+    }
+
+    public synchronized static int eglGetConfigAttrib(int eglType, final EGL10 egl, final EGLDisplay display, final EGLConfig eglConfig) {
+        egl.eglGetConfigAttrib(display, eglConfig, eglType, arrayBuffer);
+        return arrayBuffer[0];
+    }
+
+    public static boolean isVTFSupported() {
+        GLES10.glGetIntegerv(GLES20.GL_MAX_VERTEX_TEXTURE_IMAGE_UNITS, arrayBuffer, 0);
+        return arrayBuffer[0] != 0;
+    }
+
+    private static int getOpenGLVersion() {
+        final ActivityManager activityManager = (ActivityManager) context.getSystemService(Context.ACTIVITY_SERVICE);
+        final ConfigurationInfo configurationInfo = activityManager.getDeviceConfigurationInfo();
+        return configurationInfo.reqGlEsVersion;
+    }
+
+    private static boolean supportsOpenGLES2() {
+        return getOpenGLVersion() >= 0x20000;
+    }
+
+    public void loadOpenGLGles10Info(final OnCompleteCallback<OpenGLGles10Info> callback) {
+        new InfoLoader<>(new OpenGLGles10Info()).loadInfo(callback);
+    }
+
+    public void loadOpenGLGles20Info(final OnCompleteCallback<OpenGLGles20Info> callback) {
+        new InfoLoader<>(new OpenGLGles20Info()).loadInfo(callback);
+    }
+
+    // endregion
+
+    // region GPU
+
+    public interface OnCompleteCallback<T> {
+        void onComplete(final T result);
+    }
 
     public static class OpenGLGles10Info extends OpenGLInfo {
 
@@ -94,6 +172,7 @@ public class GPU {
             GL_MAX_VIEWPORT_DIMS = glGetIntegerv(GLES10.GL_MAX_VIEWPORT_DIMS, 2);
         }
 
+        @NonNull
         @Override
         public String toString() {
             return "OpenGLGles10Info{" + '\n' +
@@ -119,7 +198,7 @@ public class GPU {
 
     // endregion
 
-    // region OpenGLGles20
+    // region interfaces
 
     public static class OpenGLGles20Info extends OpenGLInfo {
 
@@ -208,6 +287,7 @@ public class GPU {
             GL_FRAGMENT_SHADER_GL_HIGH_FLOAT = glGetShaderPrecisionFormat(GLES20.GL_FRAGMENT_SHADER, GLES20.GL_HIGH_FLOAT);
         }
 
+        @NonNull
         @Override
         public String toString() {
             return "OpenGLGles20Info{" +
@@ -245,82 +325,6 @@ public class GPU {
         }
     }
 
-    // endregion
-
-    // region glGet
-
-    private static Activity context;
-    private volatile static IntBuffer buffer = IntBuffer.allocate(1);
-    private volatile static IntBuffer buffer2 = IntBuffer.allocate(2);
-    private volatile static int[] arrayBuffer = new int[1];
-
-    public GPU(final Activity context) {
-        GPU.context = context;
-    }
-
-    public synchronized static String glGetString(int value) {
-        return GLES10.glGetString(value);
-    }
-
-    public synchronized static int glGetIntegerv(int value) {
-        buffer.clear();
-        GLES10.glGetIntegerv(value, buffer);
-        return buffer.get(0);
-    }
-
-    public synchronized static int[] glGetIntegerv(int value, int size) {
-        final IntBuffer buffer = IntBuffer.allocate(size);
-        GLES10.glGetIntegerv(value, buffer);
-        return buffer.array();
-    }
-
-    public synchronized static int[] glGetShaderPrecisionFormat(int shaderType, int precisionType) {
-        if (!supportsOpenGLES2()) return new int[]{0, 0, 0};
-        buffer2.clear();
-        GLES20.glGetShaderPrecisionFormat(shaderType, precisionType, buffer2, buffer);
-        return new int[]{buffer2.get(0), buffer2.get(1), buffer.get(0)};
-    }
-
-    public synchronized static int eglGetConfigAttrib(int eglType, final EGL10 egl, final EGLDisplay display, final EGLConfig eglConfig) {
-        egl.eglGetConfigAttrib(display, eglConfig, eglType, arrayBuffer);
-        return arrayBuffer[0];
-    }
-
-    public static boolean isVTFSupported() {
-        GLES10.glGetIntegerv(GLES20.GL_MAX_VERTEX_TEXTURE_IMAGE_UNITS, arrayBuffer, 0);
-        return arrayBuffer[0] != 0;
-    }
-
-    private static int getOpenGLVersion() {
-        final ActivityManager activityManager = (ActivityManager) context.getSystemService(Context.ACTIVITY_SERVICE);
-        final ConfigurationInfo configurationInfo = activityManager.getDeviceConfigurationInfo();
-        return configurationInfo.reqGlEsVersion;
-    }
-
-    private static boolean supportsOpenGLES2() {
-        return getOpenGLVersion() >= 0x20000;
-    }
-
-    // endregion
-
-    // region GPU
-
-    public void loadOpenGLGles10Info(final OnCompleteCallback<OpenGLGles10Info> callback) {
-        new InfoLoader<OpenGLGles10Info>(new OpenGLGles10Info()).loadInfo(callback);
-    }
-
-    public void loadOpenGLGles20Info(final OnCompleteCallback<OpenGLGles20Info> callback) {
-        new InfoLoader<OpenGLGles20Info>(new OpenGLGles20Info()).loadInfo(callback);
-    }
-
-    // endregion
-
-    // region interfaces
-
-    public interface OnCompleteCallback<T> {
-        void onComplete(final T result);
-    }
-
     private static abstract class OpenGLInfo {
 
         final int eGLContextClientVersion;
@@ -328,7 +332,7 @@ public class GPU {
 
         protected OpenGLInfo(final int eGLContextClientVersion) {
             this.eGLContextClientVersion = eGLContextClientVersion;
-            eglconfigs = new ArrayList<Egl>();
+            eglconfigs = new ArrayList<>();
         }
 
         /**
@@ -353,31 +357,28 @@ public class GPU {
 
         private void loadInfo(final OnCompleteCallback<T> callback) {
 
-            context.runOnUiThread(new Runnable() {
-                @Override
-                public void run() {
-                    // new view
-                    final GLSurfaceView glView = new GLSurfaceView(context);
+            context.runOnUiThread(() -> {
+                // new view
+                final GLSurfaceView glView = new GLSurfaceView(context);
 
-                    // egl info
-                    glView.setEGLConfigChooser(new EglChooser<T>(info));
+                // egl info
+                glView.setEGLConfigChooser(new EglChooser<>(info));
 
-                    // need to be on top to be rendered at least for one frame
-                    glView.setZOrderOnTop(true);
+                // need to be on top to be rendered at least for one frame
+                glView.setZOrderOnTop(true);
 
-                    // create new renderer; note: we only need the oncreate method for all the infos
-                    renderer = new GPURenderer<T>(glView, info, callback);
+                // create new renderer; note: we only need the oncreate method for all the infos
+                renderer = new GPURenderer<>(glView, info, callback);
 
-                    // set opengl version
-                    glView.setEGLContextClientVersion(info.eGLContextClientVersion);
+                // set opengl version
+                glView.setEGLContextClientVersion(info.eGLContextClientVersion);
 
-                    // set renderer
-                    glView.setRenderer(renderer);
+                // set renderer
+                glView.setRenderer(renderer);
 
-                    // add opengl view to current active view
-                    final FrameLayout layout = (FrameLayout) context.findViewById(android.R.id.content); // Note: needs to be layout of current active view
-                    layout.addView(glView);
-                }
+                // add opengl view to current active view
+                final FrameLayout layout = (FrameLayout) context.findViewById(android.R.id.content); // Note: needs to be layout of current active view
+                layout.addView(glView);
             });
         }
     }
@@ -405,16 +406,13 @@ public class GPU {
             result.loadOnCreate();
 
             // remove view
-            context.runOnUiThread(new Runnable() {
-                @Override
-                public void run() {
+            context.runOnUiThread(() -> {
 
-                    final FrameLayout layout = (FrameLayout) context.findViewById(android.R.id.content);
-                    layout.removeView(glSurfaceView);
+                final FrameLayout layout = (FrameLayout) context.findViewById(android.R.id.content);
+                layout.removeView(glSurfaceView);
 
-                    // call callback
-                    if (callback != null) callback.onComplete(result);
-                }
+                // call callback
+                if (callback != null) callback.onComplete(result);
             });
         }
 
@@ -563,6 +561,7 @@ public class GPU {
             return result;
         }
 
+        @NonNull
         @Override
         public String toString() {
 
